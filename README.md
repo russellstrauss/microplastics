@@ -16,7 +16,7 @@ Run local webserver in root directory (index.html).
 
 ### Prerequisites
 
-Node.js
+[Node.js](https://nodejs.org/en/)
 
 ### Installing
 

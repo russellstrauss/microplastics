@@ -1,3 +1,10 @@
+.large-graphic {
+	
+	.horizontal-bar {
+		margin: 75px 0;
+	}
+}
+
 .horizontal-bar {
 	border: 1px solid black;
 	margin: 20px 0;
@@ -14,7 +21,10 @@
 		font-weight: 600;
 	}
 	
-	rect {
-		height: 5px;
+	.tick {
+		
+		text {
+			//transform: translateX(-5px); // give y-axis lables more space
+		}
 	}
 }

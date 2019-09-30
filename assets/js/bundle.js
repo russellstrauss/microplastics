@@ -5,7 +5,7 @@ module.exports = function () {
   return {
     settings: {},
     init: function init() {
-      var self = this;
+      var self = this; // code here
     }
   };
 };
@@ -13,17 +13,47 @@ module.exports = function () {
 },{}],2:[function(require,module,exports){
 "use strict";
 
+module.exports = function () {
+  return {
+    settings: {},
+    init: function init() {
+      var self = this; // code here
+    }
+  };
+};
+
+},{}],3:[function(require,module,exports){
+"use strict";
+
+module.exports = function () {
+  return {
+    settings: {},
+    init: function init() {
+      var self = this; // code here
+    }
+  };
+};
+
+},{}],4:[function(require,module,exports){
+"use strict";
+
 var Graph = require('./components/graph.js');
+
+var Graph2 = require('./components/graph-2.js');
+
+var Graph3 = require('./components/graph-3.js');
 
 var Utilities = require('./utils.js');
 
 (function () {
   document.addEventListener('DOMContentLoaded', function () {
     Graph().init();
+    Graph2().init();
+    Graph3().init();
   });
 })();
 
-},{"./components/graph.js":1,"./utils.js":3}],3:[function(require,module,exports){
+},{"./components/graph-2.js":1,"./components/graph-3.js":2,"./components/graph.js":3,"./utils.js":5}],5:[function(require,module,exports){
 "use strict";
 
 (function () {
@@ -149,4 +179,4 @@ var Utilities = require('./utils.js');
   module.exports = window.utils;
 })();
 
-},{}]},{},[2]);
+},{}]},{},[4]);

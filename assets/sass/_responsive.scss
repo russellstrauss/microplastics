@@ -39,6 +39,10 @@ $desktop-large-width: 1200px;
 	display: block;
 	margin: auto;
 	
+	&.reading {
+		max-width: 800px;
+	}
+	
 	@include mobile-only {
 		padding-left: 15px;
 		padding-right: 15px;

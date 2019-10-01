@@ -1,4 +1,6 @@
 .large-graphic {
+	width: 100%;
+	max-width: 1600px;
 	
 	.horizontal-bar {
 		margin: 75px 0;
@@ -6,6 +8,7 @@
 }
 
 .horizontal-bar {
+	width: 100%;
 	border: 1px solid black;
 	margin: 20px 0;
 	

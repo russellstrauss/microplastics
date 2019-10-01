@@ -40,7 +40,7 @@ $desktop-large-width: 1200px;
 	margin: auto;
 	
 	&.reading {
-		max-width: 800px;
+		max-width: 750px;
 	}
 	
 	@include mobile-only {

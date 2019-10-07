@@ -18,48 +18,32 @@ module.exports = function () {
 
 			var data = [
 				{
-					'salesperson': 'Bob',
-					'sales': 33
+					'foodType': 'Seafood',
+					'amount': 1.48
 				},
 				{
-					'salesperson': 'Robin',
-					'sales': 12
-				}, {
-					'salesperson': 'Anne',
-					'sales': 41
-				}, {
-					'salesperson': 'Mark',
-					'sales': 16
-				}, {
-					'salesperson': 'Joe',
-					'sales': 59
-				}, {
-					'salesperson': 'Eve',
-					'sales': 38
-				}, {
-					'salesperson': 'Karen',
-					'sales': 21
-				}, {
-					'salesperson': 'Kirsty',
-					'sales': 25
-				}, {
-					'salesperson': 'Chris',
-					'sales': 30
-				}, {
-					'salesperson': 'Lisa',
-					'sales': 47
-				}, {
-					'salesperson': 'Tom',
-					'sales': 5
-				}, {
-					'salesperson': 'Stacy',
-					'sales': 20
-				}, {
-					'salesperson': 'Charles',
-					'sales': 13
-				}, {
-					'salesperson': 'Mary',
-					'sales': 29
+					'foodType': 'Salt',
+					'amount': .11
+				},
+				{
+					'foodType': 'Honey',
+					'amount': .1
+				},
+				{
+					'foodType': 'Sugar',
+					'amount': .44
+				},
+				{
+					'foodType': 'Alcohol',
+					'amount': 32.37
+				},
+				{
+					'foodType': 'Tap Water',
+					'amount': 4.24
+				},
+				{
+					'foodType': 'Bottled Water',
+					'amount': 94.37
 				}
 			];
 				
@@ -92,23 +76,23 @@ module.exports = function () {
 	
 				// format the data
 				data.forEach(function (d) {
-					d.sales = +d.sales;
+					d.amount = +d.amount;
 				});
 				
 				let compare = function(a, b) {
-					return b.sales - a.sales;
+					return b.amount - a.amount;
 				};
 				
 				data = data.sort(compare);
 				
 				let maxValue = d3.max(data, function (d) {
-					return d.sales;
+					return d.amount;
 				});
 				
 				// Scale the range of the data in the domains
 				x.domain([0, (maxValue + maxValue * .05)])
 				y.domain(data.map(function (d) {
-					return d.salesperson;
+					return d.foodType;
 				}));
 	
 				svg.selectAll('.bar')
@@ -116,10 +100,10 @@ module.exports = function () {
 					.enter().append('rect')
 					.attr('class', 'bar')
 					.attr('width', function (d) {
-						return x(d.sales);
+						return x(d.amount);
 					})
 					.attr('y', function (d) {
-						return y(d.salesperson) + (y.bandwidth() / 2 - barHeight / 2);
+						return y(d.foodType) + (y.bandwidth() / 2 - barHeight / 2);
 					})
 					.attr('height', barHeight);
 	
@@ -129,7 +113,7 @@ module.exports = function () {
 				// Add graph title
 				let title = svg.append('text') 
 					.attr('class', 'title')
-					.text('Title Here');
+					.text('Microplastics Found in Human Diet by Food Type');
 				let textWidth = title.node().getBBox().width;
 				let textHeight = title.node().getBBox().height;
 				title.attr('transform','translate(' + (width/2 - (textWidth/2) - (padding.left/2)) + ', ' + (-1 * (padding.top/2) + 10) + ')');
@@ -138,17 +122,17 @@ module.exports = function () {
 				let xAxisHeight = 20;
 				let xAxisLabel = svg.append('text') 
 					.attr('class', 'x-axis-label')
-					.text('x-axis label here');
+					.html('Average Microplastics Per Volume (g/L/m <tspan baseline-shift="super">3</tspan>)');
 				textWidth = xAxisLabel.node().getBBox().width;
 				textHeight = xAxisLabel.node().getBBox().height;
 				xAxisLabel.attr('transform','translate(' + (width/2 - (textWidth/2) - (padding.left/2)) + ', ' + (height + xAxisHeight + (padding.bottom/2)) + ')');
 			
-				let yAxisLabel = svg.append('text') 
-					.attr('class', 'y-axis-label')
-					.text('y-axis label here');
-				textWidth = yAxisLabel.node().getBBox().width;
-				textHeight = yAxisLabel.node().getBBox().height;
-				yAxisLabel.attr('transform','translate(' + (-1 * padding.left + textHeight * 2.5) + ', ' + (height/2 + (textWidth/2)) + ') rotate(-90)');
+				// let yAxisLabel = svg.append('text') 
+				// 	.attr('class', 'y-axis-label')
+				// 	.text('y-axis label here');
+				// textWidth = yAxisLabel.node().getBBox().width;
+				// textHeight = yAxisLabel.node().getBBox().height;
+				// yAxisLabel.attr('transform','translate(' + (-1 * padding.left + textHeight * 2.5) + ', ' + (height/2 + (textWidth/2)) + ') rotate(-90)');
 			});
 			
 		}

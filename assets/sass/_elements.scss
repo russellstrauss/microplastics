@@ -45,13 +45,29 @@ p {
 	line-height: 2.25;
 }
 
+.reference {
+	margin-left: -1em;
+	counter-reset: list;
+	
+	li {
+		list-style: none;
+		position: relative;
+		padding-left: 1em;
+		
+		&:before {
+			counter-increment: list;
+			content: "[" counter(list) "] ";
+			position: absolute;
+			left: -1.4em;
+		}
+	}
+}
+
 ul {
 	font-size: .8rem;
 	line-height: 1.75;
 	
 	li {
 		list-style-type: square;
-		
-	
 	}
 }

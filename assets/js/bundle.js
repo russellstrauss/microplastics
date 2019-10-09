@@ -27,48 +27,94 @@ module.exports = function () {
 
 module.exports = function () {
   return {
-    settings: {},
-    init: function init() {
-      var self = this; // code here
-    }
-  };
-};
-
-},{}],4:[function(require,module,exports){
-"use strict";
-
-module.exports = function () {
-  return {
     settings: {
       graphicHeight: 400
     },
     init: function init() {
-      console.log(d3);
       this.addBarGraph();
     },
     addBarGraph: function addBarGraph() {
       var self = this;
       var data = [{
-        'foodType': 'Seafood',
-        'amount': 1.48
+        'river': 'Yangtze',
+        'countries': ['China'],
+        'amount': 3.33e5
       }, {
-        'foodType': 'Salt',
-        'amount': .11
+        'river': 'Ganges',
+        'countries': ['India', 'Bangladesh'],
+        'amount': 1.15e5
       }, {
-        'foodType': 'Honey',
-        'amount': .1
+        'river': 'Xi',
+        'countries': ['China'],
+        'amount': 7.39e4
       }, {
-        'foodType': 'Sugar',
-        'amount': .44
+        'river': 'Huangpu',
+        'countries': ['China'],
+        'amount': 4.08e4
       }, {
-        'foodType': 'Alcohol',
-        'amount': 32.37
+        'river': 'Cross',
+        'countries': ['Nigeria', 'Cameroon'],
+        'amount': 4.03e4
       }, {
-        'foodType': 'Tap Water',
-        'amount': 4.24
+        'river': 'Brantas',
+        'countries': ['Indonesia'],
+        'amount': 3.89e4
       }, {
-        'foodType': 'Bottled Water',
-        'amount': 94.37
+        'river': 'Amazon',
+        'countries': ['Brazil', 'Peru', 'Columbia', 'Ecuador'],
+        'amount': 3.89e4
+      }, {
+        'river': 'Pasig',
+        'countries': ['Philippines'],
+        'amount': 3.88e4
+      }, {
+        'river': 'Irrawaddy',
+        'countries': ['Myanmar'],
+        'amount': 3.53e4
+      }, {
+        'river': 'Solo',
+        'countries': ['Indonesia'],
+        'amount': 3.25e4
+      }, {
+        'river': 'Mekong',
+        'countries': ['Thailand', 'Cambodia', 'Laos', 'China', 'Myanmar', 'Vietnam'],
+        'amount': 2.28e4
+      }, {
+        'river': 'Imo',
+        'countries': ['Nigeria'],
+        'amount': 2.15e4
+      }, {
+        'river': 'Dong',
+        'countries': ['China'],
+        'amount': 1.91e4
+      }, {
+        'river': 'Serayu',
+        'countries': ['Indonesia'],
+        'amount': 1.71e4
+      }, {
+        'river': 'Magdalena',
+        'countries': ['Colombia'],
+        'amount': 1.67e4
+      }, {
+        'river': 'Tamsui',
+        'countries': ['Taiwan'],
+        'amount': 1.47e4
+      }, {
+        'river': 'Zhujiang',
+        'countries': ['China'],
+        'amount': 1.36e4
+      }, {
+        'river': 'Hanjiang',
+        'countries': ['China'],
+        'amount': 1.29e4
+      }, {
+        'river': 'Progo',
+        'countries': ['Indonesia'],
+        'amount': 1.28e4
+      }, {
+        'river': 'Kwa Ibo',
+        'countries': ['Nigeria'],
+        'amount': 1.19e4
       }];
       var graphs = document.querySelectorAll('.horizontal-bar');
       graphs.forEach(function (graph) {
@@ -82,7 +128,6 @@ module.exports = function () {
         var width = graphicContainer.offsetWidth - padding.left - padding.right;
         var height = self.settings.graphicHeight - padding.top - padding.bottom;
         var barHeight = 5;
-        var barMarginTop = 8;
         var y = d3.scaleBand().range([height, 0]);
         var x = d3.scaleLinear().range([0, width]);
         var svg = d3.select(graph).append('svg').attr('width', width + padding.left + padding.right).attr('height', height + padding.top + padding.bottom).append('g').attr('transform', 'translate(' + padding.left + ',' + padding.top + ')'); // format the data
@@ -100,24 +145,24 @@ module.exports = function () {
           return d.amount;
         }); // Scale the range of the data in the domains
 
-        x.domain([0, maxValue + maxValue * .05]);
+        x.domain([0, maxValue + maxValue * .02]);
         y.domain(data.map(function (d) {
-          return d.foodType;
+          return d.river;
         }));
         svg.selectAll('.bar').data(data).enter().append('rect').attr('class', 'bar').attr('width', function (d) {
           return x(d.amount);
         }).attr('y', function (d) {
-          return y(d.foodType) + (y.bandwidth() / 2 - barHeight / 2);
+          return y(d.river) + (y.bandwidth() / 2 - barHeight / 2);
         }).attr('height', barHeight);
         svg.append('g').attr('transform', 'translate(0,' + (height + 6) + ')').call(d3.axisBottom(x));
         svg.append('g').call(d3.axisLeft(y).tickSize(0)); // Add graph title
 
-        var title = svg.append('text').attr('class', 'title').text('Microplastics Found in Human Diet by Food Type');
+        var title = svg.append('text').attr('class', 'title').text('Top 20 Global Rivers Ranked by Ocean Plastic Input');
         var textWidth = title.node().getBBox().width;
         var textHeight = title.node().getBBox().height;
         title.attr('transform', 'translate(' + (width / 2 - textWidth / 2 - padding.left / 2) + ', ' + (-1 * (padding.top / 2) + 10) + ')');
         var xAxisHeight = 20;
-        var xAxisLabel = svg.append('text').attr('class', 'x-axis-label').html('Average Microplastics Per Volume (g/L/m <tspan baseline-shift="super">3</tspan>)');
+        var xAxisLabel = svg.append('text').attr('class', 'x-axis-label').html('Mass of Plastic Input in Tons Per Year');
         textWidth = xAxisLabel.node().getBBox().width;
         textHeight = xAxisLabel.node().getBBox().height;
         xAxisLabel.attr('transform', 'translate(' + (width / 2 - textWidth / 2 - padding.left / 2) + ', ' + (height + xAxisHeight + padding.bottom / 2) + ')'); // let yAxisLabel = svg.append('text') 
@@ -131,29 +176,58 @@ module.exports = function () {
   };
 };
 
+},{}],4:[function(require,module,exports){
+"use strict";
+
+module.exports = function () {
+  var containerWidth = parseInt(document.querySelector('.map').offsetWidth);
+  var asia = {
+    width: containerWidth,
+    height: 800,
+    scale: 800
+  };
+  asia.projection = d3.geoMercator().translate([asia.width * -.75, asia.height * .75]).scale([asia.scale]);
+  return {
+    init: function init() {
+      var self = this;
+      var projection = asia.projection;
+      var path = d3.geoPath().projection(projection);
+      var svg = d3.select('.map').append('svg').attr('width', containerWidth).attr('height', asia.height);
+      d3.json('./assets/js/data/world_oceans.json').then(function (json) {
+        //Bind data and create one path per GeoJSON feature
+        svg.selectAll('path').data(json.features).enter().append('path').attr('d', path).style('fill', '#033649').style('opacity', '.25');
+      });
+      d3.json('./assets/js/data/world_rivers.json').then(function (json) {
+        //Bind data and create one path per GeoJSON feature
+        svg.selectAll('path').data(json.features).enter().append('path').attr('d', path).style('fill', '#57C3E3');
+      });
+    }
+  };
+};
+
 },{}],5:[function(require,module,exports){
 "use strict";
 
 var HorizontalBar = require('./components/horizontal-bar.js');
 
+var Maps = require('./components/maps.js');
+
 var Graph = require('./components/graph.js');
 
 var Graph2 = require('./components/graph-2.js');
-
-var Graph3 = require('./components/graph-3.js');
 
 var Utilities = require('./utils.js');
 
 (function () {
   document.addEventListener('DOMContentLoaded', function () {
     HorizontalBar().init();
+    Maps().init();
     Graph().init();
     Graph2().init();
-    Graph3().init();
   });
 })();
 
-},{"./components/graph-2.js":1,"./components/graph-3.js":2,"./components/graph.js":3,"./components/horizontal-bar.js":4,"./utils.js":6}],6:[function(require,module,exports){
+},{"./components/graph-2.js":1,"./components/graph.js":2,"./components/horizontal-bar.js":3,"./components/maps.js":4,"./utils.js":6}],6:[function(require,module,exports){
 "use strict";
 
 (function () {

@@ -1,7 +1,7 @@
 var HorizontalBar = require('./components/horizontal-bar.js');
+var Maps = require('./components/maps.js');
 var Graph = require('./components/graph.js');
 var Graph2 = require('./components/graph-2.js');
-var Graph3 = require('./components/graph-3.js');
 var Utilities = require('./utils.js');
 
 (function () {
@@ -9,8 +9,8 @@ var Utilities = require('./utils.js');
 	document.addEventListener('DOMContentLoaded',function(){
 		
 		HorizontalBar().init();
+		Maps().init();
 		Graph().init();
 		Graph2().init();
-		Graph3().init();
 	});
 })();

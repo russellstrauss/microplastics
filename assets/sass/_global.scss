@@ -1,0 +1,17 @@
+.reference {
+	margin-left: -1.5em;
+	counter-reset: list;
+	
+	li {
+		list-style: none;
+		position: relative;
+		padding-left: 1em;
+		
+		&:before {
+			counter-increment: list;
+			content: "[" counter(list) "] ";
+			position: absolute;
+			left: -1.4em;
+		}
+	}
+}

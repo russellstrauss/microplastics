@@ -8,7 +8,6 @@ module.exports = function () {
 
 		init: function () {
 
-			console.log(d3);
 			this.addBarGraph();
 		},
 
@@ -18,32 +17,104 @@ module.exports = function () {
 
 			var data = [
 				{
-					'foodType': 'Seafood',
-					'amount': 1.48
+					'river': 'Yangtze',
+					'countries': ['China'],
+					'amount': 3.33e5
 				},
 				{
-					'foodType': 'Salt',
-					'amount': .11
+					'river': 'Ganges',
+					'countries': ['India', 'Bangladesh'],
+					'amount': 1.15e5
 				},
 				{
-					'foodType': 'Honey',
-					'amount': .1
+					'river': 'Xi',
+					'countries': ['China'],
+					'amount': 7.39e4
 				},
 				{
-					'foodType': 'Sugar',
-					'amount': .44
+					'river': 'Huangpu',
+					'countries': ['China'],
+					'amount': 4.08e4
 				},
 				{
-					'foodType': 'Alcohol',
-					'amount': 32.37
+					'river': 'Cross',
+					'countries': ['Nigeria', 'Cameroon'],
+					'amount': 4.03e4
 				},
 				{
-					'foodType': 'Tap Water',
-					'amount': 4.24
+					'river': 'Brantas',
+					'countries': ['Indonesia'],
+					'amount': 3.89e4
 				},
 				{
-					'foodType': 'Bottled Water',
-					'amount': 94.37
+					'river': 'Amazon',
+					'countries': ['Brazil', 'Peru', 'Columbia', 'Ecuador'],
+					'amount': 3.89e4
+				},
+				{
+					'river': 'Pasig',
+					'countries': ['Philippines'],
+					'amount': 3.88e4
+				},
+				{
+					'river': 'Irrawaddy',
+					'countries': ['Myanmar'],
+					'amount': 3.53e4
+				},
+				{
+					'river': 'Solo',
+					'countries': ['Indonesia'],
+					'amount': 3.25e4
+				},
+				{
+					'river': 'Mekong',
+					'countries': ['Thailand', 'Cambodia', 'Laos', 'China', 'Myanmar', 'Vietnam'],
+					'amount': 2.28e4
+				},
+				{
+					'river': 'Imo',
+					'countries': ['Nigeria'],
+					'amount': 2.15e4
+				},
+				{
+					'river': 'Dong',
+					'countries': ['China'],
+					'amount': 1.91e4
+				},
+				{
+					'river': 'Serayu',
+					'countries': ['Indonesia'],
+					'amount': 1.71e4
+				},
+				{
+					'river': 'Magdalena',
+					'countries': ['Colombia'],
+					'amount': 1.67e4
+				},
+				{
+					'river': 'Tamsui',
+					'countries': ['Taiwan'],
+					'amount': 1.47e4
+				},
+				{
+					'river': 'Zhujiang',
+					'countries': ['China'],
+					'amount': 1.36e4
+				},
+				{
+					'river': 'Hanjiang',
+					'countries': ['China'],
+					'amount': 1.29e4
+				},
+				{
+					'river': 'Progo',
+					'countries': ['Indonesia'],
+					'amount': 1.28e4
+				},
+				{
+					'river': 'Kwa Ibo',
+					'countries': ['Nigeria'],
+					'amount': 1.19e4
 				}
 			];
 				
@@ -62,7 +133,6 @@ module.exports = function () {
 				var width = graphicContainer.offsetWidth - padding.left - padding.right;
 				var height = self.settings.graphicHeight - padding.top - padding.bottom;
 				var barHeight = 5;
-				var barMarginTop = 8;
 	
 				var y = d3.scaleBand().range([height, 0]);
 				var x = d3.scaleLinear().range([0, width]);
@@ -90,9 +160,9 @@ module.exports = function () {
 				});
 				
 				// Scale the range of the data in the domains
-				x.domain([0, (maxValue + maxValue * .05)])
+				x.domain([0, (maxValue + maxValue * .02)])
 				y.domain(data.map(function (d) {
-					return d.foodType;
+					return d.river;
 				}));
 	
 				svg.selectAll('.bar')
@@ -103,7 +173,7 @@ module.exports = function () {
 						return x(d.amount);
 					})
 					.attr('y', function (d) {
-						return y(d.foodType) + (y.bandwidth() / 2 - barHeight / 2);
+						return y(d.river) + (y.bandwidth() / 2 - barHeight / 2);
 					})
 					.attr('height', barHeight);
 	
@@ -113,16 +183,15 @@ module.exports = function () {
 				// Add graph title
 				let title = svg.append('text') 
 					.attr('class', 'title')
-					.text('Microplastics Found in Human Diet by Food Type');
+					.text('Top 20 Global Rivers Ranked by Ocean Plastic Input');
 				let textWidth = title.node().getBBox().width;
 				let textHeight = title.node().getBBox().height;
 				title.attr('transform','translate(' + (width/2 - (textWidth/2) - (padding.left/2)) + ', ' + (-1 * (padding.top/2) + 10) + ')');
 				
-				
 				let xAxisHeight = 20;
 				let xAxisLabel = svg.append('text') 
 					.attr('class', 'x-axis-label')
-					.html('Average Microplastics Per Volume (g/L/m <tspan baseline-shift="super">3</tspan>)');
+					.html('Mass of Plastic Input in Tons Per Year');
 				textWidth = xAxisLabel.node().getBBox().width;
 				textHeight = xAxisLabel.node().getBBox().height;
 				xAxisLabel.attr('transform','translate(' + (width/2 - (textWidth/2) - (padding.left/2)) + ', ' + (height + xAxisHeight + (padding.bottom/2)) + ')');

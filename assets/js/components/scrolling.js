@@ -21,20 +21,22 @@ module.exports = function() {
 			// 	offset: 500
 			// });
 			
-			var intro = document.querySelector('.intro');
+			var empties = document.querySelectorAll('.empty');
 			
-			var waypoint = new Waypoint({
-				element: intro,
-				handler: function(direction) {
-					
-					if (direction === 'down') {
-						veil.classList.remove('active');
+			empties.forEach(function(empty) {
+				
+				let enter = new Waypoint({
+					element: empty,
+					handler: function(direction) {
+						
+						if (direction === 'down') {
+							veil.classList.remove('active');
+						}
+						else {
+							veil.classList.add('active');
+						}
 					}
-					else {
-						veil.classList.add('active');
-					}
-				},
-				offset: -intro.offsetHeight + 300
+				});
 			});
 		}
 	}

@@ -223,17 +223,18 @@ module.exports = function () {
       // 	offset: 500
       // });
 
-      var intro = document.querySelector('.intro');
-      var waypoint = new Waypoint({
-        element: intro,
-        handler: function handler(direction) {
-          if (direction === 'down') {
-            veil.classList.remove('active');
-          } else {
-            veil.classList.add('active');
+      var empties = document.querySelectorAll('.empty');
+      empties.forEach(function (empty) {
+        var enter = new Waypoint({
+          element: empty,
+          handler: function handler(direction) {
+            if (direction === 'down') {
+              veil.classList.remove('active');
+            } else {
+              veil.classList.add('active');
+            }
           }
-        },
-        offset: -intro.offsetHeight + 300
+        });
       });
     }
   };

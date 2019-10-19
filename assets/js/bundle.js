@@ -209,9 +209,44 @@ module.exports = function () {
 },{}],5:[function(require,module,exports){
 "use strict";
 
+module.exports = function () {
+  return {
+    settings: {},
+    init: function init() {
+      var self = this;
+      var fullScreenMap = document.querySelector('.fullscreen-map');
+      var veil = fullScreenMap.querySelector('.veil'); // var waypoint = new Waypoint({
+      // 	element: document.getElementById('references'),
+      // 	handler: function() {
+      // 		veil.classList.remove('active');
+      // 	},
+      // 	offset: 500
+      // });
+
+      var intro = document.querySelector('.intro');
+      var waypoint = new Waypoint({
+        element: intro,
+        handler: function handler(direction) {
+          if (direction === 'down') {
+            veil.classList.remove('active');
+          } else {
+            veil.classList.add('active');
+          }
+        },
+        offset: -intro.offsetHeight + 300
+      });
+    }
+  };
+};
+
+},{}],6:[function(require,module,exports){
+"use strict";
+
 var HorizontalBar = require('./components/horizontal-bar.js');
 
 var Maps = require('./components/maps.js');
+
+var Scrolling = require('./components/scrolling.js');
 
 var Graph = require('./components/graph.js');
 
@@ -223,12 +258,13 @@ var Utilities = require('./utils.js');
   document.addEventListener('DOMContentLoaded', function () {
     HorizontalBar().init();
     Maps().init();
+    Scrolling().init();
     Graph().init();
     Graph2().init();
   });
 })();
 
-},{"./components/graph-2.js":1,"./components/graph.js":2,"./components/horizontal-bar.js":3,"./components/maps.js":4,"./utils.js":6}],6:[function(require,module,exports){
+},{"./components/graph-2.js":1,"./components/graph.js":2,"./components/horizontal-bar.js":3,"./components/maps.js":4,"./components/scrolling.js":5,"./utils.js":7}],7:[function(require,module,exports){
 "use strict";
 
 (function () {
@@ -354,4 +390,4 @@ var Utilities = require('./utils.js');
   module.exports = window.utils;
 })();
 
-},{}]},{},[5]);
+},{}]},{},[6]);

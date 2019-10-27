@@ -135,8 +135,8 @@ module.exports = function() {
 					
 					if (direction === 'down') {
 						map.transition()
-						.duration(1200)
-						.ease(d3.easePolyInOut.exponent(4))
+						.duration(2000)
+						.ease(d3.easeCubicInOut)
 						.call(zoom.transform, d3.zoomIdentity
 						.translate(containerWidth/2, containerHeight/2)
 						.scale(.5)
@@ -171,7 +171,7 @@ module.exports = function() {
 					if (direction === 'down') {
 						map.transition()
 						.duration(1200)
-						.ease(d3.easePolyInOut.exponent(4))
+						.ease(d3.easeCubicInOut)
 						.call(zoom.transform, d3.zoomIdentity
 						.translate(containerWidth/2, containerHeight/2)
 						.scale(.75)
@@ -190,7 +190,7 @@ module.exports = function() {
 					if (direction === 'down') {
 						map.transition()
 						.duration(1200)
-						.ease(d3.easePolyInOut.exponent(4))
+						.ease(d3.easeCubicInOut)
 						.call(zoom.transform, d3.zoomIdentity
 						.translate(containerWidth/2, containerHeight/2)
 						.scale(1)

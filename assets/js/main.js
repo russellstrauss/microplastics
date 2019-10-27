@@ -1,7 +1,8 @@
 var HorizontalBar = require('./components/horizontal-bar.js');
+var HorizontalBar = require('./components/horizontal-bar.js');
 var Maps = require('./components/maps.js');
 var Scrolling = require('./components/scrolling.js');
-var Graph = require('./components/graph.js');
+var Sunburst = require('./components/sunburst.js');
 var Graph2 = require('./components/graph-2.js');
 var Utilities = require('./utils.js');
 
@@ -12,7 +13,7 @@ var Utilities = require('./utils.js');
 		HorizontalBar().init();
 		Maps().init();
 		Scrolling().init();
-		Graph().init();
+		Sunburst().init();
 		Graph2().init();
 	});
 })();

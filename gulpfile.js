@@ -34,6 +34,7 @@ var vendors = {
 	merge: [
 		'./assets/vendors/js/noframework.waypoints.min.js',
 		'./assets/vendors/js/d3.v4.js'
+		//'./assets/vendors/js/d3.v5.min.js'
 	]
 };
 

@@ -2,7 +2,7 @@ module.exports = function () {
 	var data;
 	var width = parseInt(document.querySelector('.sunburst').offsetWidth);
 	var height = width;
-	console.log(width);
+	
 	return {
 
 		settings: {
@@ -66,9 +66,15 @@ module.exports = function () {
 
 			// Use d3.text and d3.csvParseRows so that we do not need to have a header
 			// row, and can receive the csv as an array of arrays.
+			d3.text("./assets/js/data/global-plastic-fate.csv", function (text) {
+				// var csv = d3.csvParseRows(text);
+				// var json = buildHierarchy(csv);
+				console.log(json);
+			});
 			
 			d3.text("./assets/js/data/test-visit-sequences.csv", function (text) {
 				var csv = d3.csvParseRows(text);
+				console.log(json);
 				var json = buildHierarchy(csv);
 				createVisualization(json);
 			});

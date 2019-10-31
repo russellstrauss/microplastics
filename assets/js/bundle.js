@@ -321,7 +321,11 @@ module.exports = function () {
   var width;
   if (pie) width = parseInt(pie.offsetWidth * .8);
   var height = width;
-  var currentYearIndex = 30;
+  var radius = Math.min(width, height) / 2;
+  var color;
+  var svg;
+  var slices;
+  var currentYearIndex = 10;
   return {
     settings: {},
     init: function init() {
@@ -335,24 +339,32 @@ module.exports = function () {
       });
     },
     eatPie: function eatPie() {
-      var radius = Math.min(width, height) / 2;
-      var svg = d3.select(".eat-pie").append("svg").attr("width", width).attr("height", height).append("g").attr("transform", "translate(" + width / 2 + "," + height / 2 + ")"); // set the color scale
+      svg = d3.select(".eat-pie").append("svg").attr("width", width).attr("height", height).append("g").attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
+      svg.append('circle').attr('class', 'mask').attr('cx', 0).attr('cy', 0).attr('r', width / 3).attr('fill', 'white'); // Compute the position of each group on the pie:
 
-      var color = d3.scaleOrdinal().domain(data).range(["black", "#8a89a6", "#7b6888", "#6b486b", "#a05d56"]); // Compute the position of each group on the pie:
-
-      var pie = d3.pie().value(function (d) {
+      pie = d3.pie().value(function (d) {
         return d.values[currentYearIndex].percentage;
       });
-      var data_ready = pie(data); // Build the pie chart: Basically, each part of the pie is a path that we build using the arc function.
+      color = d3.scaleOrdinal().domain(data).range(["black", "#8a89a6", "#7b6888", "#6b486b", "#a05d56"]); // Build the pie chart: Basically, each part of the pie is a path that we build using the arc function.
 
-      svg.selectAll('whatever').data(data_ready).enter().append('path').attr('d', d3.arc().innerRadius(0).outerRadius(radius)).attr('fill', function (d) {
+      slices = svg.selectAll('path').data(pie(data)).enter().append('path').style("opacity", 0.7).transition().duration(750).attr('d', d3.arc().innerRadius(width / 3).outerRadius(radius)).attr('fill', function (d) {
         return color(d.data.key);
-      }).style("opacity", 0.7);
-      svg.append('circle').attr('class', 'mask').attr('cx', 0).attr('cy', 0).attr('r', width / 3).attr('fill', 'white');
-      ;
+      });
     },
-    decrementYear: function decrementYear() {},
-    incrementYear: function incrementYear() {},
+    getMorePie: function getMorePie() {
+      pie = pie.value(function (d) {
+        console.log(d.values[currentYearIndex].percentage);
+        return d.values[currentYearIndex].percentage;
+      });
+    },
+    decrementYear: function decrementYear() {
+      currentYearIndex--;
+      this.getMorePie();
+    },
+    incrementYear: function incrementYear() {
+      currentYearIndex++;
+      this.getMorePie();
+    },
     bindEvents: function bindEvents() {
       var self = this;
       var inputSteppers = document.querySelectorAll('.input-stepper');

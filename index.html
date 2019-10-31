@@ -60,7 +60,7 @@
 	</div>
 	
 	<div class="container panel">
-		<div class="sunburst">
+		<!-- <div class="sunburst">
 			<div class="sequence"></div>
 			<div class="chart">
 				<div class="explanation" style="visibility: hidden;">
@@ -68,7 +68,24 @@
 				of visits begin with this sequence of pages
 				</div>
 			</div>
+		</div> -->
+		
+		<div class="pie-holder">
+			
+			<div class="eat-pie"></div>
+			
+			<div class="control">
+				<div class="input-stepper">
+					<label for="fateYear">YEAR</label>
+					<div class="input-items">	
+						<button type="button" class="decrease">–</button>
+						<input type="number" id="fateYear" name="fateYear" min="1980" max="2015" step="1" value="1980">
+						<button type="button" class="increase">+</button>
+					</div>
+				</div>
+			</div>
 		</div>
+		
 	</div>
 	
 	<div class="empty" id="showAsia"></div>

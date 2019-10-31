@@ -3,18 +3,6 @@
 
 module.exports = function () {
   return {
-    settings: {},
-    init: function init() {
-      var self = this; // code here
-    }
-  };
-};
-
-},{}],2:[function(require,module,exports){
-"use strict";
-
-module.exports = function () {
-  return {
     settings: {
       graphicHeight: 400
     },
@@ -164,7 +152,7 @@ module.exports = function () {
   };
 };
 
-},{}],3:[function(require,module,exports){
+},{}],2:[function(require,module,exports){
 "use strict";
 
 module.exports = function () {
@@ -324,6 +312,76 @@ module.exports = function () {
   };
 };
 
+},{}],3:[function(require,module,exports){
+"use strict";
+
+module.exports = function () {
+  var pie = document.querySelector('.eat-pie');
+  var data;
+  var width;
+  if (pie) width = parseInt(pie.offsetWidth * .8);
+  var height = width;
+  var currentYearIndex = 30;
+  return {
+    settings: {},
+    init: function init() {
+      var self = this;
+      d3.csv('./assets/js/data/global-plastic-fate.csv', function (fate) {
+        data = d3.nest().key(function (d) {
+          return d.category;
+        }).entries(fate);
+        self.eatPie();
+        self.bindEvents();
+      });
+    },
+    eatPie: function eatPie() {
+      var radius = Math.min(width, height) / 2;
+      var svg = d3.select(".eat-pie").append("svg").attr("width", width).attr("height", height).append("g").attr("transform", "translate(" + width / 2 + "," + height / 2 + ")"); // set the color scale
+
+      var color = d3.scaleOrdinal().domain(data).range(["black", "#8a89a6", "#7b6888", "#6b486b", "#a05d56"]); // Compute the position of each group on the pie:
+
+      var pie = d3.pie().value(function (d) {
+        return d.values[currentYearIndex].percentage;
+      });
+      var data_ready = pie(data); // Build the pie chart: Basically, each part of the pie is a path that we build using the arc function.
+
+      svg.selectAll('whatever').data(data_ready).enter().append('path').attr('d', d3.arc().innerRadius(0).outerRadius(radius)).attr('fill', function (d) {
+        return color(d.data.key);
+      }).style("opacity", 0.7);
+      svg.append('circle').attr('class', 'mask').attr('cx', 0).attr('cy', 0).attr('r', width / 3).attr('fill', 'white');
+      ;
+    },
+    decrementYear: function decrementYear() {},
+    incrementYear: function incrementYear() {},
+    bindEvents: function bindEvents() {
+      var self = this;
+      var inputSteppers = document.querySelectorAll('.input-stepper');
+      inputSteppers.forEach(function (inputStepper) {
+        inputStepper.style.width = width.toString() + 'px';
+        var input = inputStepper.querySelector('input');
+        var increase = inputStepper.querySelector('.increase');
+        if (increase) increase.addEventListener('click', function () {
+          var max = parseInt(input.getAttribute('max'));
+
+          if (input.value < max) {
+            input.value = parseInt(input.value) + 1;
+            self.incrementYear();
+          }
+        });
+        var decrease = inputStepper.querySelector('.decrease');
+        if (decrease) decrease.addEventListener('click', function () {
+          var min = parseInt(input.getAttribute('min'));
+
+          if (input.value > min) {
+            input.value = parseInt(input.value) - 1;
+            self.decrementYear();
+          }
+        });
+      });
+    }
+  };
+};
+
 },{}],4:[function(require,module,exports){
 "use strict";
 
@@ -340,14 +398,16 @@ module.exports = function () {
 "use strict";
 
 module.exports = function () {
+  var sunburst = document.querySelector('.sunburst');
   var data;
-  var width = parseInt(document.querySelector('.sunburst').offsetWidth);
+  var width;
+  if (sunburst) width = parseInt(sunburst.offsetWidth);
   var height = width;
   return {
     settings: {},
     init: function init() {
       var self = this;
-      self.sunburst();
+      if (sunburst) self.sunburst();
     },
     sunburst: function sunburst() {
       var radius = Math.min(width, height) / 2; // Breadcrumb dimensions: width, height, spacing, width of tip/tail.
@@ -382,14 +442,13 @@ module.exports = function () {
       }); // Use d3.text and d3.csvParseRows so that we do not need to have a header
       // row, and can receive the csv as an array of arrays.
 
-      d3.text("./assets/js/data/global-plastic-fate.csv", function (text) {
-        // var csv = d3.csvParseRows(text);
+      d3.text("./assets/js/data/global-plastic-fate.csv", function (text) {// var csv = d3.csvParseRows(text);
         // var json = buildHierarchy(csv);
-        console.log(json);
+        //console.log(json);
       });
       d3.text("./assets/js/data/test-visit-sequences.csv", function (text) {
-        var csv = d3.csvParseRows(text);
-        console.log(json);
+        var csv = d3.csvParseRows(text); //console.log(json);
+
         var json = buildHierarchy(csv);
         createVisualization(json);
       }); // Main function to draw and set up the visualization, once we have the data.
@@ -621,7 +680,7 @@ var Scrolling = require('./components/scrolling.js');
 
 var Sunburst = require('./components/sunburst.js');
 
-var Graph2 = require('./components/graph-2.js');
+var Pie = require('./components/pie.js');
 
 var Utilities = require('./utils.js');
 
@@ -631,11 +690,11 @@ var Utilities = require('./utils.js');
     Maps().init();
     Scrolling().init();
     Sunburst().init();
-    Graph2().init();
+    Pie().init();
   });
 })();
 
-},{"./components/graph-2.js":1,"./components/horizontal-bar.js":2,"./components/maps.js":3,"./components/scrolling.js":4,"./components/sunburst.js":5,"./utils.js":7}],7:[function(require,module,exports){
+},{"./components/horizontal-bar.js":1,"./components/maps.js":2,"./components/pie.js":3,"./components/scrolling.js":4,"./components/sunburst.js":5,"./utils.js":7}],7:[function(require,module,exports){
 "use strict";
 
 (function () {

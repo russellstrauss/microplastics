@@ -1,6 +1,8 @@
 module.exports = function () {
+	var sunburst = document.querySelector('.sunburst');
 	var data;
-	var width = parseInt(document.querySelector('.sunburst').offsetWidth);
+	var width;
+	if (sunburst) width = parseInt(sunburst.offsetWidth);
 	var height = width;
 	
 	return {
@@ -12,7 +14,7 @@ module.exports = function () {
 		init: function () {
 
 			let self = this;
-			self.sunburst();
+			if (sunburst) self.sunburst();
 		},
 
 		sunburst: function () {
@@ -69,12 +71,12 @@ module.exports = function () {
 			d3.text("./assets/js/data/global-plastic-fate.csv", function (text) {
 				// var csv = d3.csvParseRows(text);
 				// var json = buildHierarchy(csv);
-				console.log(json);
+				//console.log(json);
 			});
 			
 			d3.text("./assets/js/data/test-visit-sequences.csv", function (text) {
 				var csv = d3.csvParseRows(text);
-				console.log(json);
+				//console.log(json);
 				var json = buildHierarchy(csv);
 				createVisualization(json);
 			});

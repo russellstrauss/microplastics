@@ -10,7 +10,7 @@ module.exports = function() {
 	var svg;
 	var slices;
 	
-	var currentYearIndex = 10;
+	var currentYearIndex = 0;
 	
 	return {
 		
@@ -46,6 +46,7 @@ module.exports = function() {
 
 			// Compute the position of each group on the pie:
 			pie = d3.pie().value(function(d) {
+				if (parseInt(d.values[currentYearIndex].percentage) === 0) return 1;
 				return d.values[currentYearIndex].percentage;
 			});
 			
@@ -54,13 +55,11 @@ module.exports = function() {
 			.range(["black", "#8a89a6", "#7b6888", "#6b486b", "#a05d56"])
 
 			// Build the pie chart: Basically, each part of the pie is a path that we build using the arc function.
-			slices = svg.selectAll('path')
+			svg.selectAll('path')
 			.data(pie(data))
 			.enter()
 			.append('path')
 			.style("opacity", 0.7)
-			.transition()
-			.duration(750)
 			.attr('d', d3.arc().innerRadius(width / 3).outerRadius(radius))
 			.attr('fill', function(d){ return(color(d.data.key)) });
 			
@@ -73,11 +72,17 @@ module.exports = function() {
 			
 			pie = pie.value(function(d) {
 				
-				console.log(d.values[currentYearIndex].percentage);
+				if (parseInt(d.values[currentYearIndex].percentage) === 0) return 1;
 				
 				return d.values[currentYearIndex].percentage;
 			});
 			
+			slices = svg.selectAll('path').data(pie(data))
+			.transition()
+			.duration(250)
+			.attr('d', d3.arc().innerRadius(width / 3).outerRadius(radius))
+			.attr('fill', function(d){ return(color(d.data.key)) });
+						
 		},
 		
 		decrementYear: function() {

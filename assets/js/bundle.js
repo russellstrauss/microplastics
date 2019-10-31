@@ -325,7 +325,7 @@ module.exports = function () {
   var color;
   var svg;
   var slices;
-  var currentYearIndex = 10;
+  var currentYearIndex = 0;
   return {
     settings: {},
     init: function init() {
@@ -343,18 +343,22 @@ module.exports = function () {
       svg.append('circle').attr('class', 'mask').attr('cx', 0).attr('cy', 0).attr('r', width / 3).attr('fill', 'white'); // Compute the position of each group on the pie:
 
       pie = d3.pie().value(function (d) {
+        if (parseInt(d.values[currentYearIndex].percentage) === 0) return 1;
         return d.values[currentYearIndex].percentage;
       });
       color = d3.scaleOrdinal().domain(data).range(["black", "#8a89a6", "#7b6888", "#6b486b", "#a05d56"]); // Build the pie chart: Basically, each part of the pie is a path that we build using the arc function.
 
-      slices = svg.selectAll('path').data(pie(data)).enter().append('path').style("opacity", 0.7).transition().duration(750).attr('d', d3.arc().innerRadius(width / 3).outerRadius(radius)).attr('fill', function (d) {
+      svg.selectAll('path').data(pie(data)).enter().append('path').style("opacity", 0.7).attr('d', d3.arc().innerRadius(width / 3).outerRadius(radius)).attr('fill', function (d) {
         return color(d.data.key);
       });
     },
     getMorePie: function getMorePie() {
       pie = pie.value(function (d) {
-        console.log(d.values[currentYearIndex].percentage);
+        if (parseInt(d.values[currentYearIndex].percentage) === 0) return 1;
         return d.values[currentYearIndex].percentage;
+      });
+      slices = svg.selectAll('path').data(pie(data)).transition().duration(250).attr('d', d3.arc().innerRadius(width / 3).outerRadius(radius)).attr('fill', function (d) {
+        return color(d.data.key);
       });
     },
     decrementYear: function decrementYear() {

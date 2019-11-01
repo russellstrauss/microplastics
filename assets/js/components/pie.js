@@ -8,8 +8,11 @@ module.exports = function() {
 	var radius = Math.min(width, height) / 2;
 	var color;
 	var svg;
-	var slices;
+	var slices, polyline;
 	
+	var innerArc = d3.arc().innerRadius(radius * .8).outerRadius(radius * 1.25);
+	var outerArc = d3.arc().innerRadius(width / 3).outerRadius(radius);
+	var key = function(d){ return d.data.category; };
 	var currentYearIndex = 0;
 	
 	return {
@@ -34,6 +37,8 @@ module.exports = function() {
 		},
 		
 		eatPie: function() {
+			
+			let self = this;
 
 			svg = d3.select(".eat-pie")
 			.append("svg")
@@ -43,6 +48,14 @@ module.exports = function() {
 			.attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
 			
 			svg.append('circle').attr('class', 'mask').attr('cx', 0).attr('cy', 0).attr('r', width / 3).attr('fill', 'white');
+			
+			slices = svg.append("g")
+			.attr("class", "slices");
+			svg.append("g")
+			.attr("class", "labels");
+			svg.append("g")
+			.attr("class", "lines");
+			
 
 			// Compute the position of each group on the pie:
 			pie = d3.pie().value(function(d) {
@@ -55,22 +68,20 @@ module.exports = function() {
 			.range(["black", "#8a89a6", "#7b6888", "#6b486b", "#a05d56"])
 
 			// Build the pie chart: Basically, each part of the pie is a path that we build using the arc function.
-			svg.selectAll('path')
+			slices.selectAll('path')
 			.data(pie(data))
 			.enter()
 			.append('path')
 			.style("opacity", 0.7)
-			.attr('d', d3.arc().innerRadius(width / 3).outerRadius(radius))
+			.attr('d', outerArc)
 			.attr('fill', function(d){ return(color(d.data.key)) });
 			
-			
-			
-
+			self.eatMorePie();
 		},
 		
-		getMorePie: function() {
+		eatMorePie: function() {
 			
-			pie = pie.value(function(d) {
+			pie.value(function(d) {
 				
 				if (parseInt(d.values[currentYearIndex].percentage) === 0) return 1;
 				
@@ -80,19 +91,90 @@ module.exports = function() {
 			slices = svg.selectAll('path').data(pie(data))
 			.transition()
 			.duration(250)
-			.attr('d', d3.arc().innerRadius(width / 3).outerRadius(radius))
+			.attr('d', outerArc)
 			.attr('fill', function(d){ return(color(d.data.key)) });
-						
+			
+			
+			
+			/* ------- TEXT LABELS -------*/
+
+			var text = svg.select(".labels").selectAll("text")
+			.data(pie(data), key);
+
+			text.enter()
+			.append("text")
+			.attr("dy", ".35em")
+			.text(function(d, key) {
+				console.log(d.data.key)
+				return d.data.key;
+			});
+
+			function midAngle(d){
+				return d.startAngle + (d.endAngle - d.startAngle)/2;
+			}
+			
+			var arc = d3.arc()
+			.outerRadius(radius * 0.8)
+			.innerRadius(radius * 0.4);
+
+			text.transition().duration(1000)
+				.attrTween("transform", function(d) {
+					this._current = this._current || d;
+					var interpolate = d3.interpolate(this._current, d);
+					this._current = interpolate(0);
+					return function(t) {
+						var d2 = interpolate(t);
+						var pos = outerArc.centroid(d2);
+						pos[0] = radius * (midAngle(d2) < Math.PI ? 1 : -1);
+						return "translate("+ pos +")";
+					};
+				})
+				.styleTween("text-anchor", function(d){
+					this._current = this._current || d;
+					var interpolate = d3.interpolate(this._current, d);
+					this._current = interpolate(0);
+					return function(t) {
+						var d2 = interpolate(t);
+						return midAngle(d2) < Math.PI ? "start":"end";
+					};
+				});
+
+			text.exit()
+				.remove();
+
+			/* ------- SLICE TO TEXT POLYLINES -------*/
+
+			var polyline = svg.select(".lines").selectAll("polyline")
+				.data(pie(data), key);
+
+			polyline.enter()
+				.append("polyline");
+
+			polyline.transition().duration(1000)
+				.attrTween("points", function(d){
+					this._current = this._current || d;
+					var interpolate = d3.interpolate(this._current, d);
+					this._current = interpolate(0);
+					return function(t) {
+						var d2 = interpolate(t);
+						var pos = outerArc.centroid(d2);
+						pos[0] = radius * 0.95 * (midAngle(d2) < Math.PI ? 1 : -1);
+						return [innerArc.centroid(d2), outerArc.centroid(d2), pos];
+					};			
+				});
+
+			polyline.exit()
+				.remove();
 		},
 		
 		decrementYear: function() {
 			currentYearIndex--;
-			this.getMorePie();
+			this.eatMorePie();
 		},
 		
 		incrementYear: function() {
 			currentYearIndex++;
-			this.getMorePie();
+			this.eatMorePie();
 		},
 		
 		bindEvents: function() {

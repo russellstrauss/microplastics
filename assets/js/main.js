@@ -1,5 +1,5 @@
 var HorizontalBar = require('./components/horizontal-bar.js');
-var HorizontalBar = require('./components/horizontal-bar.js');
+var UI = require('./components/ui.js');
 var Maps = require('./components/maps.js');
 var Scrolling = require('./components/scrolling.js');
 var Sunburst = require('./components/sunburst.js');
@@ -11,6 +11,7 @@ var Utilities = require('./utils.js');
 	document.addEventListener('DOMContentLoaded',function(){
 		
 		HorizontalBar().init();
+		UI().init();
 		Maps().init();
 		Scrolling().init();
 		Sunburst().init();

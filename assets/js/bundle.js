@@ -324,7 +324,14 @@ module.exports = function () {
   var radius = Math.min(width, height) / 2;
   var color;
   var svg;
-  var slices;
+  var slices, polyline;
+  var innerArc = d3.arc().innerRadius(radius * .8).outerRadius(radius * 1.25);
+  var outerArc = d3.arc().innerRadius(width / 3).outerRadius(radius);
+
+  var key = function key(d) {
+    return d.data.category;
+  };
+
   var currentYearIndex = 0;
   return {
     settings: {},
@@ -339,8 +346,12 @@ module.exports = function () {
       });
     },
     eatPie: function eatPie() {
+      var self = this;
       svg = d3.select(".eat-pie").append("svg").attr("width", width).attr("height", height).append("g").attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
-      svg.append('circle').attr('class', 'mask').attr('cx', 0).attr('cy', 0).attr('r', width / 3).attr('fill', 'white'); // Compute the position of each group on the pie:
+      svg.append('circle').attr('class', 'mask').attr('cx', 0).attr('cy', 0).attr('r', width / 3).attr('fill', 'white');
+      slices = svg.append("g").attr("class", "slices");
+      svg.append("g").attr("class", "labels");
+      svg.append("g").attr("class", "lines"); // Compute the position of each group on the pie:
 
       pie = d3.pie().value(function (d) {
         if (parseInt(d.values[currentYearIndex].percentage) === 0) return 1;
@@ -348,26 +359,76 @@ module.exports = function () {
       });
       color = d3.scaleOrdinal().domain(data).range(["black", "#8a89a6", "#7b6888", "#6b486b", "#a05d56"]); // Build the pie chart: Basically, each part of the pie is a path that we build using the arc function.
 
-      svg.selectAll('path').data(pie(data)).enter().append('path').style("opacity", 0.7).attr('d', d3.arc().innerRadius(width / 3).outerRadius(radius)).attr('fill', function (d) {
+      slices.selectAll('path').data(pie(data)).enter().append('path').style("opacity", 0.7).attr('d', outerArc).attr('fill', function (d) {
         return color(d.data.key);
       });
+      self.eatMorePie();
     },
-    getMorePie: function getMorePie() {
-      pie = pie.value(function (d) {
+    eatMorePie: function eatMorePie() {
+      pie.value(function (d) {
         if (parseInt(d.values[currentYearIndex].percentage) === 0) return 1;
         return d.values[currentYearIndex].percentage;
       });
-      slices = svg.selectAll('path').data(pie(data)).transition().duration(250).attr('d', d3.arc().innerRadius(width / 3).outerRadius(radius)).attr('fill', function (d) {
+      slices = svg.selectAll('path').data(pie(data)).transition().duration(250).attr('d', outerArc).attr('fill', function (d) {
         return color(d.data.key);
       });
+      /* ------- TEXT LABELS -------*/
+
+      var text = svg.select(".labels").selectAll("text").data(pie(data), key);
+      text.enter().append("text").attr("dy", ".35em").text(function (d, key) {
+        console.log(d.data.key);
+        return d.data.key;
+      });
+
+      function midAngle(d) {
+        return d.startAngle + (d.endAngle - d.startAngle) / 2;
+      }
+
+      var arc = d3.arc().outerRadius(radius * 0.8).innerRadius(radius * 0.4);
+      text.transition().duration(1000).attrTween("transform", function (d) {
+        this._current = this._current || d;
+        var interpolate = d3.interpolate(this._current, d);
+        this._current = interpolate(0);
+        return function (t) {
+          var d2 = interpolate(t);
+          var pos = outerArc.centroid(d2);
+          pos[0] = radius * (midAngle(d2) < Math.PI ? 1 : -1);
+          return "translate(" + pos + ")";
+        };
+      }).styleTween("text-anchor", function (d) {
+        this._current = this._current || d;
+        var interpolate = d3.interpolate(this._current, d);
+        this._current = interpolate(0);
+        return function (t) {
+          var d2 = interpolate(t);
+          return midAngle(d2) < Math.PI ? "start" : "end";
+        };
+      });
+      text.exit().remove();
+      /* ------- SLICE TO TEXT POLYLINES -------*/
+
+      var polyline = svg.select(".lines").selectAll("polyline").data(pie(data), key);
+      polyline.enter().append("polyline");
+      polyline.transition().duration(1000).attrTween("points", function (d) {
+        this._current = this._current || d;
+        var interpolate = d3.interpolate(this._current, d);
+        this._current = interpolate(0);
+        return function (t) {
+          var d2 = interpolate(t);
+          var pos = outerArc.centroid(d2);
+          pos[0] = radius * 0.95 * (midAngle(d2) < Math.PI ? 1 : -1);
+          return [innerArc.centroid(d2), outerArc.centroid(d2), pos];
+        };
+      });
+      polyline.exit().remove();
     },
     decrementYear: function decrementYear() {
       currentYearIndex--;
-      this.getMorePie();
+      this.eatMorePie();
     },
     incrementYear: function incrementYear() {
       currentYearIndex++;
-      this.getMorePie();
+      this.eatMorePie();
     },
     bindEvents: function bindEvents() {
       var self = this;
@@ -686,9 +747,24 @@ module.exports = function () {
 },{}],6:[function(require,module,exports){
 "use strict";
 
-var HorizontalBar = require('./components/horizontal-bar.js');
+module.exports = function () {
+  return {
+    settings: {
+      options: ['option 1', 'option 2', 'option 3']
+    },
+    init: function init() {
+      var self = this;
+      var cycle = document.querySelector('.cycle');
+    }
+  };
+};
+
+},{}],7:[function(require,module,exports){
+"use strict";
 
 var HorizontalBar = require('./components/horizontal-bar.js');
+
+var UI = require('./components/ui.js');
 
 var Maps = require('./components/maps.js');
 
@@ -703,6 +779,7 @@ var Utilities = require('./utils.js');
 (function () {
   document.addEventListener('DOMContentLoaded', function () {
     HorizontalBar().init();
+    UI().init();
     Maps().init();
     Scrolling().init();
     Sunburst().init();
@@ -710,7 +787,7 @@ var Utilities = require('./utils.js');
   });
 })();
 
-},{"./components/horizontal-bar.js":1,"./components/maps.js":2,"./components/pie.js":3,"./components/scrolling.js":4,"./components/sunburst.js":5,"./utils.js":7}],7:[function(require,module,exports){
+},{"./components/horizontal-bar.js":1,"./components/maps.js":2,"./components/pie.js":3,"./components/scrolling.js":4,"./components/sunburst.js":5,"./components/ui.js":6,"./utils.js":8}],8:[function(require,module,exports){
 "use strict";
 
 (function () {
@@ -836,4 +913,4 @@ var Utilities = require('./utils.js');
   module.exports = window.utils;
 })();
 
-},{}]},{},[6]);
+},{}]},{},[7]);

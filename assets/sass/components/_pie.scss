@@ -19,6 +19,12 @@
 		justify-content: center;
 		position: relative;
 		width: 100%;
+		
+		polyline {
+			fill: none;
+			stroke-width: 2;
+			stroke: black;
+		}
 	}
 }
 
@@ -51,23 +57,15 @@
 		}
 	
 		button, input {
+			@include disable-highlight;
 			font-size: 6rem;
 			font-weight: bold;
 			text-align: center;
 			border: 0;
 			background: none;
 			
-			
 			&:focus {
 				outline: none;
-			}
-		}
-		
-		input {
-			transition: all 125ms ease;
-			
-			&:hover {
-				transform: scale(1.1);
 			}
 		}
 		

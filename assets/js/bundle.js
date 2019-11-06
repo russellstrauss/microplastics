@@ -501,6 +501,97 @@ module.exports = function () {
 "use strict";
 
 module.exports = function () {
+  var graphic = document.querySelector('.plastic-longevity .graphic');
+  var data;
+  var width;
+  if (graphic) width = parseInt(graphic.offsetWidth);
+  var height = width;
+  return {
+    settings: {
+      graphicHeight: 400
+    },
+    init: function init() {
+      this.setUpPlot();
+    },
+    setUpPlot: function setUpPlot() {
+      var self = this;
+      var data = [{
+        'river': 'Vegetable',
+        'countries': ['China'],
+        'amount': .08333
+      }, {
+        'river': 'Polypropylene',
+        'countries': ['China1'],
+        'amount': 450
+      }, {
+        'river': 'Wood',
+        'countries': ['China2'],
+        'amount': 3
+      }, {
+        'river': 'Cardboard',
+        'countries': ['China2'],
+        'amount': .5
+      }];
+      var graphicContainer = graphic.parentElement;
+      var padding = {
+        top: 60,
+        right: 40,
+        bottom: 80,
+        left: 130
+      };
+      var width = graphicContainer.offsetWidth - padding.left - padding.right;
+      var height = self.settings.graphicHeight - padding.top - padding.bottom;
+      var barHeight = 5;
+      var y = d3.scaleBand().range([height, 0]);
+      var x = d3.scaleLinear().range([0, width]);
+      var svg = d3.select(graphic).append('svg').attr('width', width + padding.left + padding.right).attr('height', height + padding.top + padding.bottom).append('g').attr('transform', 'translate(' + padding.left + ',' + padding.top + ')'); // format the data
+
+      data.forEach(function (d) {
+        d.amount = +d.amount;
+      });
+
+      var compare = function compare(a, b) {
+        return b.amount - a.amount;
+      };
+
+      data = data.sort(compare);
+      var maxValue = d3.max(data, function (d) {
+        return d.amount;
+      }); // Scale the range of the data in the domains
+
+      x.domain([0, maxValue + maxValue * .02]);
+      y.domain(data.map(function (d) {
+        return d.river;
+      }));
+      svg.selectAll('.bar').data(data).enter().append('rect').attr('class', 'bar').attr('width', function (d) {
+        return x(d.amount);
+      }).attr('y', function (d) {
+        return y(d.river) + (y.bandwidth() / 2 - barHeight / 2);
+      }).attr('height', barHeight);
+      svg.append('g').attr('transform', 'translate(0,' + (height + 6) + ')').call(d3.axisBottom(x));
+      svg.append('g').call(d3.axisLeft(y).tickSize(0)); // Add graph title
+
+      var title = svg.append('text').attr('class', 'title').text('Plastic Longevity');
+      var textWidth = title.node().getBBox().width;
+      var textHeight = title.node().getBBox().height;
+      title.attr('transform', 'translate(' + (width / 2 - textWidth / 2 - padding.left / 2) + ', ' + (-1 * (padding.top / 2) + 10) + ')');
+      var xAxisHeight = 20;
+      var xAxisLabel = svg.append('text').attr('class', 'x-axis-label').html('Decompsure Time');
+      textWidth = xAxisLabel.node().getBBox().width;
+      textHeight = xAxisLabel.node().getBBox().height;
+      xAxisLabel.attr('transform', 'translate(' + (width / 2 - textWidth / 2 - padding.left / 2) + ', ' + (height + xAxisHeight + padding.bottom / 2) + ')');
+      var yAxisLabel = svg.append('text').attr('class', 'y-axis-label').text('Material');
+      textWidth = yAxisLabel.node().getBBox().width;
+      textHeight = yAxisLabel.node().getBBox().height;
+      yAxisLabel.attr('transform', 'translate(' + (-1 * padding.left + textHeight * 2.5) + ', ' + (height / 2 + textWidth / 2) + ') rotate(-90)');
+    }
+  };
+};
+
+},{}],5:[function(require,module,exports){
+"use strict";
+
+module.exports = function () {
   return {
     settings: {},
     init: function init() {
@@ -509,7 +600,7 @@ module.exports = function () {
   };
 };
 
-},{}],5:[function(require,module,exports){
+},{}],6:[function(require,module,exports){
 "use strict";
 
 module.exports = function () {
@@ -782,7 +873,7 @@ module.exports = function () {
   };
 };
 
-},{}],6:[function(require,module,exports){
+},{}],7:[function(require,module,exports){
 "use strict";
 
 module.exports = function () {
@@ -797,10 +888,12 @@ module.exports = function () {
   };
 };
 
-},{}],7:[function(require,module,exports){
+},{}],8:[function(require,module,exports){
 "use strict";
 
 var HorizontalBar = require('./components/horizontal-bar.js');
+
+var PlasticLongevity = require('./components/plastic-longevity.js');
 
 var UI = require('./components/ui.js');
 
@@ -817,6 +910,7 @@ var Utilities = require('./utils.js');
 (function () {
   document.addEventListener('DOMContentLoaded', function () {
     HorizontalBar().init();
+    PlasticLongevity().init();
     UI().init();
     Maps().init();
     Scrolling().init();
@@ -825,7 +919,7 @@ var Utilities = require('./utils.js');
   });
 })();
 
-},{"./components/horizontal-bar.js":1,"./components/maps.js":2,"./components/pie.js":3,"./components/scrolling.js":4,"./components/sunburst.js":5,"./components/ui.js":6,"./utils.js":8}],8:[function(require,module,exports){
+},{"./components/horizontal-bar.js":1,"./components/maps.js":2,"./components/pie.js":3,"./components/plastic-longevity.js":4,"./components/scrolling.js":5,"./components/sunburst.js":6,"./components/ui.js":7,"./utils.js":9}],9:[function(require,module,exports){
 "use strict";
 
 (function () {
@@ -951,4 +1045,4 @@ var Utilities = require('./utils.js');
   module.exports = window.utils;
 })();
 
-},{}]},{},[7]);
+},{}]},{},[8]);

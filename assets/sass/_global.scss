@@ -13,6 +13,29 @@
 	height: 200vh;
 }
 
+.hero {
+	height: 650px;
+	background-size: cover;
+	background-repeat: no-repeat;
+	background-position: center center;
+	//margin-bottom: 100px;
+	box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+}
+
+.pagination {
+	position: sticky;
+	top: 250px;
+	
+	.plate {
+		transform: translateY(-50%);
+		
+		svg {
+			width: 100px;
+			height: 100px;
+		}
+	}
+}
+
 .reference {
 	margin-left: -1.5em;
 	counter-reset: list;

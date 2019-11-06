@@ -3,7 +3,7 @@ module.exports = function() {
 	var pie = document.querySelector('.eat-pie');
 	var data;
 	var width;
-	if (pie) width = parseInt(pie.offsetWidth * .8);
+	if (pie) width = parseInt(pie.offsetWidth);
 	var height = width;
 	var radius = Math.min(width, height) / 2;
 	var color;
@@ -101,13 +101,13 @@ module.exports = function() {
 			var text = svg.select(".labels").selectAll("text")
 			.data(pie(data), key);
 
-			text.enter()
-			.append("text")
-			.attr("dy", ".35em")
-			.text(function(d, key) {
-				console.log(d.data.key)
-				return d.data.key;
-			});
+			// text.enter()
+			// .append("text")
+			// .attr("dy", ".35em")
+			// .text(function(d, key) {
+			// 	console.log(d.data.key)
+			// 	return d.data.key;
+			// });
 
 			function midAngle(d){
 				return d.startAngle + (d.endAngle - d.startAngle)/2;
@@ -118,53 +118,95 @@ module.exports = function() {
 			.innerRadius(radius * 0.4);
 
 			text.transition().duration(1000)
-				.attrTween("transform", function(d) {
-					this._current = this._current || d;
-					var interpolate = d3.interpolate(this._current, d);
-					this._current = interpolate(0);
-					return function(t) {
-						var d2 = interpolate(t);
-						var pos = outerArc.centroid(d2);
-						pos[0] = radius * (midAngle(d2) < Math.PI ? 1 : -1);
-						return "translate("+ pos +")";
-					};
-				})
-				.styleTween("text-anchor", function(d){
-					this._current = this._current || d;
-					var interpolate = d3.interpolate(this._current, d);
-					this._current = interpolate(0);
-					return function(t) {
-						var d2 = interpolate(t);
-						return midAngle(d2) < Math.PI ? "start":"end";
-					};
-				});
+			.attrTween("transform", function(d) {
+				this._current = this._current || d;
+				var interpolate = d3.interpolate(this._current, d);
+				this._current = interpolate(0);
+				return function(t) {
+					var d2 = interpolate(t);
+					var pos = outerArc.centroid(d2);
+					pos[0] = radius * (midAngle(d2) < Math.PI ? 1 : -1);
+					return "translate("+ pos +")";
+				};
+			})
+			.styleTween("text-anchor", function(d){
+				this._current = this._current || d;
+				var interpolate = d3.interpolate(this._current, d);
+				this._current = interpolate(0);
+				return function(t) {
+					var d2 = interpolate(t);
+					return midAngle(d2) < Math.PI ? "start":"end";
+				};
+			});
 
-			text.exit()
-				.remove();
+			text.exit().remove();
 
 			/* ------- SLICE TO TEXT POLYLINES -------*/
 
-			var polyline = svg.select(".lines").selectAll("polyline")
-				.data(pie(data), key);
+			var polyline = svg.select(".lines").selectAll("polyline").data(pie(data), key);
+			polyline.enter().append("polyline");
+				
+			var arcCentroid = svg.select('.labels').selectAll('circle').data(pie(data), key);
+			var arcEnter = arcCentroid.enter().append('circle');
+			//console.log(arcEnter);
+			
+			arcCentroid
+			//.transition().duration(1000)
+			.attr('cx', function(d) {
+				
+				
+				
+				let centroid = outerArc.centroid(d);
+				this._current = this._current || d;
+				var interpolate = d3.interpolate(this._current, d);
+				this._current = interpolate(0);
+				
 
-			polyline.enter()
-				.append("polyline");
-
+				let inner = function(t) {
+					var d2 = interpolate(t);
+					var pos = outerArc.centroid(d2);
+					pos[0] = radius * 0.95 * (midAngle(d2) < Math.PI ? 1 : -1);
+					return [innerArc.centroid(d2), outerArc.centroid(d2), pos];
+				};
+				console.log('cx');
+				//console.log(inner(0)[i][0]);
+				//return parseInt(inner(0)[0]);
+				//console.log(outerArc.centroid(d));
+				
+				return outerArc.centroid(d)[0];
+			}).attr('cy', function(d) {
+				let centroid = outerArc.centroid(d);
+				
+				
+				let inner = function(t) {
+					var d2 = interpolate(t);
+					var pos = outerArc.centroid(d2);
+					pos[0] = radius * 0.95 * (midAngle(d2) < Math.PI ? 1 : -1);
+					return [innerArc.centroid(d2), outerArc.centroid(d2), pos];
+				};
+				
+				//return parseInt(inner(0)[i][0]);
+				
+				return outerArc.centroid(d)[1];
+			})
+			.attr('class', 'centroid').attr('r', 10).attr('fill', 'black');
+			
 			polyline.transition().duration(1000)
-				.attrTween("points", function(d){
-					this._current = this._current || d;
-					var interpolate = d3.interpolate(this._current, d);
-					this._current = interpolate(0);
-					return function(t) {
-						var d2 = interpolate(t);
-						var pos = outerArc.centroid(d2);
-						pos[0] = radius * 0.95 * (midAngle(d2) < Math.PI ? 1 : -1);
-						return [innerArc.centroid(d2), outerArc.centroid(d2), pos];
-					};			
-				});
+			.attrTween("points", function(d) {
+				this._current = this._current || d;
+				var interpolate = d3.interpolate(this._current, d);
+				this._current = interpolate(0);
+				
+				return function(t) {
+					var d2 = interpolate(t);
+					var pos = outerArc.centroid(d2);
+					pos[0] = radius * 0.95 * (midAngle(d2) < Math.PI ? 1 : -1);
+					return [innerArc.centroid(d2), outerArc.centroid(d2), pos];
+				};			
+			});
 
-			polyline.exit()
-				.remove();
+			//arcCentroid.exit().remove()
+			polyline.exit().remove();
 		},
 		
 		decrementYear: function() {

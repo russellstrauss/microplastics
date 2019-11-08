@@ -9,8 +9,17 @@
 	}
 }
 
+.full {
+	padding: 100px 0;
+	background-color: rgba(255, 255, 255, .75);
+}
+
 .empty {
 	height: 200vh;
+}
+
+.intro {
+	padding-top: 100px;
 }
 
 .hero {
@@ -25,11 +34,23 @@
 .pagination {
 	position: sticky;
 	top: 250px;
+	height: 0;
+	
+	&.active {
+		
+		.plate {
+			svg {
+				transform: translateY(100px) scale(.75);
+			}
+		}
+	}
 	
 	.plate {
 		transform: translateY(-50%);
 		
 		svg {
+			transition: transform 350ms cubic-bezier(0.455, 0.03, 0.515, 0.955);
+			transition-delay: 25ms;
 			width: 100px;
 			height: 100px;
 		}
@@ -73,13 +94,8 @@
 }
 
 .reading {
-	@include panelBackground;
-	margin-top: 200px;
-	margin-bottom: 200px;
-	
-	&.intro {
-		margin-top: 0;
-	}
+	max-width: 600px;
+	margin: auto;
 	
 	&.left {
 		margin-left: 5%;

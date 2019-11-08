@@ -582,12 +582,18 @@ module.exports = function () {
       textWidth = yAxisLabel.node().getBBox().width;
       textHeight = yAxisLabel.node().getBBox().height;
       yAxisLabel.attr('transform', 'translate(' + (-1 * padding.left + textHeight * 2.5) + ', ' + (innerHeight / 2 + textWidth / 2) + ') rotate(-90)');
+      d3.xml('./assets/svg/starbucks.svg', function (data) {
+        var cup = data.documentElement;
+        cup.classList.add('cup');
+        svg.node().append(cup);
+        svg.select('.cup').attr('x', -500).attr('y', -100);
+      });
       self.circles();
     },
     circles: function circles() {
       var rawData = [];
 
-      for (var i = 0; i < 500; i++) {
+      for (var i = 0; i < 1250; i++) {
         rawData.push({
           x: 0,
           y: 0,
@@ -608,21 +614,24 @@ module.exports = function () {
       }
 
       var simulation = d3.forceSimulation().velocityDecay(0.2).force('x', d3.forceX().strength(forceStrength).x(center.x)).force('y', d3.forceY().strength(forceStrength).y(center.y)).force('charge', d3.forceManyBody().strength(charge)).on('tick', ticked);
+      svg.on('click', function () {
+        simulation.force('repelForce', d3.forceManyBody().strength(-200).distanceMax(50).distanceMin(10));
+      });
       simulation.stop();
       var fillColor = d3.scaleOrdinal().domain(['low', 'medium', 'high']).range(['#d84b2a', '#beccae', '#7aa25c']);
       var myNodes = rawData.map(function (d) {
         return {
-          radius: 5,
+          radius: 3,
           x: Math.random() * 900,
           y: Math.random() * 800
         };
       });
       bubbles = svg.selectAll('.bubble').data(myNodes);
       var bubblesE = bubbles.enter().append('circle').classed('bubble', true).attr('r', 0).attr('fill', function (d) {
-        return 'red';
+        return 'rgb(200, 200, 200)';
       }).attr('stroke', function (d) {
         return 'black';
-      }).attr('stroke-width', 2);
+      }).attr('stroke-width', 1);
       bubbles = bubbles.merge(bubblesE);
       bubbles.transition().duration(2000).attr('r', function (d) {
         return d.radius;
@@ -938,7 +947,25 @@ module.exports = function () {
     },
     init: function init() {
       var self = this;
+      self.pagination();
       var cycle = document.querySelector('.cycle');
+    },
+    pagination: function pagination() {
+      var pagination = document.querySelector('.pagination');
+
+      if (pagination) {
+        var waypoint = new Waypoint({
+          element: document.querySelector('.pagination'),
+          handler: function handler(direction) {
+            if (direction === 'down') {
+              pagination.classList.add('active');
+            } else {
+              pagination.classList.remove('active');
+            }
+          },
+          offset: 249
+        });
+      }
     }
   };
 };

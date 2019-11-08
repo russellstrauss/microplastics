@@ -122,13 +122,23 @@ module.exports = function () {
 			textHeight = yAxisLabel.node().getBBox().height;
 			yAxisLabel.attr('transform','translate(' + (-1 * padding.left + textHeight * 2.5) + ', ' + (innerHeight/2 + (textWidth/2)) + ') rotate(-90)');
 			
+			
+			d3.xml('./assets/svg/starbucks.svg', function(data) {
+				let cup = data.documentElement;
+				cup.classList.add('cup');
+				
+				svg.node().append(cup);
+				
+				svg.select('.cup').attr('x', -500).attr('y', -100);
+			});
+			
 			self.circles();
 		},
 		
 		circles: function() {
 			
 			var rawData = [];
-			for (let i = 0; i < 500; i++) {
+			for (let i = 0; i < 1250; i++) {
 				rawData.push({ x: 0, y: 0, radius: 5});
 			}
 
@@ -152,6 +162,10 @@ module.exports = function () {
 			.force('y', d3.forceY().strength(forceStrength).y(center.y))
 			.force('charge', d3.forceManyBody().strength(charge))
 			.on('tick', ticked);
+			
+			svg.on('click', function() {
+				simulation.force('repelForce', d3.forceManyBody().strength(-200).distanceMax(50).distanceMin(10));
+			});
 
 			simulation.stop();
 
@@ -161,7 +175,7 @@ module.exports = function () {
 
 			var myNodes = rawData.map(function (d) {
 				return {
-					radius: 5,
+					radius: 3,
 					x: Math.random() * 900,
 					y: Math.random() * 800
 				};
@@ -174,12 +188,12 @@ module.exports = function () {
 			.classed('bubble', true)
 			.attr('r', 0)
 			.attr('fill', function (d) {
-				return 'red';
+				return 'rgb(200, 200, 200)';
 			})
 			.attr('stroke', function (d) {
 				return 'black';
 			})
-			.attr('stroke-width', 2);
+			.attr('stroke-width', 1);
 
 			bubbles = bubbles.merge(bubblesE);
 

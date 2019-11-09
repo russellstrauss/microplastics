@@ -507,6 +507,12 @@ module.exports = function () {
   if (graphic) width = parseInt(graphic.offsetWidth);
   var height = 600;
   var svg;
+  var cupWidth, cupHeight;
+  var bubbles = null;
+  var center = {
+    x: width / 2 - 50,
+    y: height / 2
+  };
   return {
     init: function init() {
       this.setUpPlot();
@@ -572,7 +578,7 @@ module.exports = function () {
       var title = svg.append('text').attr('class', 'title').text('Plastic Longevity');
       var textWidth = title.node().getBBox().width;
       var textHeight = title.node().getBBox().height;
-      title.attr('transform', 'translate(' + (width / 2 - textWidth / 2 - padding.left / 2) + ', ' + (-1 * (padding.top / 2) + 10) + ')');
+      title.attr('transform', 'translate(' + (center.x - textWidth / 2 - padding.left / 2 - 20) + ', ' + (-1 * (padding.top / 2) + 10) + ')');
       var xAxisHeight = 20;
       var xAxisLabel = svg.append('text').attr('class', 'x-axis-label').html('Decomposition Time');
       textWidth = xAxisLabel.node().getBBox().width;
@@ -586,14 +592,16 @@ module.exports = function () {
         var cup = data.documentElement;
         cup.classList.add('cup');
         svg.node().append(cup);
-        svg.select('.cup').attr('x', -500).attr('y', -100);
+        cupWidth = cup.getBBox().width;
+        cupHeight = cup.getBBox().height;
+        svg.select('.cup').attr('width', 300).attr('x', center.x - cupWidth).attr('y', center.y - cupHeight);
+        self.circles();
       });
-      self.circles();
     },
     circles: function circles() {
       var rawData = [];
 
-      for (var i = 0; i < 1250; i++) {
+      for (var i = 0; i < 500; i++) {
         rawData.push({
           x: 0,
           y: 0,
@@ -601,21 +609,19 @@ module.exports = function () {
         });
       }
 
-      var center = {
-        x: width / 4,
-        y: height / 2
-      };
-      console.log(center, width, height);
       var forceStrength = 0.03;
-      var bubbles = null;
 
       function charge(d) {
         return -Math.pow(d.radius, 2.0) * forceStrength;
       }
 
-      var simulation = d3.forceSimulation().velocityDecay(0.2).force('x', d3.forceX().strength(forceStrength).x(center.x)).force('y', d3.forceY().strength(forceStrength).y(center.y)).force('charge', d3.forceManyBody().strength(charge)).on('tick', ticked);
+      var simulation = d3.forceSimulation().velocityDecay(0.2).force('x', d3.forceX().strength(forceStrength).x(center.x)).force('y', d3.forceY().strength(forceStrength).y(center.y - cupHeight / 2 + 100)).force('charge', d3.forceManyBody().strength(charge)).on('tick', ticked);
       svg.on('click', function () {
-        simulation.force('repelForce', d3.forceManyBody().strength(-200).distanceMax(50).distanceMin(10));
+        simulation.force('repelForce', d3.forceManyBody().strength(-200).distanceMax(40).distanceMin(10)); // simulation.force('x', d3.forceX().strength(forceStrength).x(3 * width/4))
+        // .force('y', d3.forceY().strength(forceStrength).y(100));
+
+        svg.select('.cup').attr('opacity', 0);
+        bubbles.attr('opacity', 1);
       });
       simulation.stop();
       var fillColor = d3.scaleOrdinal().domain(['low', 'medium', 'high']).range(['#d84b2a', '#beccae', '#7aa25c']);
@@ -631,14 +637,12 @@ module.exports = function () {
         return 'rgb(200, 200, 200)';
       }).attr('stroke', function (d) {
         return 'black';
-      }).attr('stroke-width', 1);
+      }).attr('stroke-width', 1).attr('opacity', 0);
       bubbles = bubbles.merge(bubblesE);
       bubbles.transition().duration(2000).attr('r', function (d) {
         return d.radius;
       });
       simulation.nodes(myNodes);
-      simulation.force('x', d3.forceX().strength(forceStrength).x(center.x)); // @v4 Reset the 'x' force to draw the bubbles to the center.
-
       simulation.alpha(1).restart(); // @v4 We can reset the alpha value and restart the simulation
 
       function ticked() {

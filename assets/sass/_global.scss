@@ -9,17 +9,14 @@
 	}
 }
 
-.full {
-	padding: 100px 0;
-	background-color: rgba(255, 255, 255, .75);
-}
-
 .empty {
 	height: 200vh;
 }
 
-.intro {
-	padding-top: 100px;
+.full {
+	padding: 100px 0;
+	background-color: rgba(255, 255, 255, .97);
+	box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
 }
 
 .hero {
@@ -28,6 +25,10 @@
 	background-repeat: no-repeat;
 	background-position: center center;
 	box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+}
+
+.intro {
+	padding-top: 100px;
 }
 
 .pagination {
@@ -56,6 +57,41 @@
 	}
 }
 
+@mixin panelBackground {
+	padding: 20px;
+	position: relative;
+	z-index: 100;
+	background-color: rgba(255, 255, 255, .9);
+	box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
+	border-radius: 3px;
+	
+	@include desktop {
+		padding: 50px;
+	}
+}
+
+.panel {
+	@include panelBackground;
+}
+
+.reading {
+	max-width: 600px;
+	margin: auto;
+	
+	&.left {
+		margin-left: 5%;
+	}
+	
+	&.center {
+		margin-left: auto;
+		margin-right: right;
+	}
+	
+	&.right {
+		margin-right: 5%;
+	}
+}
+
 .reference {
 	margin-left: -1.5em;
 	counter-reset: list;
@@ -74,38 +110,10 @@
 	}
 }
 
-@mixin panelBackground {
-	padding: 20px;
-	position: relative;
-	z-index: 100;
-	background-color: rgba(255, 255, 255, .9);
-	box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
-	border-radius: 3px;
+.two-column {
+	display: flex;
 	
-	@include desktop {
-		padding: 50px;
-	}
-}
-
-.panel {
-	@include panelBackground;
-	
-}
-
-.reading {
-	max-width: 600px;
-	margin: auto;
-	
-	&.left {
-		margin-left: 5%;
-	}
-	
-	&.center {
-		margin-left: auto;
-		margin-right: right;
-	}
-	
-	&.right {
-		margin-right: 5%;
+	> * {
+		width: 50%;
 	}
 }

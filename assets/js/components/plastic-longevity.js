@@ -7,10 +7,11 @@ module.exports = function () {
 	var height = 600;
 	var svg;
 	var cupWidth, cupHeight;
-	var bubbles = null;
+	
+	console.log(width);
 	
 	var center = {
-		x: width / 2 - 50,
+		x: width / 2,
 		y: height / 2
 	};
 	
@@ -25,203 +26,112 @@ module.exports = function () {
 			
 			let self = this;
 
-			var data = [
-				{
-					'river': 'Vegetable',
-					'countries': ['China'],
-					'amount': .08333
-				},
-				{
-					'river': 'Polypropylene',
-					'countries': ['China1'],
-					'amount': 450
-				},
-				{
-					'river': 'Wood',
-					'countries': ['China2'],
-					'amount': 3
-				},
-				{
-					'river': 'Cardboard',
-					'countries': ['China2'],
-					'amount': .5
-				},
-			];
+			svg = d3.select(graphic).append('svg').attr('width', width).attr('height', height);
 			
-			let graphicContainer = graphic.parentElement;
-			var padding = {
-				top: 60,
-				right: 40,
-				bottom: 80,
-				left: 130
-			};
-			
-			var width = graphicContainer.offsetWidth - padding.left - padding.right;
-			var innerHeight = height - padding.top - padding.bottom;
-			var barHeight = 5;
 
-			var y = d3.scaleBand().range([innerHeight, 0]);
-			var x = d3.scaleLinear().range([0, width]);
-
-			svg = d3.select(graphic).append('svg')
-				.attr('width', width + padding.left + padding.right)
-				.attr('height', innerHeight + padding.top + padding.bottom)
-				.append('g')
-				.attr('transform',
-					'translate(' + padding.left + ',' + padding.top + ')');
-
-			// format the data
-			data.forEach(function (d) {
-				d.amount = +d.amount;
-			});
+			// show center
+			//svg.append('circle').attr('class', 'mask').attr('cx', center.x).attr('cy', center.y).attr('r', 10).attr('fill', 'black');
 			
-			let compare = function(a, b) {
-				return b.amount - a.amount;
-			};
+			let cupWidth = 250, cupHeight = 410;
+			let image = svg.append('svg:image')
+			.attr('xlink:href',  './assets/svg/starbucks.svg')
+			.attr('width', cupWidth)
+			.attr('height', cupHeight)
+			.attr('x', center.x - cupWidth / 2)
+			.attr('y', center.y - cupHeight / 2)
+			.attr('class', 'cup');
 			
-			data = data.sort(compare);
-			
-			let maxValue = d3.max(data, function (d) {
-				return d.amount;
-			});
-			
-			// Scale the range of the data in the domains
-			x.domain([0, (maxValue + maxValue * .02)])
-			y.domain(data.map(function (d) {
-				return d.river;
-			}));
-
-			svg.selectAll('.bar')
-				.data(data)
-				.enter().append('rect')
-				.attr('class', 'bar')
-				.attr('width', function (d) {
-					return x(d.amount);
-				})
-				.attr('y', function (d) {
-					return y(d.river) + (y.bandwidth() / 2 - barHeight / 2);
-				})
-				.attr('height', barHeight);
-
-			svg.append('g').attr('transform', 'translate(0,' + (innerHeight + 6) + ')').call(d3.axisBottom(x));
-			svg.append('g').call(d3.axisLeft(y).tickSize(0));
-			
-			// Add graph title
-			let title = svg.append('text') 
-				.attr('class', 'title')
-				.text('Plastic Longevity');
-			let textWidth = title.node().getBBox().width;
-			let textHeight = title.node().getBBox().height;
-			title.attr('transform','translate(' + (center.x - (textWidth/2) - (padding.left/2) - 20) + ', ' + (-1 * (padding.top/2) + 10) + ')');
-			
-			let xAxisHeight = 20;
-			let xAxisLabel = svg.append('text') 
-				.attr('class', 'x-axis-label')
-				.html('Decomposition Time');
-			textWidth = xAxisLabel.node().getBBox().width;
-			textHeight = xAxisLabel.node().getBBox().height;
-			xAxisLabel.attr('transform','translate(' + (width/2 - (textWidth/2) - (padding.left/2)) + ', ' + (innerHeight + xAxisHeight + (padding.bottom/2)) + ')');
-		
-			let yAxisLabel = svg.append('text') 
-				.attr('class', 'y-axis-label')
-				.text('Material');
-			textWidth = yAxisLabel.node().getBBox().width;
-			textHeight = yAxisLabel.node().getBBox().height;
-			yAxisLabel.attr('transform','translate(' + (-1 * padding.left + textHeight * 2.5) + ', ' + (innerHeight/2 + (textWidth/2)) + ') rotate(-90)');
-			
-			
-			d3.xml('./assets/svg/starbucks.svg', function(data) {
-				let cup = data.documentElement;
-				cup.classList.add('cup');
-				
-				svg.node().append(cup);
-				
-				cupWidth = cup.getBBox().width;
-				cupHeight = cup.getBBox().height;
-				
-				svg.select('.cup').attr('width', 300).attr('x', center.x - cupWidth).attr('y', center.y - cupHeight);
-				self.circles();
-			});
-			
+			self.particles();
 		},
 		
-		circles: function() {
+		particles: function() {
+			var colorScale = d3.scaleSequential(d3.interpolateViridis);
+			var network;
 			
-			var rawData = [];
-			for (let i = 0; i < 500; i++) {
-				rawData.push({ x: 0, y: 0, radius: 5});
+			var particles = [];
+			for (let i = 0; i < 1000; i++) {
+				particles.push({ 
+					x: Math.random() * width,
+					y: Math.random() * height,
+					// x: 0,
+					// y: 0,
+					radius: i%3 + 2
+				});
 			}
-
-			var forceStrength = 0.03;
-
+			
+			var nodeG = svg.append('g').attr('class', 'nodes-group');
+			
+			var forceStrength = .1;
 			function charge(d) {
+				console.log(-Math.pow(d.radius, 2.0) * forceStrength)
 				return -Math.pow(d.radius, 2.0) * forceStrength;
 			}
-
-			var simulation = d3.forceSimulation()
-			.velocityDecay(0.2)
-			.force('x', d3.forceX().strength(forceStrength).x(center.x))
-			.force('y', d3.forceY().strength(forceStrength).y(center.y - cupHeight/2 + 100))
-			.force('charge', d3.forceManyBody().strength(charge))
-			.on('tick', ticked);
 			
-			svg.on('click', function() {
-				simulation.force('repelForce', d3.forceManyBody().strength(-200).distanceMax(40).distanceMin(10));
-				// simulation.force('x', d3.forceX().strength(forceStrength).x(3 * width/4))
-				// .force('y', d3.forceY().strength(forceStrength).y(100));
-				
-				svg.select('.cup').attr('opacity', 0);
-				bubbles.attr('opacity', 1);
-			});
-
-			simulation.stop();
-
-			var fillColor = d3.scaleOrdinal()
-			.domain(['low', 'medium', 'high'])
-			.range(['#d84b2a', '#beccae', '#7aa25c']);
-
-			var myNodes = rawData.map(function (d) {
-				return {
-					radius: 3,
-					x: Math.random() * 900,
-					y: Math.random() * 800
-				};
-			});
-
-			bubbles = svg.selectAll('.bubble')
-			.data(myNodes);
-
-			var bubblesE = bubbles.enter().append('circle')
-			.classed('bubble', true)
-			.attr('r', 0)
+			var simulation = d3.forceSimulation()
+			.velocityDecay(0.1)
+			//.force('charge', charge)
+			.force('charge', d3.forceManyBody().strength(-.5))
+			.force('repelForce', d3.forceManyBody().strength(-1).distanceMax(10).distanceMin(5))
+			.force('center', d3.forceCenter(center.x, center.y));
+			
+			var nodeEnter = nodeG.selectAll()
+			.data(particles)
+			.enter()
+			.append('circle')
+			.attr('class', 'node')
+			.attr('r', function(d) { return d.radius;})
 			.attr('fill', function (d) {
 				return 'rgb(200, 200, 200)';
 			})
 			.attr('stroke', function (d) {
-				return 'black';
+				return 'rgba(0, 0, 0, .5)';
 			})
-			.attr('stroke-width', 1)
-			.attr('opacity', 0);
-
-			bubbles = bubbles.merge(bubblesE);
-
-			bubbles.transition()
-			.duration(2000)
-			.attr('r', function (d) {
-				return d.radius;
-			});
-			simulation.nodes(myNodes);
-			simulation.alpha(1).restart(); // @v4 We can reset the alpha value and restart the simulation
-
-			function ticked() {
+			//.attr('opacity', 0)
+			.attr('stroke-width', 1);
 			
-				bubbles.attr('cx', function (d) {
-					return d.x;
-				})
-				.attr('cy', function (d) {
-					return d.y;
-				});
+			var updateParticles = function() {
+
+				
+				nodeEnter = nodeG.selectAll('.node')
+				.data(particles)
+				.merge(nodeEnter);
+				
+				nodeEnter.exit().transition().remove();
+				// Update and restart the simulation.
+				simulation.nodes(nodeEnter);
+				simulation.alpha(1).restart();
+			};
+			
+			svg.on('click', function() {
+				simulation.force('repelForce', d3.forceManyBody().strength(-1).distanceMax(2).distanceMin(1));
+				
+				particles = [];
+				for (let i = 0; i < 1000; i++) {
+					particles.push({ 
+						x: Math.random() * width,
+						y: Math.random() * height,
+						radius: i%3 + 2
+					});
+				}
+				
+				updateParticles();
+				
+				svg.select('.cup').attr('opacity', 0);
+				//nodeEnter.attr('opacity', 1);
+			});
+			
+			simulation.nodes(particles).on('tick', tickSimulation);
+			
+			var done = false;
+			function tickSimulation() {
+
+				nodeEnter.attr('cx', function(d) { return d.x;})
+				.attr('cy', function(d) { return d.y;});
 			}
+		},
+		
+		longevityTimescale: function() {
+			
 		}
 	}
 }

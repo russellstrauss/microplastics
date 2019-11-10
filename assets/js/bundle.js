@@ -163,67 +163,17 @@ module.exports = function () {
     width: containerWidth,
     height: 800,
     scale: 800
-  }; //asia.projection = d3.geoMercator().translate([asia.width * .25, asia.height * .75]).scale([asia.scale]);
+  };
+  var china = {
+    lat: 23.638,
+    long: 120.998 //asia.projection = d3.geoMercator().translate([asia.width * .25, asia.height * .75]).scale([asia.scale]);
 
+  };
   asia.projection = d3.geoMercator().center([-84.386330, 33.753746]).scale(1500);
   return {
     init: function init() {
       var self = this;
-      self.zoomMap();
-      self.setScrollPoints();
-    },
-    zoomMap: function zoomMap() {
-      var mapContainer = document.querySelector('.fullscreen-map');
-      var projection = d3.geoMercator().translate([0, 0]);
-      var path = d3.geoPath().projection(projection); //Define quantize scale to sort data values into buckets of color
-
-      var color = d3.scaleQuantize().range(['rgb(237,248,233)', 'rgb(186,228,179)', 'rgb(116,196,118)', 'rgb(49,163,84)', 'rgb(0,109,44)']); //Colors taken from colorbrewer.js, included in the D3 download
-      //Number formatting for population values
-
-      var formatAsThousands = d3.format(','); //e.g. converts 123456 to '123,456'
-      //Create SVG element
-
-      var svg = d3.select('.fullscreen-map').append('svg').attr('width', containerWidth).attr('height', containerHeight); //Define what to do when panning or zooming
-
-      var zooming = function zooming(d) {
-        //Log out d3.event.transform, so you can see all the goodies inside
-        //console.log(d3.event.transform);
-        //New offset array
-        var offset = [d3.event.transform.x, d3.event.transform.y]; //Calculate new scale
-
-        var newScale = d3.event.transform.k * 2000; //Update projection with new offset and scale
-
-        projection.translate(offset).scale(newScale); //Update all paths and circles
-
-        svg.selectAll('path').attr('d', path);
-        svg.selectAll('circle').attr('cx', function (d) {
-          return projection([d.lon, d.lat])[0];
-        }).attr('cy', function (d) {
-          return projection([d.lon, d.lat])[1];
-        });
-      }; //Then define the zoom behavior
-
-
-      zoom = d3.zoom().scaleExtent([0.2, 2.0]).translateExtent([[-1200, -700], [1200, 700]]).on('zoom', zooming); //The center of the country, roughly
-
-      center = projection([-97.0, 39.0]); //Create a container in which all zoom-able elements will live
-
-      map = svg.append('g').attr('id', 'map').call(zoom) //Bind the zoom behavior
-      .call(zoom.transform, d3.zoomIdentity //Then apply the initial transform
-      .translate(containerWidth / 2, containerHeight / 2).scale(0.25).translate(-center[0], -center[1])); //Create a new, invisible background rect to catch zoom events
-
-      map.append('rect').attr('x', 0).attr('y', 0).attr('width', containerWidth).attr('height', containerHeight).attr('opacity', 0);
-      d3.json('./assets/js/data/world_oceans.json', function (json) {
-        //Bind data and create one path per GeoJSON feature
-        svg.selectAll('path').data(json.features).enter().append('path').attr('d', path).style('fill', '#033649').style('opacity', '.5');
-      });
-      d3.json('./assets/js/data/world_countries_small.json', function (json) {
-        //Bind data and create one path per GeoJSON feature
-        svg.selectAll('path').data(json.features).enter().append('path').attr('d', path).style('stroke', 'black').style('opacity', '.5').style('fill', 'white');
-      }); //This triggers a zoom event, translating by x, y
-      //map.transition().call(zoom.translateBy, x, y);
-      //This triggers a zoom event, scaling by 'scaleFactor'
-      //map.transition().call(zoom.scaleBy, scaleFactor);
+      self.v5Map(); // self.setScrollPoints();
     },
     setScrollPoints: function setScrollPoints() {
       var self = this;
@@ -234,8 +184,7 @@ module.exports = function () {
           if (direction === 'down') {
             map.transition().duration(2000).ease(d3.easeCubicInOut).call(zoom.transform, d3.zoomIdentity.translate(containerWidth / 2, containerHeight / 2).scale(.5).translate(-4000, 500));
           } else {
-            veil.classList.add('active');
-            self.resetMap();
+            veil.classList.add('active'); //self.resetMap();
           }
         },
         offset: 0
@@ -270,44 +219,72 @@ module.exports = function () {
         offset: 800
       });
     },
-    resetMap: function resetMap() {
-      map.transition().duration(1200).ease(d3.easePolyInOut.exponent(4)).call(zoom.transform, d3.zoomIdentity //Same as the initial transform
-      .translate(containerWidth / 2, containerHeight / 2).scale(0.25).translate(-center[0], -center[1]));
-    },
-    oldMap: function oldMap() {
-      var self = this;
-      var projection = asia.projection;
-      var path = d3.geoPath().projection(projection);
-      var svg = d3.select('.map').append('svg').attr('width', containerWidth);
-      var step = document.querySelector('#step1');
-      var enter = new Waypoint({
-        element: step,
-        handler: function handler(direction) {
-          if (direction === 'down') {
-            //veil.classList.remove('active');
-            alert('down step 1');
-            projection.translate([1000, 0]);
-          } else {
-            alert('up step 1'); //veil.classList.add('active');
+    v5Map: function v5Map() {
+      var map = d3.select('.fullscreen-map');
+      var mapWidth = parseInt(map.offsetWidth);
+      var mapHeight = parseInt(map.offsetHeight);
+      var atlLatLng = new L.LatLng(33.7771, -84.3900);
+      var chinaLocation = new L.LatLng(china.lat, china.long);
+      var myMap = L.map('map').setView(chinaLocation, 5);
+      var vertices = d3.map();
+      var activeMapType = 'nodes_links';
+      L.tileLayer('https://stamen-tiles-{s}.a.ssl.fastly.net/toner-background/{z}/{x}/{y}{r}.png?access_token={accessToken}', {
+        maxZoom: 10,
+        minZoom: 3,
+        id: 'mapbox.light',
+        accessToken: 'pk.eyJ1IjoiamFnb2R3aW4iLCJhIjoiY2lnOGQxaDhiMDZzMXZkbHYzZmN4ZzdsYiJ9.Uwh_L37P-qUoeC-MBSDteA'
+      }).addTo(myMap);
+      var svgLayer = L.svg();
+      svgLayer.addTo(myMap);
+      var svg = d3.select('#map').select('svg');
+      var nodeLinkG = svg.select('g').attr('class', 'leaflet-zoom-hide');
 
-            projection.translate([-1000, 0]);
-          }
+      function updateLayers() {
+        nodeLinkG.selectAll('.grid-node').attr('cx', function (d) {
+          return myMap.latLngToLayerPoint(d.LatLng).x;
+        }).attr('cy', function (d) {
+          return myMap.latLngToLayerPoint(d.LatLng).y;
+        });
+        nodeLinkG.selectAll('.grid-link').attr('x1', function (d) {
+          return myMap.latLngToLayerPoint(d.node1.LatLng).x;
+        }).attr('y1', function (d) {
+          return myMap.latLngToLayerPoint(d.node1.LatLng).y;
+        }).attr('x2', function (d) {
+          return myMap.latLngToLayerPoint(d.node2.LatLng).x;
+        }).attr('y2', function (d) {
+          return myMap.latLngToLayerPoint(d.node2.LatLng).y;
+        });
+      }
+
+      d3.selectAll('.btn-group > .btn.btn-secondary').on('click', function () {
+        var newMapType = d3.select(this).attr('data-type');
+        d3.selectAll('.btn.btn-secondary.active').classed('active', false);
+        cleanUpMap(activeMapType);
+        showOnMap(newMapType);
+        activeMapType = newMapType;
+      });
+
+      function cleanUpMap(type) {
+        switch (type) {
+          case 'cleared':
+            break;
+
+          case 'nodes_links':
+            nodeLinkG.attr('visibility', 'hidden');
+            break;
         }
-      }); // svg.selectAll('path')
-      // .transition()
-      // .duration(750)
-      // .call(
-      // 	//projection.translate([100, 0])
-      // );
+      }
 
-      d3.json('./assets/js/data/world_oceans.json').then(function (json) {
-        //Bind data and create one path per GeoJSON feature
-        svg.selectAll('path').data(json.features).enter().append('path').attr('d', path).style('fill', '#033649').style('opacity', '.25');
-      });
-      d3.json('./assets/js/data/world_rivers.json').then(function (json) {
-        //Bind data and create one path per GeoJSON feature
-        svg.selectAll('path').data(json.features).enter().append('path').attr('d', path).style('fill', '#57C3E3');
-      });
+      function showOnMap(type) {
+        switch (type) {
+          case 'cleared':
+            break;
+
+          case 'nodes_links':
+            nodeLinkG.attr('visibility', 'visible');
+            break;
+        }
+      }
     }
   };
 };
@@ -508,9 +485,9 @@ module.exports = function () {
   var height = 600;
   var svg;
   var cupWidth, cupHeight;
-  var bubbles = null;
+  console.log(width);
   var center = {
-    x: width / 2 - 50,
+    x: width / 2,
     y: height / 2
   };
   return {
@@ -519,140 +496,83 @@ module.exports = function () {
     },
     setUpPlot: function setUpPlot() {
       var self = this;
-      var data = [{
-        'river': 'Vegetable',
-        'countries': ['China'],
-        'amount': .08333
-      }, {
-        'river': 'Polypropylene',
-        'countries': ['China1'],
-        'amount': 450
-      }, {
-        'river': 'Wood',
-        'countries': ['China2'],
-        'amount': 3
-      }, {
-        'river': 'Cardboard',
-        'countries': ['China2'],
-        'amount': .5
-      }];
-      var graphicContainer = graphic.parentElement;
-      var padding = {
-        top: 60,
-        right: 40,
-        bottom: 80,
-        left: 130
-      };
-      var width = graphicContainer.offsetWidth - padding.left - padding.right;
-      var innerHeight = height - padding.top - padding.bottom;
-      var barHeight = 5;
-      var y = d3.scaleBand().range([innerHeight, 0]);
-      var x = d3.scaleLinear().range([0, width]);
-      svg = d3.select(graphic).append('svg').attr('width', width + padding.left + padding.right).attr('height', innerHeight + padding.top + padding.bottom).append('g').attr('transform', 'translate(' + padding.left + ',' + padding.top + ')'); // format the data
+      svg = d3.select(graphic).append('svg').attr('width', width).attr('height', height); // show center
+      //svg.append('circle').attr('class', 'mask').attr('cx', center.x).attr('cy', center.y).attr('r', 10).attr('fill', 'black');
 
-      data.forEach(function (d) {
-        d.amount = +d.amount;
-      });
-
-      var compare = function compare(a, b) {
-        return b.amount - a.amount;
-      };
-
-      data = data.sort(compare);
-      var maxValue = d3.max(data, function (d) {
-        return d.amount;
-      }); // Scale the range of the data in the domains
-
-      x.domain([0, maxValue + maxValue * .02]);
-      y.domain(data.map(function (d) {
-        return d.river;
-      }));
-      svg.selectAll('.bar').data(data).enter().append('rect').attr('class', 'bar').attr('width', function (d) {
-        return x(d.amount);
-      }).attr('y', function (d) {
-        return y(d.river) + (y.bandwidth() / 2 - barHeight / 2);
-      }).attr('height', barHeight);
-      svg.append('g').attr('transform', 'translate(0,' + (innerHeight + 6) + ')').call(d3.axisBottom(x));
-      svg.append('g').call(d3.axisLeft(y).tickSize(0)); // Add graph title
-
-      var title = svg.append('text').attr('class', 'title').text('Plastic Longevity');
-      var textWidth = title.node().getBBox().width;
-      var textHeight = title.node().getBBox().height;
-      title.attr('transform', 'translate(' + (center.x - textWidth / 2 - padding.left / 2 - 20) + ', ' + (-1 * (padding.top / 2) + 10) + ')');
-      var xAxisHeight = 20;
-      var xAxisLabel = svg.append('text').attr('class', 'x-axis-label').html('Decomposition Time');
-      textWidth = xAxisLabel.node().getBBox().width;
-      textHeight = xAxisLabel.node().getBBox().height;
-      xAxisLabel.attr('transform', 'translate(' + (width / 2 - textWidth / 2 - padding.left / 2) + ', ' + (innerHeight + xAxisHeight + padding.bottom / 2) + ')');
-      var yAxisLabel = svg.append('text').attr('class', 'y-axis-label').text('Material');
-      textWidth = yAxisLabel.node().getBBox().width;
-      textHeight = yAxisLabel.node().getBBox().height;
-      yAxisLabel.attr('transform', 'translate(' + (-1 * padding.left + textHeight * 2.5) + ', ' + (innerHeight / 2 + textWidth / 2) + ') rotate(-90)');
-      d3.xml('./assets/svg/starbucks.svg', function (data) {
-        var cup = data.documentElement;
-        cup.classList.add('cup');
-        svg.node().append(cup);
-        cupWidth = cup.getBBox().width;
-        cupHeight = cup.getBBox().height;
-        svg.select('.cup').attr('width', 300).attr('x', center.x - cupWidth).attr('y', center.y - cupHeight);
-        self.circles();
-      });
+      var cupWidth = 250,
+          cupHeight = 410;
+      var image = svg.append('svg:image').attr('xlink:href', './assets/svg/starbucks.svg').attr('width', cupWidth).attr('height', cupHeight).attr('x', center.x - cupWidth / 2).attr('y', center.y - cupHeight / 2).attr('class', 'cup');
+      self.particles();
     },
-    circles: function circles() {
-      var rawData = [];
+    particles: function particles() {
+      var colorScale = d3.scaleSequential(d3.interpolateViridis);
+      var network;
+      var particles = [];
 
-      for (var i = 0; i < 500; i++) {
-        rawData.push({
-          x: 0,
-          y: 0,
-          radius: 5
+      for (var i = 0; i < 1000; i++) {
+        particles.push({
+          x: Math.random() * width,
+          y: Math.random() * height,
+          // x: 0,
+          // y: 0,
+          radius: i % 3 + 2
         });
       }
 
-      var forceStrength = 0.03;
+      var nodeG = svg.append('g').attr('class', 'nodes-group');
+      var forceStrength = .1;
 
       function charge(d) {
+        console.log(-Math.pow(d.radius, 2.0) * forceStrength);
         return -Math.pow(d.radius, 2.0) * forceStrength;
       }
 
-      var simulation = d3.forceSimulation().velocityDecay(0.2).force('x', d3.forceX().strength(forceStrength).x(center.x)).force('y', d3.forceY().strength(forceStrength).y(center.y - cupHeight / 2 + 100)).force('charge', d3.forceManyBody().strength(charge)).on('tick', ticked);
-      svg.on('click', function () {
-        simulation.force('repelForce', d3.forceManyBody().strength(-200).distanceMax(40).distanceMin(10)); // simulation.force('x', d3.forceX().strength(forceStrength).x(3 * width/4))
-        // .force('y', d3.forceY().strength(forceStrength).y(100));
-
-        svg.select('.cup').attr('opacity', 0);
-        bubbles.attr('opacity', 1);
-      });
-      simulation.stop();
-      var fillColor = d3.scaleOrdinal().domain(['low', 'medium', 'high']).range(['#d84b2a', '#beccae', '#7aa25c']);
-      var myNodes = rawData.map(function (d) {
-        return {
-          radius: 3,
-          x: Math.random() * 900,
-          y: Math.random() * 800
-        };
-      });
-      bubbles = svg.selectAll('.bubble').data(myNodes);
-      var bubblesE = bubbles.enter().append('circle').classed('bubble', true).attr('r', 0).attr('fill', function (d) {
+      var simulation = d3.forceSimulation().velocityDecay(0.1) //.force('charge', charge)
+      .force('charge', d3.forceManyBody().strength(-.5)).force('repelForce', d3.forceManyBody().strength(-1).distanceMax(10).distanceMin(5)).force('center', d3.forceCenter(center.x, center.y));
+      var nodeEnter = nodeG.selectAll().data(particles).enter().append('circle').attr('class', 'node').attr('r', function (d) {
+        return d.radius;
+      }).attr('fill', function (d) {
         return 'rgb(200, 200, 200)';
       }).attr('stroke', function (d) {
-        return 'black';
-      }).attr('stroke-width', 1).attr('opacity', 0);
-      bubbles = bubbles.merge(bubblesE);
-      bubbles.transition().duration(2000).attr('r', function (d) {
-        return d.radius;
-      });
-      simulation.nodes(myNodes);
-      simulation.alpha(1).restart(); // @v4 We can reset the alpha value and restart the simulation
+        return 'rgba(0, 0, 0, .5)';
+      }) //.attr('opacity', 0)
+      .attr('stroke-width', 1);
 
-      function ticked() {
-        bubbles.attr('cx', function (d) {
+      var updateParticles = function updateParticles() {
+        nodeEnter = nodeG.selectAll('.node').data(particles).merge(nodeEnter);
+        nodeEnter.exit().transition().remove(); // Update and restart the simulation.
+
+        simulation.nodes(nodeEnter);
+        simulation.alpha(1).restart();
+      };
+
+      svg.on('click', function () {
+        simulation.force('repelForce', d3.forceManyBody().strength(-1).distanceMax(2).distanceMin(1));
+        particles = [];
+
+        for (var _i = 0; _i < 1000; _i++) {
+          particles.push({
+            x: Math.random() * width,
+            y: Math.random() * height,
+            radius: _i % 3 + 2
+          });
+        }
+
+        updateParticles();
+        svg.select('.cup').attr('opacity', 0); //nodeEnter.attr('opacity', 1);
+      });
+      simulation.nodes(particles).on('tick', tickSimulation);
+      var done = false;
+
+      function tickSimulation() {
+        nodeEnter.attr('cx', function (d) {
           return d.x;
         }).attr('cy', function (d) {
           return d.y;
         });
       }
-    }
+    },
+    longevityTimescale: function longevityTimescale() {}
   };
 };
 

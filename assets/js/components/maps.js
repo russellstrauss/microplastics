@@ -9,6 +9,10 @@ module.exports = function() {
 		height: 800,
 		scale: 800
 	};
+	var china = {
+		lat: 23.638,
+		long: 120.998
+	}
 	//asia.projection = d3.geoMercator().translate([asia.width * .25, asia.height * .75]).scale([asia.scale]);
 	asia.projection = d3.geoMercator().center([-84.386330, 33.753746]).scale(1500);
 	
@@ -17,111 +21,9 @@ module.exports = function() {
 		init: function() {
 
 			let self = this;
-
-			self.zoomMap();
-			self.setScrollPoints();
-		},
-		
-		zoomMap: function() {
 			
-			let mapContainer = document.querySelector('.fullscreen-map');
-			var projection = d3.geoMercator().translate([0, 0]);
-			var path = d3.geoPath().projection(projection);
-				
-			//Define quantize scale to sort data values into buckets of color
-			var color = d3.scaleQuantize().range(['rgb(237,248,233)','rgb(186,228,179)','rgb(116,196,118)','rgb(49,163,84)','rgb(0,109,44)']);
-								//Colors taken from colorbrewer.js, included in the D3 download
-
-			//Number formatting for population values
-			var formatAsThousands = d3.format(',');  //e.g. converts 123456 to '123,456'
-
-			//Create SVG element
-			var svg = d3.select('.fullscreen-map')
-						.append('svg')
-						.attr('width', containerWidth)
-						.attr('height', containerHeight);
-
-			//Define what to do when panning or zooming
-			var zooming = function(d) {
-
-				//Log out d3.event.transform, so you can see all the goodies inside
-				//console.log(d3.event.transform);
-
-				//New offset array
-				var offset = [d3.event.transform.x, d3.event.transform.y];
-
-				//Calculate new scale
-				var newScale = d3.event.transform.k * 2000;
-
-				//Update projection with new offset and scale
-				projection.translate(offset).scale(newScale);
-
-				//Update all paths and circles
-				svg.selectAll('path')
-					.attr('d', path);
-
-				svg.selectAll('circle').attr('cx', function(d) {
-					return projection([d.lon, d.lat])[0];
-				})
-				.attr('cy', function(d) {
-					return projection([d.lon, d.lat])[1];
-				});
-
-			}
-
-			//Then define the zoom behavior
-			zoom = d3.zoom()
-			.scaleExtent([ 0.2, 2.0 ])
-			.translateExtent([[ -1200, -700 ], [ 1200, 700 ]])
-			.on('zoom', zooming);
-
-			//The center of the country, roughly
-			center = projection([-97.0, 39.0]);
-
-			//Create a container in which all zoom-able elements will live
-			map = svg.append('g')
-			.attr('id', 'map')
-			.call(zoom)  //Bind the zoom behavior
-			.call(zoom.transform, d3.zoomIdentity  //Then apply the initial transform
-			.translate(containerWidth/2, containerHeight/2)
-			.scale(0.25)
-			.translate(-center[0], -center[1]));
-
-			//Create a new, invisible background rect to catch zoom events
-			map.append('rect')
-			.attr('x', 0)
-			.attr('y', 0)
-			.attr('width', containerWidth)
-			.attr('height', containerHeight)
-			.attr('opacity', 0);
-			
-			d3.json('./assets/js/data/world_oceans.json', function(json) {
-				
-				//Bind data and create one path per GeoJSON feature
-				svg.selectAll('path')
-				.data(json.features)
-				.enter()
-				.append('path')
-				.attr('d', path)
-				.style('fill', '#033649').style('opacity', '.5');
-			});
-			
-			d3.json('./assets/js/data/world_countries_small.json', function(json) {
-				
-				//Bind data and create one path per GeoJSON feature
-				svg.selectAll('path')
-				.data(json.features)
-				.enter()
-				.append('path')
-				.attr('d', path)
-				.style('stroke', 'black').style('opacity', '.5')
-				.style('fill', 'white');
-			});
-				
-			//This triggers a zoom event, translating by x, y
-			//map.transition().call(zoom.translateBy, x, y);
-			//This triggers a zoom event, scaling by 'scaleFactor'
-			//map.transition().call(zoom.scaleBy, scaleFactor);
+			self.v5Map();
+			// self.setScrollPoints();
 		},
 		
 		setScrollPoints: function() {
@@ -144,7 +46,7 @@ module.exports = function() {
 					}
 					else {
 						veil.classList.add('active');
-						self.resetMap();
+						//self.resetMap();
 					}
 				},
 				offset: 0
@@ -204,69 +106,71 @@ module.exports = function() {
 			});
 		},
 		
-		resetMap: function() {
-			map.transition()
-			.duration(1200)
-			.ease(d3.easePolyInOut.exponent(4))
-			.call(zoom.transform, d3.zoomIdentity  //Same as the initial transform
-			.translate(containerWidth/2, containerHeight/2)
-			.scale(0.25)
-			.translate(-center[0], -center[1]));
-		},
-		
-		oldMap: function() {
-			
-			let self = this;
-			
-			var projection = asia.projection;
-			var path = d3.geoPath().projection(projection);
-			var svg = d3.select('.map').append('svg').attr('width', containerWidth);
-			
-			let step = document.querySelector('#step1');
-			let enter = new Waypoint({
-				element: step,
-				handler: function(direction) {
-					
-					if (direction === 'down') {
-						//veil.classList.remove('active');
-						alert('down step 1');
-						projection.translate([1000, 0]);
-					}
-					else {
-						alert('up step 1');
-						//veil.classList.add('active');
-						projection.translate([-1000, 0]);
-					}
+		v5Map: function() {
+			var map = d3.select('.fullscreen-map');
+			var mapWidth = parseInt(map.offsetWidth);
+			var mapHeight = parseInt(map.offsetHeight);
+			var atlLatLng = new L.LatLng(33.7771, -84.3900);
+			var chinaLocation = new L.LatLng(china.lat, china.long);
+			var myMap = L.map('map').setView(chinaLocation, 5);
+			var vertices = d3.map();
+			var activeMapType = 'nodes_links';
+
+			L.tileLayer('https://stamen-tiles-{s}.a.ssl.fastly.net/toner-background/{z}/{x}/{y}{r}.png?access_token={accessToken}', {
+				maxZoom: 10,
+				minZoom: 3,
+				id: 'mapbox.light',
+				accessToken: 'pk.eyJ1IjoiamFnb2R3aW4iLCJhIjoiY2lnOGQxaDhiMDZzMXZkbHYzZmN4ZzdsYiJ9.Uwh_L37P-qUoeC-MBSDteA'
+			}).addTo(myMap);
+
+			var svgLayer = L.svg();
+			svgLayer.addTo(myMap)
+
+			var svg = d3.select('#map').select('svg');
+			var nodeLinkG = svg.select('g')
+			.attr('class', 'leaflet-zoom-hide');
+
+			function updateLayers() {
+				nodeLinkG.selectAll('.grid-node')
+				.attr('cx', function(d){return myMap.latLngToLayerPoint(d.LatLng).x})
+				.attr('cy', function(d){return myMap.latLngToLayerPoint(d.LatLng).y});
+				
+				nodeLinkG.selectAll('.grid-link')
+				.attr('x1', function(d){return myMap.latLngToLayerPoint(d.node1.LatLng).x})
+				.attr('y1', function(d){return myMap.latLngToLayerPoint(d.node1.LatLng).y})
+				.attr('x2', function(d){return myMap.latLngToLayerPoint(d.node2.LatLng).x})
+				.attr('y2', function(d){return myMap.latLngToLayerPoint(d.node2.LatLng).y});
+			}
+
+			d3.selectAll('.btn-group > .btn.btn-secondary').on('click', function() {
+				
+				var newMapType = d3.select(this).attr('data-type');
+				d3.selectAll('.btn.btn-secondary.active').classed('active', false);
+
+				cleanUpMap(activeMapType);
+				showOnMap(newMapType);
+				activeMapType = newMapType;
+			});
+
+			function cleanUpMap(type) {
+				switch(type) {
+					case 'cleared':
+						break;
+					case 'nodes_links':
+						nodeLinkG.attr('visibility', 'hidden');
+						break;
 				}
-			});
-			
-			// svg.selectAll('path')
-			// .transition()
-			// .duration(750)
-			// .call(
-			// 	//projection.translate([100, 0])
-			// );
-			
+			}
 
-			d3.json('./assets/js/data/world_oceans.json').then(function(json){
-				//Bind data and create one path per GeoJSON feature
-				svg.selectAll('path')
-					.data(json.features)
-					.enter()
-					.append('path')
-					.attr('d', path)
-					.style('fill', '#033649').style('opacity', '.25');
-			});
-
-			d3.json('./assets/js/data/world_rivers.json').then(function(json){
-				//Bind data and create one path per GeoJSON feature
-				svg.selectAll('path')
-					.data(json.features)
-					.enter()
-					.append('path')
-					.attr('d', path)
-					.style('fill', '#57C3E3');
-			});
+			function showOnMap(type) {
+				switch(type) {
+					case 'cleared':
+						break;
+					case 'nodes_links':
+						nodeLinkG.attr('visibility', 'visible');
+						break;
+				}
+			}
 		}
 	}
 }

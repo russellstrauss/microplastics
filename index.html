@@ -5,9 +5,9 @@
 	<title>Microplastics</title>
 	
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-	<link href="https://fonts.googleapis.com/css?family=Open+Sans|Cormorant&display=swap" rel="stylesheet">
+	<link href="https://fonts.googleapis.com/css?family=Open+Sans|Cormorant|Abel&display=swap" rel="stylesheet">
+	<link rel="stylesheet" href="https://unpkg.com/leaflet@1.2.0/dist/leaflet.css" />
 	<link rel="stylesheet" href="assets/sass/main.css">
-	
 </head>
 <body>
 	
@@ -35,8 +35,16 @@
 		</div>
 	</div> -->
 	
-	<div class="map fullscreen-map">
+	<div class="map fullscreen-map" id="map">
 		<div class="veil active"></div>
+		<div class="btn-group btn-group-sm" data-toggle="buttons">
+			<label class="btn btn-secondary"  data-type="cleared">
+				<input type="checkbox" name="options" autocomplete="off">Clear
+			</label>
+			<label class="btn btn-secondary active" data-type="nodes_links">
+				<input type="checkbox" name="options" autocomplete="off" checked>Show Power Grid
+			</label>
+		</div>
 	</div>
 	
 	<div class="full intro">
@@ -87,12 +95,26 @@
 		</div>
 
 		<div class="plastic-longevity">
-			<div class="graphic"></div>
+			<div class="two-column">
+				<div class="stats">
+					<ul>
+						<li class="material">Material: <span>1 Plastic cup</span></li>
+						<li class="use-time">Average use time: <span>30 minutes</span></li>
+						<li class="mass">Plastic contribution per unit: <span>157g</span></li>
+						<li class="particles">Will break down into: <span>684 particles</span></li>
+						<li class="use-time-ratio">Average usetime vs. longevity: <span>7,884,000x</span></li>
+						<li class="generations">Will break down after: <span>15.5 generations</span></li>
+					</ul>
+					
+					<div class="longevity"></div>
+				</div>
+				<div class="graphic"></div>
+			</div>
 		</div>
 	</div>
 	
 	
-	<div class="container panel">
+	<!-- <div class="container panel">
 		
 		<div class="pie-holder">
 			<div class="eat-pie"></div>
@@ -109,50 +131,11 @@
 			</div>
 		</div>
 		
-	</div>
+	</div> -->
 	
 	<div class="empty" id="showAsia"></div>
 	
-	<div class="container panel">
-		<h3>Generic Section</h3>
-		<p>
-			Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer laoreet lorem ipsum, ut sollicitudin turpis eleifend elementum. Morbi porta est eu sapien hendrerit, non fermentum nunc bibendum. Proin consequat placerat lorem, non sodales lacus cursus nec. Curabitur suscipit et arcu vel interdum. Donec a ultricies elit, vitae suscipit nibh. Morbi vel nibh at tortor semper sagittis non in orci. Nam vulputate scelerisque imperdiet. Duis nec lacus nec metus ultrices rhoncus. Donec eleifend condimentum sapien vitae vehicula. In elit arcu, mollis nec nunc in, ultrices iaculis felis. Quisque iaculis lacinia rutrum. Pellentesque ullamcorper semper sem, non ultrices leo mollis et. Donec dui justo, facilisis sagittis velit in, consequat condimentum augue. Aliquam ac justo interdum, tristique sapien sit amet, maximus nisl.
-		</p>
-		<p>
-			Suspendisse molestie elit nulla, ac faucibus leo tincidunt et. Morbi a ultrices eros. Suspendisse feugiat nibh vitae lectus dictum, et tempus lectus interdum. Quisque imperdiet et leo et gravida. Fusce vel dolor ac nulla feugiat ornare. Cras tempus rhoncus leo. Nulla ultricies dui lorem, sit amet lacinia risus lobortis et. Integer semper tincidunt nulla ut cursus. Donec elementum tellus augue, quis venenatis mauris maximus quis. Suspendisse enim dolor, rhoncus non metus feugiat, laoreet elementum nunc. Cras blandit quis nibh ac iaculis. Nunc pellentesque, libero at dignissim porttitor, odio nisl feugiat odio, eu finibus risus nisi ut tellus. Curabitur non felis cursus, tincidunt nisi eget, gravida urna. Nam ullamcorper lorem sed tellus eleifend, eget vehicula quam sodales. Aenean semper semper ante vitae placerat.
-		</p>
-		<p>
-			Ut vel dapibus enim, id porta diam. Morbi mollis pharetra sagittis. Quisque dolor arcu, consectetur eget lobortis ac, tincidunt quis dui. Phasellus ultrices, eros nec consequat venenatis, leo felis sollicitudin neque, in viverra libero eros non lacus. Aenean pellentesque tellus quis nisi tempor, sed ullamcorper tortor dapibus. Curabitur rhoncus magna est, efficitur semper mauris vulputate non. Vivamus arcu nulla, placerat accumsan nibh a, blandit tincidunt elit. Etiam lobortis iaculis nisi, ut condimentum quam laoreet at. Mauris hendrerit pharetra elit, id efficitur libero porttitor vitae. Vestibulum ultrices tempor facilisis. Praesent ornare nibh a velit vestibulum euismod. Vivamus condimentum felis vel odio molestie bibendum.
-		</p>
-		<p>
-			Cras laoreet justo et pretium efficitur. Maecenas nulla massa, pellentesque et pharetra sagittis, pellentesque sit amet mauris. Nunc arcu eros, suscipit at viverra non, consequat ut mi. Curabitur condimentum dolor a fringilla pretium. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Cras sed nisl ut tortor tempor congue non eget ex. Sed mauris diam, feugiat sit amet elit id, volutpat dictum turpis.
-		</p>
-		<p>
-			Donec mollis vitae est at pellentesque. Nullam ultrices dui ornare dignissim suscipit. Cras dapibus quam lorem. Proin nisl enim, iaculis tempus orci iaculis, malesuada facilisis libero. Sed pretium mauris sapien, vitae venenatis arcu mattis tincidunt. Donec tincidunt ligula neque, sit amet hendrerit quam ullamcorper ut. Cras ut quam imperdiet, semper felis et, egestas tellus. Nam eu aliquam lectus. Pellentesque tempor egestas arcu, eu luctus mauris consectetur at. Vivamus vitae magna dui. Nullam malesuada justo id sem euismod eleifend. In turpis justo, consequat nec odio sed, condimentum vulputate eros.
-		</p>
-	</div>
-	
-	<div class="empty" id="showUS"></div>
-	
-	<div class="container reading panel left" id="showJapan">
-		<h3>Section with Right Aligned Map</h3>
-		<p>
-			Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer laoreet lorem ipsum, ut sollicitudin turpis eleifend elementum. Morbi porta est eu sapien hendrerit, non fermentum nunc bibendum. Proin consequat placerat lorem, non sodales lacus cursus nec. Curabitur suscipit et arcu vel interdum. Donec a ultricies elit, vitae suscipit nibh. Morbi vel nibh at tortor semper sagittis non in orci. Nam vulputate scelerisque imperdiet. Duis nec lacus nec metus ultrices rhoncus. Donec eleifend condimentum sapien vitae vehicula. In elit arcu, mollis nec nunc in, ultrices iaculis felis. Quisque iaculis lacinia rutrum. Pellentesque ullamcorper semper sem, non ultrices leo mollis et. Donec dui justo, facilisis sagittis velit in, consequat condimentum augue. Aliquam ac justo interdum, tristique sapien sit amet, maximus nisl.
-		</p>
-		<p>
-			Suspendisse molestie elit nulla, ac faucibus leo tincidunt et. Morbi a ultrices eros. Suspendisse feugiat nibh vitae lectus dictum, et tempus lectus interdum. Quisque imperdiet et leo et gravida. Fusce vel dolor ac nulla feugiat ornare. Cras tempus rhoncus leo. Nulla ultricies dui lorem, sit amet lacinia risus lobortis et. Integer semper tincidunt nulla ut cursus. Donec elementum tellus augue, quis venenatis mauris maximus quis. Suspendisse enim dolor, rhoncus non metus feugiat, laoreet elementum nunc. Cras blandit quis nibh ac iaculis. Nunc pellentesque, libero at dignissim porttitor, odio nisl feugiat odio, eu finibus risus nisi ut tellus. Curabitur non felis cursus, tincidunt nisi eget, gravida urna. Nam ullamcorper lorem sed tellus eleifend, eget vehicula quam sodales. Aenean semper semper ante vitae placerat.
-		</p>
-		<h3>Heading</h3>
-		<p>
-			Ut vel dapibus enim, id porta diam. Morbi mollis pharetra sagittis. Quisque dolor arcu, consectetur eget lobortis ac, tincidunt quis dui. Phasellus ultrices, eros nec consequat venenatis, leo felis sollicitudin neque, in viverra libero eros non lacus. Aenean pellentesque tellus quis nisi tempor, sed ullamcorper tortor dapibus. Curabitur rhoncus magna est, efficitur semper mauris vulputate non. Vivamus arcu nulla, placerat accumsan nibh a, blandit tincidunt elit. Etiam lobortis iaculis nisi, ut condimentum quam laoreet at. Mauris hendrerit pharetra elit, id efficitur libero porttitor vitae. Vestibulum ultrices tempor facilisis. Praesent ornare nibh a velit vestibulum euismod. Vivamus condimentum felis vel odio molestie bibendum.
-		</p>
-		<p>
-			Cras laoreet justo et pretium efficitur. Maecenas nulla massa, pellentesque et pharetra sagittis, pellentesque sit amet mauris. Nunc arcu eros, suscipit at viverra non, consequat ut mi. Curabitur condimentum dolor a fringilla pretium. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Cras sed nisl ut tortor tempor congue non eget ex. Sed mauris diam, feugiat sit amet elit id, volutpat dictum turpis.
-		</p>
-		<p>
-			Donec mollis vitae est at pellentesque. Nullam ultrices dui ornare dignissim suscipit. Cras dapibus quam lorem. Proin nisl enim, iaculis tempus orci iaculis, malesuada facilisis libero. Sed pretium mauris sapien, vitae venenatis arcu mattis tincidunt. Donec tincidunt ligula neque, sit amet hendrerit quam ullamcorper ut. Cras ut quam imperdiet, semper felis et, egestas tellus. Nam eu aliquam lectus. Pellentesque tempor egestas arcu, eu luctus mauris consectetur at. Vivamus vitae magna dui. Nullam malesuada justo id sem euismod eleifend. In turpis justo, consequat nec odio sed, condimentum vulputate eros.
-		</p>
-	</div>
+
 	
 	<!-- <div class="container reading small-graphic">
 		<div class="horizontal-bar"></div>
@@ -222,6 +205,14 @@
 		</div>
 		
 	</div>
+	
+	<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
+	<script src="http://d3js.org/d3.v5.min.js"></script>
+	<script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
+	<script src="https://unpkg.com/leaflet@1.2.0/dist/leaflet.js"></script>
+	<script src='https://npmcdn.com/@turf/turf/turf.min.js'></script>
 	
 	<script src="assets/vendors/js/vendors.js"></script>
 	<script src="assets/js/bundle.js"></script>

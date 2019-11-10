@@ -1,6 +1,30 @@
 .plastic-longevity {
 	margin: 100px auto;
 	
+	.two-column {
+		overflow: visible;
+	}
+	
+	.stats {
+		padding: 20px 130px;
+		
+		ul {
+			font-size: 18px;
+			font-weight: bold;
+			width: 800px;
+			
+			li {
+				display: flex;
+				justify-content: space-between;
+				margin-bottom: 20px;
+				
+				span {
+					font-weight: normal;
+				}
+			}
+		}
+	}
+	
 	.graphic {
 		
 		svg {

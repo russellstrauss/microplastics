@@ -482,10 +482,10 @@ module.exports = function () {
   var data;
   var width;
   if (graphic) width = parseInt(graphic.offsetWidth);
-  var height = 600;
+  var height = 500;
   var svg;
   var cupWidth, cupHeight;
-  console.log(width);
+  var timescaleHeight = 200;
   var center = {
     x: width / 2,
     y: height / 2
@@ -493,6 +493,7 @@ module.exports = function () {
   return {
     init: function init() {
       this.setUpPlot();
+      this.longevityTimescale();
     },
     setUpPlot: function setUpPlot() {
       var self = this;
@@ -527,7 +528,7 @@ module.exports = function () {
         return -Math.pow(d.radius, 2.0) * forceStrength;
       }
 
-      var simulation = d3.forceSimulation().velocityDecay(0.1) //.force('charge', charge)
+      var simulation = d3.forceSimulation().velocityDecay(0.03) //.force('charge', charge)
       .force('charge', d3.forceManyBody().strength(-.5)).force('repelForce', d3.forceManyBody().strength(-1).distanceMax(10).distanceMin(5)).force('center', d3.forceCenter(center.x, center.y));
       var nodeEnter = nodeG.selectAll().data(particles).enter().append('circle').attr('class', 'node').attr('r', function (d) {
         return d.radius;
@@ -535,11 +536,11 @@ module.exports = function () {
         return 'rgb(200, 200, 200)';
       }).attr('stroke', function (d) {
         return 'rgba(0, 0, 0, .5)';
-      }) //.attr('opacity', 0)
-      .attr('stroke-width', 1);
+      }).attr('opacity', 0).attr('stroke-width', 1);
 
       var updateParticles = function updateParticles() {
-        nodeEnter = nodeG.selectAll('.node').data(particles).merge(nodeEnter);
+        nodeEnter = nodeG.selectAll('.node').transition().duration(500) // remove me
+        .attr('opacity', 1).data(particles).merge(nodeEnter);
         nodeEnter.exit().transition().remove(); // Update and restart the simulation.
 
         simulation.nodes(nodeEnter);
@@ -559,7 +560,7 @@ module.exports = function () {
         }
 
         updateParticles();
-        svg.select('.cup').attr('opacity', 0); //nodeEnter.attr('opacity', 1);
+        svg.select('.cup').attr('opacity', 0);
       });
       simulation.nodes(particles).on('tick', tickSimulation);
       var done = false;
@@ -572,7 +573,60 @@ module.exports = function () {
         });
       }
     },
-    longevityTimescale: function longevityTimescale() {}
+    longevityTimescale: function longevityTimescale() {
+      var self = this;
+      var data = [{
+        'river': 'polypropylene',
+        'countries': ['Indonesia'],
+        'amount': 450
+      }];
+      var graphs = document.querySelectorAll('.longevity');
+      graphs.forEach(function (graph) {
+        var graphicContainer = graph.parentElement;
+        var padding = {
+          top: 60,
+          right: 50,
+          bottom: 80,
+          left: 100
+        };
+        var width = graphicContainer.offsetWidth - padding.left - padding.right;
+        var height = timescaleHeight - padding.top - padding.bottom;
+        var barHeight = 20;
+        var y = d3.scaleBand().range([height, 0]);
+        var x = d3.scaleLinear().range([0, width]);
+        var svg = d3.select(graph).append('svg').attr('width', width + padding.left + padding.right).attr('height', height + padding.top + padding.bottom).append('g').attr('transform', 'translate(' + padding.left + ',' + padding.top + ')'); // format the data
+
+        data.forEach(function (d) {
+          d.amount = +d.amount;
+        });
+
+        var compare = function compare(a, b) {
+          return b.amount - a.amount;
+        };
+
+        data = data.sort(compare);
+        var maxValue = d3.max(data, function (d) {
+          return d.amount;
+        }); // Scale the range of the data in the domains
+
+        x.domain([0, maxValue + maxValue * .02]);
+        y.domain(data.map(function (d) {
+          return d.river;
+        }));
+        var xAxisHeight = 20;
+        var xAxisLabel = svg.append('text').attr('class', 'x-axis-label').html('Years to Break Down');
+        var textWidth = xAxisLabel.node().getBBox().width;
+        var textHeight = xAxisLabel.node().getBBox().height;
+        xAxisLabel.attr('transform', 'translate(' + (width / 2 - textWidth) + ', ' + (height + xAxisHeight + padding.bottom / 2) + ')');
+        svg.selectAll('.bar').data(data).enter().append('rect').attr('class', 'bar').attr('width', function (d) {
+          return x(d.amount);
+        }).attr('y', function (d) {
+          return y(d.river) + (y.bandwidth() / 2 - barHeight / 2);
+        }).attr('height', barHeight);
+        svg.append('g').attr('transform', 'translate(0,' + (height + 6) + ')').call(d3.axisBottom(x));
+        svg.append('g').call(d3.axisLeft(y).tickSize(0));
+      });
+    }
   };
 };
 

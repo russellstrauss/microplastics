@@ -136,9 +136,8 @@ module.exports = function () {
 
 			var data = [
 				{
-					'river': 'polypropylene',
-					'countries': ['Indonesia'],
-					'amount': 450
+					'category': '',
+					'years': 450
 				}
 			];
 				
@@ -148,7 +147,7 @@ module.exports = function () {
 				
 				let graphicContainer = graph.parentElement;
 				var padding = {
-					top: 60,
+					top: 5,
 					right: 50,
 					bottom: 80,
 					left: 100
@@ -169,23 +168,23 @@ module.exports = function () {
 	
 				// format the data
 				data.forEach(function (d) {
-					d.amount = +d.amount;
+					d.years = +d.years;
 				});
 				
 				let compare = function(a, b) {
-					return b.amount - a.amount;
+					return b.years - a.years;
 				};
 				
 				data = data.sort(compare);
 				
 				let maxValue = d3.max(data, function (d) {
-					return d.amount;
+					return d.years;
 				});
 				
 				// Scale the range of the data in the domains
-				x.domain([0, (maxValue + maxValue * .02)])
+				x.domain([0, (maxValue + maxValue * .2)])
 				y.domain(data.map(function (d) {
-					return d.river;
+					return d.category;
 				}));
 				
 				let xAxisHeight = 20;
@@ -202,10 +201,10 @@ module.exports = function () {
 					.enter().append('rect')
 					.attr('class', 'bar')
 					.attr('width', function (d) {
-						return x(d.amount);
+						return x(d.years);
 					})
 					.attr('y', function (d) {
-						return y(d.river) + (y.bandwidth() / 2 - barHeight / 2);
+						return y(d.category) + (y.bandwidth() / 2 - barHeight / 2);
 					})
 					.attr('height', barHeight);
 	

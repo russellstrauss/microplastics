@@ -576,15 +576,14 @@ module.exports = function () {
     longevityTimescale: function longevityTimescale() {
       var self = this;
       var data = [{
-        'river': 'polypropylene',
-        'countries': ['Indonesia'],
-        'amount': 450
+        'category': '',
+        'years': 450
       }];
       var graphs = document.querySelectorAll('.longevity');
       graphs.forEach(function (graph) {
         var graphicContainer = graph.parentElement;
         var padding = {
-          top: 60,
+          top: 5,
           right: 50,
           bottom: 80,
           left: 100
@@ -597,21 +596,21 @@ module.exports = function () {
         var svg = d3.select(graph).append('svg').attr('width', width + padding.left + padding.right).attr('height', height + padding.top + padding.bottom).append('g').attr('transform', 'translate(' + padding.left + ',' + padding.top + ')'); // format the data
 
         data.forEach(function (d) {
-          d.amount = +d.amount;
+          d.years = +d.years;
         });
 
         var compare = function compare(a, b) {
-          return b.amount - a.amount;
+          return b.years - a.years;
         };
 
         data = data.sort(compare);
         var maxValue = d3.max(data, function (d) {
-          return d.amount;
+          return d.years;
         }); // Scale the range of the data in the domains
 
-        x.domain([0, maxValue + maxValue * .02]);
+        x.domain([0, maxValue + maxValue * .2]);
         y.domain(data.map(function (d) {
-          return d.river;
+          return d.category;
         }));
         var xAxisHeight = 20;
         var xAxisLabel = svg.append('text').attr('class', 'x-axis-label').html('Years to Break Down');
@@ -619,9 +618,9 @@ module.exports = function () {
         var textHeight = xAxisLabel.node().getBBox().height;
         xAxisLabel.attr('transform', 'translate(' + (width / 2 - textWidth) + ', ' + (height + xAxisHeight + padding.bottom / 2) + ')');
         svg.selectAll('.bar').data(data).enter().append('rect').attr('class', 'bar').attr('width', function (d) {
-          return x(d.amount);
+          return x(d.years);
         }).attr('y', function (d) {
-          return y(d.river) + (y.bandwidth() / 2 - barHeight / 2);
+          return y(d.category) + (y.bandwidth() / 2 - barHeight / 2);
         }).attr('height', barHeight);
         svg.append('g').attr('transform', 'translate(0,' + (height + 6) + ')').call(d3.axisBottom(x));
         svg.append('g').call(d3.axisLeft(y).tickSize(0));

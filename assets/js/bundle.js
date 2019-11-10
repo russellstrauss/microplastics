@@ -158,7 +158,6 @@ module.exports = function () {
 module.exports = function () {
   var containerWidth = parseInt(document.querySelector('.fullscreen-map').offsetWidth);
   var containerHeight = parseInt(document.querySelector('.fullscreen-map').offsetHeight);
-  var map, zoom, center;
   var asia = {
     width: containerWidth,
     height: 800,
@@ -166,14 +165,19 @@ module.exports = function () {
   };
   var china = {
     lat: 23.638,
-    long: 120.998 //asia.projection = d3.geoMercator().translate([asia.width * .25, asia.height * .75]).scale([asia.scale]);
-
+    "long": 120.998
   };
-  asia.projection = d3.geoMercator().center([-84.386330, 33.753746]).scale(1500);
+  var atl = new L.LatLng(33.7771, -84.3900); //var map = L.map('map').setView(atl, 5);
+
+  var chinaLocation = new L.LatLng(china.lat, china["long"]);
+  var map = L.map('map').setView(chinaLocation, 5);
+  var svgLayer = L.svg();
+  svgLayer.addTo(map);
   return {
     init: function init() {
       var self = this;
-      self.v5Map(); // self.setScrollPoints();
+      self.v5Map();
+      self.showCountries(); // self.setScrollPoints();
     },
     setScrollPoints: function setScrollPoints() {
       var self = this;
@@ -181,78 +185,44 @@ module.exports = function () {
       var waypoint = new Waypoint({
         element: document.getElementById('showAsia'),
         handler: function handler(direction) {
-          if (direction === 'down') {
-            map.transition().duration(2000).ease(d3.easeCubicInOut).call(zoom.transform, d3.zoomIdentity.translate(containerWidth / 2, containerHeight / 2).scale(.5).translate(-4000, 500));
-          } else {
-            veil.classList.add('active'); //self.resetMap();
-          }
+          if (direction === 'down') {} else {}
         },
         offset: 0
       });
-      waypoint = new Waypoint({
-        element: document.getElementById('showAsia'),
-        handler: function handler(direction) {
-          if (direction === 'down') {
-            veil.classList.remove('active');
-          } else {//veil.classList.add('active');
-          }
-        },
-        offset: 500
-      });
-      waypoint = new Waypoint({
-        element: document.getElementById('showUS'),
-        handler: function handler(direction) {
-          if (direction === 'down') {
-            map.transition().duration(1200).ease(d3.easeCubicInOut).call(zoom.transform, d3.zoomIdentity.translate(containerWidth / 2, containerHeight / 2).scale(.75).translate(2500, 1500));
-          } else {//veil.classList.add('active');
-          }
-        }
-      });
-      waypoint = new Waypoint({
-        element: document.getElementById('showJapan'),
-        handler: function handler(direction) {
-          if (direction === 'down') {
-            map.transition().duration(1200).ease(d3.easeCubicInOut).call(zoom.transform, d3.zoomIdentity.translate(containerWidth / 2, containerHeight / 2).scale(1).translate(-4500, 1650));
-          } else {//veil.classList.add('active');
-          }
-        },
-        offset: 800
-      });
     },
     v5Map: function v5Map() {
-      var map = d3.select('.fullscreen-map');
-      var mapWidth = parseInt(map.offsetWidth);
-      var mapHeight = parseInt(map.offsetHeight);
+      var mapElement = d3.select('.fullscreen-map');
+      var mapWidth = parseInt(mapElement.offsetWidth);
+      var mapHeight = parseInt(mapElement.offsetHeight);
       var atlLatLng = new L.LatLng(33.7771, -84.3900);
-      var chinaLocation = new L.LatLng(china.lat, china.long);
-      var myMap = L.map('map').setView(chinaLocation, 5);
       var vertices = d3.map();
       var activeMapType = 'nodes_links';
       L.tileLayer('https://stamen-tiles-{s}.a.ssl.fastly.net/toner-background/{z}/{x}/{y}{r}.png?access_token={accessToken}', {
         maxZoom: 10,
         minZoom: 3,
         id: 'mapbox.light',
-        accessToken: 'pk.eyJ1IjoiamFnb2R3aW4iLCJhIjoiY2lnOGQxaDhiMDZzMXZkbHYzZmN4ZzdsYiJ9.Uwh_L37P-qUoeC-MBSDteA'
-      }).addTo(myMap);
-      var svgLayer = L.svg();
-      svgLayer.addTo(myMap);
+        accessToken: 'pk.eyJ1IjoiamFnb2R3aW4iLCJhIjoiY2lnOGQxaDhiMDZzMXZkbHYzZmN4ZzdsYiJ9.Uwh_L37P-qUoeC-MBSDteA',
+        edgeBufferTiles: 2
+      }).addTo(map); // var svgLayer = L.svg();
+      // svgLayer.addTo(map)
+
       var svg = d3.select('#map').select('svg');
       var nodeLinkG = svg.select('g').attr('class', 'leaflet-zoom-hide');
 
       function updateLayers() {
         nodeLinkG.selectAll('.grid-node').attr('cx', function (d) {
-          return myMap.latLngToLayerPoint(d.LatLng).x;
+          return map.latLngToLayerPoint(d.LatLng).x;
         }).attr('cy', function (d) {
-          return myMap.latLngToLayerPoint(d.LatLng).y;
+          return map.latLngToLayerPoint(d.LatLng).y;
         });
         nodeLinkG.selectAll('.grid-link').attr('x1', function (d) {
-          return myMap.latLngToLayerPoint(d.node1.LatLng).x;
+          return map.latLngToLayerPoint(d.node1.LatLng).x;
         }).attr('y1', function (d) {
-          return myMap.latLngToLayerPoint(d.node1.LatLng).y;
+          return map.latLngToLayerPoint(d.node1.LatLng).y;
         }).attr('x2', function (d) {
-          return myMap.latLngToLayerPoint(d.node2.LatLng).x;
+          return map.latLngToLayerPoint(d.node2.LatLng).x;
         }).attr('y2', function (d) {
-          return myMap.latLngToLayerPoint(d.node2.LatLng).y;
+          return map.latLngToLayerPoint(d.node2.LatLng).y;
         });
       }
 
@@ -285,6 +255,31 @@ module.exports = function () {
             break;
         }
       }
+    },
+    showCountries: function showCountries() {
+      d3.json('./assets/js/data/ne_10m_admin_0_countries.json').then(function (json) {
+        //console.log(json);
+        function style(feature) {
+          console.log(feature.properties.NAME); // if (feature.properties.NAME === 'China') {
+          // 	return {
+          // 		fillColor: 'yellow',
+          // 		weight: 2,
+          // 		opacity: .5,
+          // 		color: 'black',
+          // 		fillOpacity: 0.5
+          // 	};
+          // }
+          // return {
+          // 	fillColor: 'red',
+          // 	weight: 2,
+          // 	opacity: .5,
+          // 	color: 'black',
+          // 	fillOpacity: 0.5
+          // };
+        } // var countriesLayer = L.geoJson(json, {style: style});
+        // countriesLayer.addTo(map);
+
+      });
     }
   };
 };
@@ -485,7 +480,7 @@ module.exports = function () {
   var height = 500;
   var svg;
   var cupWidth, cupHeight;
-  var timescaleHeight = 200;
+  var timescaleHeight = 140;
   var center = {
     x: width / 2,
     y: height / 2
@@ -590,7 +585,7 @@ module.exports = function () {
         };
         var width = graphicContainer.offsetWidth - padding.left - padding.right;
         var height = timescaleHeight - padding.top - padding.bottom;
-        var barHeight = 20;
+        var barHeight = 15;
         var y = d3.scaleBand().range([height, 0]);
         var x = d3.scaleLinear().range([0, width]);
         var svg = d3.select(graph).append('svg').attr('width', width + padding.left + padding.right).attr('height', height + padding.top + padding.bottom).append('g').attr('transform', 'translate(' + padding.left + ',' + padding.top + ')'); // format the data

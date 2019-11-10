@@ -7,7 +7,7 @@ module.exports = function () {
 	var height = 500;
 	var svg;
 	var cupWidth, cupHeight;
-	var timescaleHeight = 200;
+	var timescaleHeight = 140;
 	
 	var center = {
 		x: width / 2,
@@ -155,7 +155,7 @@ module.exports = function () {
 				
 				var width = graphicContainer.offsetWidth - padding.left - padding.right;
 				var height = timescaleHeight - padding.top - padding.bottom;
-				var barHeight = 20;
+				var barHeight = 15;
 	
 				var y = d3.scaleBand().range([height, 0]);
 				var x = d3.scaleLinear().range([0, width]);

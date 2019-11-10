@@ -32,10 +32,11 @@ gulp.task('sync', ['sass'], function() {
 
 var vendors = {
 	merge: [
-		'./assets/vendors/js/noframework.waypoints.min.js',
+		'./assets/vendors/js/d3.v5.min.js',
 		'./assets/vendors/js/d3-tip.js',
-		//'./assets/vendors/js/d3.v4.js'
-		'./assets/vendors/js/d3.v5.min.js'
+		'./assets/vendors/js/leaflet.js',
+		'./assets/vendors/js/leaflet.edgebuffer.js',
+		'./assets/vendors/js/noframework.waypoints.min.js',
 	]
 };
 

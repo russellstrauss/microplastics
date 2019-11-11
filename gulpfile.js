@@ -36,6 +36,7 @@ var vendors = {
 		'./assets/vendors/js/d3-tip.js',
 		'./assets/vendors/js/leaflet.js',
 		'./assets/vendors/js/leaflet.edgebuffer.js',
+		'./assets/vendors/js/snap.svg-min.js',
 		'./assets/vendors/js/noframework.waypoints.min.js',
 	]
 };

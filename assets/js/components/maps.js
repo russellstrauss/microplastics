@@ -1,3 +1,5 @@
+require('leaflet-arc');
+
 module.exports = function() {
 	
 	var containerWidth = parseInt(document.querySelector('.fullscreen-map').offsetWidth);
@@ -12,10 +14,11 @@ module.exports = function() {
 		lat: 23.638,
 		long: 120.998
 	}
-	var atl = new L.LatLng(33.7771, -84.3900);
-	//var map = L.map('map').setView(atl, 5);
+	
 	var chinaLocation = new L.LatLng(china.lat, china.long);
 	var map = L.map('map').setView(chinaLocation, 5);
+	var svg = d3.select('#map').select('svg');
+	var pointsGroup = svg.select('g').attr('class', 'points').append('g');
 	
 	var svgLayer = L.svg();
 	svgLayer.addTo(map);
@@ -28,6 +31,7 @@ module.exports = function() {
 			
 			self.v5Map();
 			self.showCountries();
+			self.flightPaths();
 			// self.setScrollPoints();
 		},
 		
@@ -56,8 +60,6 @@ module.exports = function() {
 			var mapElement = d3.select('.fullscreen-map');
 			var mapWidth = parseInt(mapElement.offsetWidth);
 			var mapHeight = parseInt(mapElement.offsetHeight);
-			var atlLatLng = new L.LatLng(33.7771, -84.3900);
-			
 			
 			var vertices = d3.map();
 			var activeMapType = 'nodes_links';
@@ -69,62 +71,11 @@ module.exports = function() {
 				accessToken: 'pk.eyJ1IjoiamFnb2R3aW4iLCJhIjoiY2lnOGQxaDhiMDZzMXZkbHYzZmN4ZzdsYiJ9.Uwh_L37P-qUoeC-MBSDteA',
 				edgeBufferTiles: 2
 			}).addTo(map);
-
-			// var svgLayer = L.svg();
-			// svgLayer.addTo(map)
-
-			var svg = d3.select('#map').select('svg');
-			var nodeLinkG = svg.select('g')
-			.attr('class', 'leaflet-zoom-hide');
-
-			function updateLayers() {
-				nodeLinkG.selectAll('.grid-node')
-				.attr('cx', function(d){return map.latLngToLayerPoint(d.LatLng).x})
-				.attr('cy', function(d){return map.latLngToLayerPoint(d.LatLng).y});
-				
-				nodeLinkG.selectAll('.grid-link')
-				.attr('x1', function(d){return map.latLngToLayerPoint(d.node1.LatLng).x})
-				.attr('y1', function(d){return map.latLngToLayerPoint(d.node1.LatLng).y})
-				.attr('x2', function(d){return map.latLngToLayerPoint(d.node2.LatLng).x})
-				.attr('y2', function(d){return map.latLngToLayerPoint(d.node2.LatLng).y});
-			}
-
-			d3.selectAll('.btn-group > .btn.btn-secondary').on('click', function() {
-				
-				var newMapType = d3.select(this).attr('data-type');
-				d3.selectAll('.btn.btn-secondary.active').classed('active', false);
-
-				cleanUpMap(activeMapType);
-				showOnMap(newMapType);
-				activeMapType = newMapType;
-			});
-
-			function cleanUpMap(type) {
-				switch(type) {
-					case 'cleared':
-						break;
-					case 'nodes_links':
-						nodeLinkG.attr('visibility', 'hidden');
-						break;
-				}
-			}
-
-			function showOnMap(type) {
-				switch(type) {
-					case 'cleared':
-						break;
-					case 'nodes_links':
-						nodeLinkG.attr('visibility', 'visible');
-						break;
-				}
-			}
 		},
 		
 		showCountries: function() {
 			
 			d3.json('./assets/js/data/ne_10m_admin_0_countries.json').then(function(json){
-				
-				//console.log(json);
 				
 				function style(feature) {
 					console.log(feature.properties.NAME);
@@ -151,6 +102,37 @@ module.exports = function() {
 				// var countriesLayer = L.geoJson(json, {style: style});
 				// countriesLayer.addTo(map);
 			});
+		},
+		
+		flightPaths: function() {
+			
+			var arc = L.Polyline.Arc([23.697809, 120.960518], [35.689487, 139.691711], {
+				color: 'rgba(255, 225, 255, .5)',
+				vertices: 250
+			}).addTo(map);
+			
+			var snapMap = Snap("#map");
+			var g = Snap("#svgElem");
+			if (g) {
+				
+				var rect = g.select('#rect'),
+				invisiblePath = g.select('#followPath_invisible'), 
+				//invisiblePath = snapMap.select('path'), 
+				lenPath = Snap.path.getTotalLength(invisiblePath.attr("d")), 
+				path0Pos = invisiblePath.getPointAtLength(0);
+				
+				rect.attr({
+					transform: 't' + [path0Pos.x, path0Pos.y] + 'r' + (path0Pos.alpha - 90)
+				});
+				
+				Snap.animate(0, lenPath, function(val) {
+					var pos = invisiblePath.getPointAtLength(val);
+	
+					rect.attr({
+						transform: 't' + [pos.x, pos.y] + 'r' + (pos.alpha - 90)
+					});
+				}, 4000, mina.easeinout);
+			}
 		}
 	}
 }

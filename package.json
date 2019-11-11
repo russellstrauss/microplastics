@@ -24,9 +24,10 @@
     "gulp-watch": "^4.3.5",
     "jshint": "^2.10.3",
     "jshint-stylish": "^2.2.1",
-    "leaflet.bezier": "^0.1.0",
     "node-notifier": "^5.2.1",
-    "three": "^0.107.0",
     "vinyl-source-stream": "^2.0.0"
+  },
+  "dependencies": {
+    "leaflet-arc": "^1.0.2"
   }
 }

@@ -4,6 +4,8 @@ module.exports = function() {
 	
 	var containerWidth = parseInt(document.querySelector('.fullscreen-map').offsetWidth);
 	var containerHeight = parseInt(document.querySelector('.fullscreen-map').offsetHeight);
+	let mapWithLabels = 'https://stamen-tiles-{s}.a.ssl.fastly.net/toner/{z}/{x}/{y}{r}.png?access_token={accessToken}';
+	let mapWithoutLabels = 'https://stamen-tiles-{s}.a.ssl.fastly.net/toner-background/{z}/{x}/{y}{r}.png?access_token={accessToken}';
 	
 	var asia = {
 		width: containerWidth,
@@ -16,7 +18,7 @@ module.exports = function() {
 	}
 	
 	var chinaLocation = new L.LatLng(china.lat, china.long);
-	var map = L.map('map').setView(chinaLocation, 5);
+	var map = L.map('map', { zoomControl: false }).setView(chinaLocation, 5);
 	var svg = d3.select('#map').select('svg');
 	var pointsGroup = svg.select('g').attr('class', 'points').append('g');
 	
@@ -57,16 +59,33 @@ module.exports = function() {
 		
 		v5Map: function() {
 			
+			let self = this;
 			var mapElement = d3.select('.fullscreen-map');
 			var mapWidth = parseInt(mapElement.offsetWidth);
 			var mapHeight = parseInt(mapElement.offsetHeight);
 			
 			var vertices = d3.map();
 			var activeMapType = 'nodes_links';
-
-			L.tileLayer('https://stamen-tiles-{s}.a.ssl.fastly.net/toner-background/{z}/{x}/{y}{r}.png?access_token={accessToken}', {
-				maxZoom: 10,
-				minZoom: 3,
+			
+			L.tileLayer(mapWithoutLabels, {
+				id: 'mapbox.light',
+				accessToken: 'pk.eyJ1IjoiamFnb2R3aW4iLCJhIjoiY2lnOGQxaDhiMDZzMXZkbHYzZmN4ZzdsYiJ9.Uwh_L37P-qUoeC-MBSDteA',
+				edgeBufferTiles: 2,
+				reuseTiles: true,
+				format: 'jpg70'
+			}).addTo(map);
+		},
+		
+		showLabels: function() {
+			L.tileLayer(mapWithLabels, {
+				id: 'mapbox.light',
+				accessToken: 'pk.eyJ1IjoiamFnb2R3aW4iLCJhIjoiY2lnOGQxaDhiMDZzMXZkbHYzZmN4ZzdsYiJ9.Uwh_L37P-qUoeC-MBSDteA',
+				edgeBufferTiles: 2
+			}).addTo(map);
+		},
+		
+		hideLabels: function() {
+			L.tileLayer(mapWithoutLabels, {
 				id: 'mapbox.light',
 				accessToken: 'pk.eyJ1IjoiamFnb2R3aW4iLCJhIjoiY2lnOGQxaDhiMDZzMXZkbHYzZmN4ZzdsYiJ9.Uwh_L37P-qUoeC-MBSDteA',
 				edgeBufferTiles: 2
@@ -106,10 +125,10 @@ module.exports = function() {
 		
 		flightPaths: function() {
 			
-			var arc = L.Polyline.Arc([23.697809, 120.960518], [35.689487, 139.691711], {
-				color: 'rgba(255, 225, 255, .5)',
-				vertices: 250
-			}).addTo(map);
+			// var arc = L.Polyline.Arc([23.697809, 120.960518], [35.689487, 139.691711], {
+			// 	color: 'rgba(255, 225, 255, .5)',
+			// 	vertices: 250
+			// }).addTo(map);
 			
 			var snapMap = Snap("#map");
 			var g = Snap("#svgElem");

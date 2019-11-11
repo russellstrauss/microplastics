@@ -921,7 +921,7 @@ module.exports = function () {
 
       if (pagination) {
         var waypoint = new Waypoint({
-          element: document.querySelector('.pagination'),
+          element: pagination,
           handler: function handler(direction) {
             if (direction === 'down') {
               pagination.classList.add('active');
@@ -931,6 +931,20 @@ module.exports = function () {
           },
           offset: 249
         });
+        var graphic = document.querySelector('.plastic-longevity');
+        var hidePagination = new Waypoint({
+          element: graphic,
+          handler: function handler(direction) {
+            if (direction === 'down') {
+              pagination.style.opacity = "0";
+            } else {
+              pagination.style.opacity = "1";
+            }
+          },
+          offset: 800
+        });
+        var scrollTop = window.pageYOffset || (document.documentElement || document.body.parentNode || document.body).scrollTop;
+        console.log(scrollTop);
       }
     }
   };

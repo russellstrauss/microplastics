@@ -20,13 +20,13 @@ module.exports = function() {
 		},
 		
 		pagination: function() {
-			
+
 			let pagination = document.querySelector('.pagination');
 			
 			if (pagination) {
 				
 				var waypoint = new Waypoint({
-					element: document.querySelector('.pagination'),
+					element: pagination,
 					handler: function(direction) {
 						
 						if (direction === 'down') {
@@ -38,6 +38,25 @@ module.exports = function() {
 					},
 					offset: 249
 				});
+								
+				let graphic = document.querySelector('.plastic-longevity');
+				var hidePagination = new Waypoint({
+					element: graphic,
+					handler: function(direction) {
+						
+						if (direction === 'down') {
+							pagination.style.opacity = "0";
+						}
+						else {
+							pagination.style.opacity = "1";
+						}
+					},
+					offset: 800
+				});
+				
+				var scrollTop = window.pageYOffset || (document.documentElement || document.body.parentNode || document.body).scrollTop;
+				
+				console.log(scrollTop);
 			}
 		}
 	}

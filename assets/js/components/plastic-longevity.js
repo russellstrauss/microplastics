@@ -63,7 +63,7 @@ module.exports = function () {
 			
 			var forceStrength = .1;
 			function charge(d) {
-				console.log(-Math.pow(d.radius, 2.0) * forceStrength)
+				//console.log(-Math.pow(d.radius, 2.0) * forceStrength)
 				return -Math.pow(d.radius, 2.0) * forceStrength;
 			}
 			

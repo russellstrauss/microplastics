@@ -492,6 +492,7 @@ module.exports = function () {
           cupHeight = 410;
       var image = svg.append('svg:image').attr('xlink:href', './assets/svg/starbucks.svg').attr('width', cupWidth).attr('height', cupHeight).attr('x', center.x - cupWidth / 2).attr('y', center.y - cupHeight / 2).attr('class', 'cup');
       self.particles();
+      self.useRatio();
     },
     particles: function particles() {
       var colorScale = d3.scaleSequential(d3.interpolateViridis);
@@ -613,6 +614,64 @@ module.exports = function () {
         svg.append('g').attr('transform', 'translate(0,' + (height + 6) + ')').call(d3.axisBottom(x));
         svg.append('g').call(d3.axisLeft(y).tickSize(0));
       });
+    },
+    useRatio: function useRatio() {
+      var useTimeHours = 3;
+      var decomposeYears = 450;
+      var decomposeHours = decomposeYears * 8760;
+      var ratio = decomposeHours / useTimeHours;
+      var width;
+      var element = document.querySelector('.use-ratio');
+
+      if (element) {
+        width = parseInt(element.offsetWidth);
+      }
+
+      var canvas = document.querySelector('#dotCanvas');
+      var context = canvas.getContext('2d');
+      var height = 1200;
+      var vw = width,
+          vh = height;
+      var dotRadius = 1;
+      var cellSize = 4;
+
+      function resizeCanvas() {
+        canvas.width = vw;
+        canvas.height = vh;
+        drawDots();
+      }
+
+      resizeCanvas();
+
+      function drawDots() {
+        for (var x = dotRadius * 2; x < vw; x += cellSize) {
+          for (var y = dotRadius * 2; y < vh; y += cellSize) {
+            context.beginPath();
+            context.arc(x - dotRadius / 2, y - dotRadius / 2, dotRadius, 0, 2 * Math.PI, false);
+            context.fillStyle = 'black';
+            context.fill();
+          }
+        }
+      } //let countPerCanvas = 
+      // let canvasCopies = Math.floor(count / ratio);
+      // console.log(count);
+
+
+      for (var i = 0; i < 20 + 1; i++) {
+        element.append(cloneCanvas(canvas));
+        canvas.remove();
+      }
+
+      function cloneCanvas(oldCanvas) {
+        var newCanvas = document.createElement('canvas');
+        var context = newCanvas.getContext('2d');
+        newCanvas.width = oldCanvas.width;
+        newCanvas.height = oldCanvas.height;
+        context.drawImage(oldCanvas, 0, 0);
+        return newCanvas;
+      }
+
+      window.addEventListener('resize', resizeCanvas, false);
     }
   };
 };

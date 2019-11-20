@@ -616,12 +616,13 @@ module.exports = function () {
       });
     },
     useRatio: function useRatio() {
-      var useTimeHours = 3;
+      var useTimeHours = 4;
       var decomposeYears = 450;
       var decomposeHours = decomposeYears * 8760;
       var ratio = decomposeHours / useTimeHours;
       var width;
-      var element = document.querySelector('.use-ratio');
+      var element = document.querySelector('.use-ratio .canvas-holder');
+      var message = element.querySelector('.message');
 
       if (element) {
         width = parseInt(element.offsetWidth);
@@ -629,35 +630,55 @@ module.exports = function () {
 
       var canvas = document.querySelector('#dotCanvas');
       var context = canvas.getContext('2d');
+      var waypoint = new Waypoint({
+        element: element,
+        handler: function handler(direction) {
+          if (direction === 'down') {
+            message.style.marginBottom = '6px';
+          } else {
+            message.style.marginBottom = '-40px';
+          }
+        },
+        offset: -1000
+      });
       var height = 1200;
       var vw = width,
           vh = height;
-      var dotRadius = 1;
-      var cellSize = 4;
+      var dotRadius = 2;
+      var cellSize = 5;
+      var countPerCanvas;
 
       function resizeCanvas() {
         canvas.width = vw;
         canvas.height = vh;
-        drawDots();
+        countPerCanvas = drawDots();
       }
 
       resizeCanvas();
 
       function drawDots() {
+        var count = 0;
+
         for (var x = dotRadius * 2; x < vw; x += cellSize) {
           for (var y = dotRadius * 2; y < vh; y += cellSize) {
             context.beginPath();
             context.arc(x - dotRadius / 2, y - dotRadius / 2, dotRadius, 0, 2 * Math.PI, false);
-            context.fillStyle = 'black';
+            context.fillStyle = '#999';
             context.fill();
+            context.strokeStyle = 'black';
+            context.lineWidth = 1; //context.stroke();
+
+            count++;
           }
         }
-      } //let countPerCanvas = 
-      // let canvasCopies = Math.floor(count / ratio);
-      // console.log(count);
 
+        return count;
+      }
 
-      for (var i = 0; i < 20 + 1; i++) {
+      var canvasCopies = Math.floor(ratio / countPerCanvas);
+
+      for (var i = 0; i < canvasCopies + 1; i++) {
+        // duplicate multiple copies of the canvas to avoid millions of loops
         element.append(cloneCanvas(canvas));
         canvas.remove();
       }

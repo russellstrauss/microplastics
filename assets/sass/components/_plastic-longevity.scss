@@ -44,11 +44,39 @@
 .use-ratio {
 	padding: 0 15px;
 	
-	svg {
-		width: 100%;
+	.single-dot {
+		margin-bottom: 10px;
 	}
 	
-	canvas {
-		display: block;
+	svg {
+		margin-right: 4px;
+		
+		circle {
+			fill: black;
+		}
+		
+		line {
+			stroke:black;
+			stroke-width: 1;
+		}
+	}
+	
+	.canvas-holder {
+		position: relative;
+		
+		.message {
+			position: sticky;
+			background-color: rgba(255, 255, 255, 0.8);
+			padding: 5px;
+			left: 21px;
+			top: 6px;
+			width: 280px;
+			height: 34px;
+			margin-bottom: -40px;
+		}
+		
+		canvas {
+			display: block;
+		}
 	}
 }

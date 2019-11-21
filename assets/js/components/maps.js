@@ -97,7 +97,7 @@ module.exports = function() {
 			d3.json('./assets/js/data/ne_10m_admin_0_countries.json').then(function(json){
 				
 				function style(feature) {
-					console.log(feature.properties.NAME);
+					//console.log(feature.properties.NAME);
 					
 					// if (feature.properties.NAME === 'China') {
 					// 	return {

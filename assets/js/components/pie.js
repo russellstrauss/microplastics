@@ -168,7 +168,7 @@ module.exports = function() {
 					pos[0] = radius * 0.95 * (midAngle(d2) < Math.PI ? 1 : -1);
 					return [innerArc.centroid(d2), outerArc.centroid(d2), pos];
 				};
-				console.log('cx');
+				
 				//console.log(inner(0)[i][0]);
 				//return parseInt(inner(0)[0]);
 				//console.log(outerArc.centroid(d));

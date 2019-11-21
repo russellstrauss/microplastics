@@ -5,6 +5,7 @@ var Maps = require('./components/maps.js');
 var Scrolling = require('./components/scrolling.js');
 var Sunburst = require('./components/sunburst.js');
 var Pie = require('./components/pie.js');
+var Scatter = require('./components/scatterplot.js');
 var Utilities = require('./utils.js');
 
 (function () {
@@ -18,5 +19,6 @@ var Utilities = require('./utils.js');
 		Scrolling().init();
 		Sunburst().init();
 		Pie().init();
+		Scatter().init();
 	});
 })();

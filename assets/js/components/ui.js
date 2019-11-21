@@ -53,10 +53,6 @@ module.exports = function() {
 					},
 					offset: 800
 				});
-				
-				var scrollTop = window.pageYOffset || (document.documentElement || document.body.parentNode || document.body).scrollTop;
-				
-				console.log(scrollTop);
 			}
 		}
 	}

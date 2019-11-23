@@ -615,12 +615,13 @@ module.exports = function () {
           for (var y = dotRadius * 2; y < vh; y += cellSize) {
             context.beginPath();
             context.arc(x - dotRadius / 2, y - dotRadius / 2, dotRadius, 0, 2 * Math.PI, false);
-            context.fillStyle = '#999';
+            context.fillStyle = 'rgba(204, 204, 204, .7)';
             context.fill();
-            context.strokeStyle = 'black';
+            context.strokeStyle = 'white';
             context.lineWidth = 1; //context.stroke();
 
             if (count === 1000000 * millionCount) {
+              console.log(count);
               var result = millionCount + ' millionX longer than you used it';
               element.append(result);
               element.append('test string lkj;lkjdfas;lkj');
@@ -634,8 +635,7 @@ module.exports = function () {
         return count;
       }
 
-      var canvasCopies = Math.floor(ratio / countPerCanvas);
-      console.log('Number of canvases: ', canvasCopies);
+      var canvasCopies = Math.floor(ratio / countPerCanvas); //console.log('Number of canvases: ', canvasCopies);
 
       for (var i = 0; i < canvasCopies + 1; i++) {
         // duplicate multiple copies of the canvas to avoid millions of loops
@@ -643,9 +643,8 @@ module.exports = function () {
         canvas.remove();
         totalCount += countPerCanvas;
         if (totalCount > 1000000) element.append('1 million times as long as you used it');
-      }
+      } //console.log('Total count: ', totalCount);
 
-      console.log('Total count: ', totalCount);
 
       function cloneCanvas(oldCanvas) {
         var newCanvas = document.createElement('canvas');

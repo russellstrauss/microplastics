@@ -478,19 +478,50 @@ module.exports = function () {
     x: width / 2,
     y: height / 2
   };
+  var settings = {
+    materials: {
+      coffee: {
+        title: '1 Plastic Coffee Lid',
+        path: './assets/svg/coffee.svg',
+        useTime: 4,
+        mass: '157g',
+        breakdownTime: 450
+      },
+      bottle: {
+        title: '1 Plastic Coffee Lid',
+        path: './assets/svg/bottle.svg',
+        useTime: 4,
+        mass: '157g',
+        breakdownTime: 450
+      },
+      vegetable: {
+        title: 'Vegetable',
+        path: './assets/svg/vegetable.svg',
+        useTime: .5,
+        mass: '',
+        breakdownTime: .2
+      }
+    }
+  };
   return {
     init: function init() {
       this.setUpPlot();
       this.longevityTimescale();
+      this.bindUI();
     },
     setUpPlot: function setUpPlot() {
       var self = this;
       svg = d3.select(graphic).append('svg').attr('width', width).attr('height', height); // show center
       //svg.append('circle').attr('class', 'mask').attr('cx', center.x).attr('cy', center.y).attr('r', 10).attr('fill', 'black');
+      // let cupWidth = 250, cupHeight = 410;
+      // let image = svg.append('svg:image')
+      // .attr('xlink:href',  './assets/svg/starbucks.svg')
+      // .attr('width', cupWidth)
+      // .attr('height', cupHeight)
+      // .attr('x', center.x - cupWidth / 2)
+      // .attr('y', center.y - cupHeight / 2)
+      // .attr('class', 'cup');
 
-      var cupWidth = 250,
-          cupHeight = 410;
-      var image = svg.append('svg:image').attr('xlink:href', './assets/svg/starbucks.svg').attr('width', cupWidth).attr('height', cupHeight).attr('x', center.x - cupWidth / 2).attr('y', center.y - cupHeight / 2).attr('class', 'cup');
       self.useRatio();
     },
     longevityTimescale: function longevityTimescale() {
@@ -564,6 +595,28 @@ module.exports = function () {
       frames[frames.length - 1].style.width = remainder - 5 + 'px';
       svg.append('g').attr('transform', 'translate(0,' + (height + 6) + ')').call(d3.axisBottom(x));
       svg.append('g').call(d3.axisLeft(y).tickSize(0));
+    },
+    bindUI: function bindUI() {
+      var self = this;
+      var selector = document.querySelector('#longevitySelector');
+      if (selector) selector.addEventListener('change', function (event) {
+        self.setMaterial(selector.value);
+      });
+    },
+    setMaterial: function setMaterial(materialID) {
+      var self = this;
+      var material = settings.materials[materialID];
+      var image = document.querySelector('.plastic-longevity .graphic img');
+      if (image) image.setAttribute('src', material.path);
+      var title = document.querySelector('.plastic-longevity .stats .material span');
+      var useTime = document.querySelector('.plastic-longevity .stats .use-time span');
+      var mass = document.querySelector('.plastic-longevity .stats .mass span');
+      var breakdownTime = document.querySelector('.plastic-longevity .stats .generations span');
+      title.textContent = material.title;
+      useTime.textContent = material.useTime;
+      mass.textContent = material.mass;
+      breakdownTime.textContent = material.breakdownTime;
+      console.log(material);
     },
     useRatio: function useRatio() {
       var useTimeHours = 3;

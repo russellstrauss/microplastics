@@ -11,8 +11,6 @@
 </head>
 <body>
 	
-	<div class="hero" style="background-image: url(./assets/img/sushi-2.jpg);"></div>
-	
 	<div class="pagination container">
 		
 		<div class="plate">
@@ -36,79 +34,114 @@
 		<div class="background active"></div>
 	</div>
 	
-	<div class="full intro">
-		<div class="reading">
-			<div>
-				<h2 class="monumentvis"> Plastics vs Real world</h2>
-			</div>
+	<div class="intro">
+		
+		<div class="hero" style="background-image: url(./assets/img/sushi-2.jpg);"></div>
+		
+		<section class="white">
+			<h2>Hungry friends?<br>How about some sushi?<br>Let the good times roll!</h2>
+		</section>
+		
+		<div class="gradient-fade white">
+			<h2>But wait...</h2>
 		</div>
 		
-		<div class="scatterplot">
-			<svg></svg>
+		<div class="video-frame">
+			<video autoplay="autoplay" loop autoplay>
+				<source src="./assets/video/ocean.mp4" type="video/mp4">
+			</video>
 		</div>
-
-		<div class="plastic-longevity">
+		
+		<section class="white">
+			<h2>Sushi is made of fish.<br>Fish live in the ocean.</h2>
 			
-			<div class="selector">
-				<h3>Plastic Longevity</h3>
-				<p>We grapple with these choices every day. See how the waste you produce might end up on the plates of your great, great grandchildren. </p>
-				<select name="longevitySelector" class="material" id="longevitySelector">
-					<option value="coffee">Coffee Cup</option>
-					<option value="bottle">Bottle</option>
-					<option value="vegetable">Vegetable</option>
-				</select>
+			<h2>What else lives in the ocean?</h2>
+			
+			<img class="bag" src="./assets/img/bag.png" alt="">
+			
+			<div class="gradient-fade black">
+				<h2>Plastics in our world.</h2>
 			</div>
-			<div class="two-column">
-				<div class="graphic">
-					<img src="./assets/svg/bottle.svg" alt="">
-				</div>
-					<div class="stats">
-						<ul>
-							<li class="material">Material: <span>1 Plastic cup</span></li>
-							<li class="use-time">Average use time: <span>4 hours</span></li>
-							<li class="mass">Mass: <span>157g</span></li>
-							<li class="generations">Will break down after: <span>450 years</span></li>
-							<li class="lifetimes" style="justify-content: flex-end;"><span>5.2 lifetimes</span></li>
-						</ul>
-						
-						<div class="generation-glyphs" style="padding-left: 105px;">
-							<div class="frame"><img src="./assets/svg/generation.svg" alt="generation icon"></div>
-						</div>
-						<div class="longevity"></div>
-					</div>
-					
-				</div>
-				
-				<div class="use-ratio">
-					<div class="single-dot">
-						<svg width="200" height="10">
-							<circle cx="2" cy="5" r="2"></circle>
-							<line x1="10" y1="5" x2="200" y2="5" />
-						</svg>
-						how long you used the cup
-					</div>
-					<div class="canvas-holder">
-						<div class="message">how long the material sticks around</div>
-						<canvas id="dotCanvas"></canvas>
-					</div>
-				</div>
-				
-			<!-- <svg id="svgElem" width='100%'>
-				<path id="followPath_invisible" 
-						d="M62.9 14.9c-25-7.74-56.6 4.8-60.4 24.3-3.73 19.6 21.6 35 39.6 37.6 42.8 6.2 72.9-53.4 116-58.9 65-18.2 191 101 215 28.8 5-16.7-7-49.1-34-44-34 11.5-31 46.5-14 69.3 9.38 12.6 24.2 20.6 39.8 22.9 91.4 9.05 102-98.9 176-86.7 18.8 3.81 33 17.3 36.7 34.6 2.01 10.2.124 21.1-5.18 30.1" 
-						stroke="grey" 
-						fill="none"/>
-				<path id="followPath" 
-						d="M62.9 14.9c-25-7.74-56.6 4.8-60.4 24.3-3.73 19.6 21.6 35 39.6 37.6 42.8 6.2 72.9-53.4 116-58.9 65-18.2 191 101 215 28.8 5-16.7-7-49.1-34-44-34 11.5-31 46.5-14 69.3 9.38 12.6 24.2 20.6 39.8 22.9 91.4 9.05 102-98.9 176-86.7 18.8 3.81 33 17.3 36.7 34.6 2.01 10.2.124 21.1-5.18 30.1"
-						
-						stroke="grey" 
-						fill="none"/>
-				<rect id="rect" x="-5" y="-5" width="10" height="10" fill="red">
-			</svg> -->
-		</div>
+		</section>
 		
-		<div class="use-ratio"></div>
+		<section class="black">
+			<div>
+				<h2 class="monumentvis">Plastics vs Real world</h2>
+			</div>
+			
+		</section>
+		
+		<section class="bubble-chart white">
+			<div class="scatterplot">
+				<svg></svg>
+			</div>
+		</section>
 	</div>
+
+	<div class="plastic-longevity">
+		
+		<div class="selector">
+			<h3>Plastic Longevity</h3>
+			<p>We grapple with these choices every day. See how the waste you produce might end up on the plates of your great, great grandchildren. </p>
+			<select name="longevitySelector" class="material" id="longevitySelector">
+				<option value="bottle">Bottle</option>
+				<option value="coffee">Coffee Cup</option>
+				<option value="vegetable">Vegetable</option>
+			</select>
+		</div>
+		<div class="two-column">
+			<div class="graphic">
+				<img src="./assets/svg/bottle.svg" alt="">
+			</div>
+				<div class="stats">
+					<ul>
+						<li class="material">Material: <span>1 Plastic cup</span></li>
+						<li class="use-time">Average use time: <span>4 hours</span></li>
+						<li class="mass">Mass: <span>157g</span></li>
+						<li class="generations">Will break down after: <span>450 years</span></li>
+						<li class="lifetimes" style="justify-content: flex-end;"><span>5.2 lifetimes</span></li>
+					</ul>
+					
+					<div class="generation-glyphs" style="padding-left: 105px;">
+						<div class="frame"><img src="./assets/svg/generation.svg" alt="generation icon"></div>
+					</div>
+					<div class="longevity"></div>
+				</div>
+				
+			</div>
+			
+			<div class="use-ratio">
+				<div class="single-dot">
+					<svg width="200" height="10">
+						<circle cx="2" cy="5" r="2"></circle>
+						<line x1="10" y1="5" x2="200" y2="5" />
+					</svg>
+					how long you used the cup
+				</div>
+				<div class="canvas-holder">
+					<div class="mini-map">
+						<div class="dragger"></div>
+					</div>
+					<div class="message">how long the material remains in the environment</div>
+					<canvas id="dotCanvas"></canvas>
+				</div>
+			</div>
+			
+		<!-- <svg id="svgElem" width='100%'>
+			<path id="followPath_invisible" 
+					d="M62.9 14.9c-25-7.74-56.6 4.8-60.4 24.3-3.73 19.6 21.6 35 39.6 37.6 42.8 6.2 72.9-53.4 116-58.9 65-18.2 191 101 215 28.8 5-16.7-7-49.1-34-44-34 11.5-31 46.5-14 69.3 9.38 12.6 24.2 20.6 39.8 22.9 91.4 9.05 102-98.9 176-86.7 18.8 3.81 33 17.3 36.7 34.6 2.01 10.2.124 21.1-5.18 30.1" 
+					stroke="grey" 
+					fill="none"/>
+			<path id="followPath" 
+					d="M62.9 14.9c-25-7.74-56.6 4.8-60.4 24.3-3.73 19.6 21.6 35 39.6 37.6 42.8 6.2 72.9-53.4 116-58.9 65-18.2 191 101 215 28.8 5-16.7-7-49.1-34-44-34 11.5-31 46.5-14 69.3 9.38 12.6 24.2 20.6 39.8 22.9 91.4 9.05 102-98.9 176-86.7 18.8 3.81 33 17.3 36.7 34.6 2.01 10.2.124 21.1-5.18 30.1"
+					
+					stroke="grey" 
+					fill="none"/>
+			<rect id="rect" x="-5" y="-5" width="10" height="10" fill="red">
+		</svg> -->
+	</div>
+	
+	<div class="use-ratio"></div>
 	
 	<div class="empty" id="showAsia"></div>
 		

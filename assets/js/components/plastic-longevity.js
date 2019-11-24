@@ -8,6 +8,7 @@ module.exports = function () {
 	var svg;
 	var cupWidth, cupHeight;
 	var timescaleHeight = 140;
+	var unitVisContainer = document.querySelector('.plastic-longevity .use-ratio');
 	
 	var center = {
 		x: width / 2,
@@ -24,7 +25,7 @@ module.exports = function () {
 				breakdownTime: 450
 			},
 			bottle: {
-				title: '1 Plastic Coffee Lid',
+				title: '1 Plastic Bottle',
 				path: './assets/svg/bottle.svg',
 				useTime: 4,
 				mass: '157g',
@@ -44,31 +45,10 @@ module.exports = function () {
 
 		init: function () {
  
-			this.setUpPlot();
+			this.useRatio();
 			this.longevityTimescale();
 			this.bindUI();
-		},
-
-		setUpPlot: function () {
-			
-			let self = this;
-
-			svg = d3.select(graphic).append('svg').attr('width', width).attr('height', height);
-			
-
-			// show center
-			//svg.append('circle').attr('class', 'mask').attr('cx', center.x).attr('cy', center.y).attr('r', 10).attr('fill', 'black');
-			
-			// let cupWidth = 250, cupHeight = 410;
-			// let image = svg.append('svg:image')
-			// .attr('xlink:href',  './assets/svg/starbucks.svg')
-			// .attr('width', cupWidth)
-			// .attr('height', cupHeight)
-			// .attr('x', center.x - cupWidth / 2)
-			// .attr('y', center.y - cupHeight / 2)
-			// .attr('class', 'cup');
-			
-			self.useRatio();
+			this.miniMap();
 		},
 		
 		longevityTimescale: function() {
@@ -86,7 +66,6 @@ module.exports = function () {
 			];
 				
 			let graph = document.querySelector('.longevity');
-				
 			let graphicContainer = graph.parentElement;
 			var padding = {
 				top: 5,
@@ -199,7 +178,6 @@ module.exports = function () {
 			useTime.textContent = material.useTime;
 			mass.textContent = material.mass;
 			breakdownTime.textContent = material.breakdownTime;
-			console.log(material);
 		},
 		
 		useRatio: function() {
@@ -297,6 +275,61 @@ module.exports = function () {
 			}
 			
 			window.addEventListener('resize', resizeCanvas, false);
+		},
+		
+		miniMap: function() {
+			
+			var range = document.querySelector('.mini-map');
+			var dragger = document.querySelector('.mini-map .dragger');
+			var dragging = false, startY, currentY, draggerStartY;
+			var moveableHeight = range.getBoundingClientRect().height - dragger.getBoundingClientRect().height;
+			
+			var totalProgress = 0;
+			
+			dragger.addEventListener('mousedown', function(event) {
+				
+				draggerStartY = dragger.offsetTop;
+				startY = event.clientY;
+				dragging = true;
+				updateDragger(event);
+				return false;
+			});
+		
+			document.addEventListener('mousemove', function(event) {
+				
+				currentY = event.clientY;
+				if (dragging)  {
+					updateDragger(event);
+				}
+			});
+		
+			document.addEventListener('mouseup', function(event) {
+				dragging = false;
+			});
+		
+			function updateDragger(event) {
+				
+				let deltaY = currentY - startY;
+				let currentPos = dragger.offsetTop;
+				currentPos = draggerStartY + deltaY;
+				
+				if (currentPos > 0 && currentPos < moveableHeight) {
+					dragger.style.top = currentPos + 'px';
+				}
+				else if (currentPos < 0) {
+					dragger.style.top = '0';
+				}
+				else if (currentPos > moveableHeight) {
+					dragger.style.top = moveableHeight - 1 + 'px';
+				}
+				
+				totalProgress = dragger.offsetTop / (moveableHeight - 1);
+				
+				console.log(unitVisContainer.offsetTop);
+				//unitVisContainer.scrollIntoView();
+				let scrollToY = unitVisContainer.offsetTop + (unitVisContainer.offsetHeight * totalProgress);
+				window.scrollTo(0, scrollToY);
+			}
 		}
 	}
 }

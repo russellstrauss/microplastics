@@ -14,22 +14,8 @@
 }
 
 .full {
-	padding: 100px 0;
 	background-color: rgba(255, 255, 255, .97);
 	box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
-}
-
-.hero {
-	background-color: white;
-	height: 650px;
-	background-size: contain;
-	background-repeat: no-repeat;
-	background-position: center right;
-	//box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
-}
-
-.intro {
-	padding-top: 100px;
 }
 
 .pagination {
@@ -124,4 +110,5 @@
 .monumentvis {
     font-size: 2.5rem; 
     text-align: center;
-    padding-top: 2.5rem;}
+	padding-top: 2.5rem;
+}

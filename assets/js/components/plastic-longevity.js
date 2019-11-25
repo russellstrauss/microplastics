@@ -8,7 +8,8 @@ module.exports = function () {
 	var svg;
 	var cupWidth, cupHeight;
 	var timescaleHeight = 140;
-	var unitVisContainer = document.querySelector('.plastic-longevity .use-ratio');
+	var canvasHolder = document.querySelector('.plastic-longevity .canvas-holder');
+	var unitVisContainer = document.querySelector('.plastic-longevity .use-ratio .column-right');
 	
 	var center = {
 		x: width / 2,
@@ -20,14 +21,14 @@ module.exports = function () {
 			coffee: {
 				title: '1 Plastic Coffee Lid',
 				path: './assets/svg/coffee.svg',
-				useTime: 4,
+				useTime: .5,
 				mass: '157g',
 				breakdownTime: 450
 			},
 			bottle: {
 				title: '1 Plastic Bottle',
 				path: './assets/svg/bottle.svg',
-				useTime: 4,
+				useTime: 1,
 				mass: '157g',
 				breakdownTime: 450
 			},
@@ -166,7 +167,11 @@ module.exports = function () {
 			let self = this;
 			let material = settings.materials[materialID];
 			let image = document.querySelector('.plastic-longevity .graphic img');
-			if (image) image.setAttribute('src', material.path);
+			if (image) {
+				image.classList = '';
+				image.classList.add(materialID);
+				image.setAttribute('src', material.path);
+			}
 			
 			
 			let title = document.querySelector('.plastic-longevity .stats .material span');
@@ -236,10 +241,6 @@ module.exports = function () {
 						context.arc(x-dotRadius/2, y-dotRadius/2, dotRadius, 0, 2 * Math.PI, false);
 						context.fillStyle = 'rgba(204, 204, 204, .7)';
 						context.fill();
-						context.strokeStyle = 'white';
-						context.lineWidth = 1;
-						//context.stroke();
-						
 						
 						if (count === 1000000 * millionCount) {
 							console.log(count);
@@ -282,13 +283,14 @@ module.exports = function () {
 			var range = document.querySelector('.mini-map');
 			var dragger = document.querySelector('.mini-map .dragger');
 			var dragging = false, startY, currentY, draggerStartY;
-			var moveableHeight = range.getBoundingClientRect().height - dragger.getBoundingClientRect().height;
+			var moveableHeight = document.querySelector('.plastic-longevity .column-left').getBoundingClientRect().height - dragger.getBoundingClientRect().height;
 			
 			var totalProgress = 0;
 			
 			dragger.addEventListener('mousedown', function(event) {
 				
-				draggerStartY = dragger.offsetTop;
+				draggerStartY = parseInt(dragger.style.transform.replace(/\D/g,''));
+				if (isNaN(draggerStartY)) draggerStartY = 0;
 				startY = event.clientY;
 				dragging = true;
 				updateDragger(event);
@@ -310,26 +312,32 @@ module.exports = function () {
 			function updateDragger(event) {
 				
 				let deltaY = currentY - startY;
-				let currentPos = dragger.offsetTop;
-				currentPos = draggerStartY + deltaY;
+				let currentPos = draggerStartY + deltaY;
 				
 				if (currentPos > 0 && currentPos < moveableHeight) {
-					dragger.style.top = currentPos + 'px';
+					dragger.style.transform = 'translateY(' + currentPos + 'px)';
 				}
 				else if (currentPos < 0) {
-					dragger.style.top = '0';
+					currentPos = 0;
+					dragger.style.transform = 'translateY(' + currentPos + 'px)';
 				}
 				else if (currentPos > moveableHeight) {
-					dragger.style.top = moveableHeight - 1 + 'px';
+					currentPos = (moveableHeight - 1);
+					dragger.style.transform = 'translateY(' + currentPos + 'px)';
 				}
 				
-				totalProgress = dragger.offsetTop / (moveableHeight - 1);
+				totalProgress = currentPos / (moveableHeight - 1);
 				
-				console.log(unitVisContainer.offsetTop);
-				//unitVisContainer.scrollIntoView();
-				let scrollToY = unitVisContainer.offsetTop + (unitVisContainer.offsetHeight * totalProgress);
-				window.scrollTo(0, scrollToY);
+				let scrollToY = canvasHolder.offsetHeight * totalProgress;
+				unitVisContainer.scrollTo(0, scrollToY);
 			}
+			
+			unitVisContainer.addEventListener('scroll', function(event) {
+				let totalProgress = unitVisContainer.scrollTop / canvasHolder.offsetHeight;
+				let translation = moveableHeight * totalProgress;
+				
+				dragger.style.transform = 'translateY(' + translation + 'px)';
+			});
 		}
 	}
 }

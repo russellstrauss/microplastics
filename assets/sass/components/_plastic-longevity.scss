@@ -15,6 +15,11 @@ $foreground: black;
 	
 	.two-column {
 		overflow: visible;
+		
+		@include desktop {
+			width: 75%;
+			margin: auto;
+		}
 	}
 	
 	.graphic {
@@ -24,8 +29,8 @@ $foreground: black;
 		align-items: center;
 		
 		img, svg {
-			width: 100%;
 			max-height: 500px;
+			width: 100%;
 			
 			&.coffee {
 				max-width: 250px;
@@ -44,7 +49,6 @@ $foreground: black;
 			font-weight: bold;
 			width: 100%;
 			padding-left: 100px;
-			margin-bottom: 50px;
 			
 			li {
 				display: flex;
@@ -56,17 +60,22 @@ $foreground: black;
 				}
 			}
 		}
+	}
+}
+
+.bar {
+	margin-top: 100px;
+	
+	.generation-glyphs {
+		padding-left: 25px;
+		overflow: auto;
 		
-		.generation-glyphs {
-			overflow: auto;
+		.frame {
+			overflow: hidden;
+			float: left;
 			
-			.frame {
-				overflow: hidden;
-				float: left;
-				
-				img {
-					max-width: 1000px;
-				}
+			img {
+				max-width: 1000px;
 			}
 		}
 	}
@@ -83,14 +92,15 @@ $foreground: black;
 }
 
 .use-ratio {
-	margin: 100px 0;
+	margin: 50px 0;
 	height: 80vh;
 	display: flex;
 	justify-content: space-between;
+	position: relative;
 	
 	.column-left {
 		width: 100px;
-		margin-right: 20px;
+		margin-right: 10px;
 		
 		.mini-map {
 			opacity: .7;
@@ -111,10 +121,10 @@ $foreground: black;
 	
 	.column-right {
 		width: calc(100% - 80px);
-		overflow-y: scroll;
-		position: relative;
 		
 		.baseline {
+			height: 30px;
+			background-color: white;
 			
 			svg {
 				margin-left: 1px;
@@ -131,28 +141,45 @@ $foreground: black;
 			}
 		}
 		
-		.canvas-holder {
+		.unit-vis-viewport {
+			position: relative;
+			overflow-y: scroll;
+			height: calc(100% - 30px);
 			
 			.message {
 				position: sticky;
-				top: 20px;
-				background-color: white;
-				padding: 5px;
-				display: inline-block;
-				left: 6px;
+				text-align: right;
+				top: 0;
+				left: 0;
+				
+				span {
+					background-color: white;
+					padding: 10px;
+					display: inline-block;
+					margin-right: 6px;
+					margin-top: 6px;
+				}
 			}
 			
-			canvas {
-				display: block;
-				height: 1200px;
+			.canvas-holder {
+				
+				canvas {
+					display: block;
+					height: 1200px;
+				}
 			}
 		}
 		
 		.count {
 			font-size: 8rem;
 			position: absolute;
-			bottom: 0;
+			bottom: -10px;
 			line-height: normal;
+			opacity: .1;
+			
+			@include desktop-large {
+				font-size: 12rem;
+			}
 		}
 	}
 }

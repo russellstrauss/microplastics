@@ -9,7 +9,8 @@ module.exports = function () {
 	var cupWidth, cupHeight;
 	var timescaleHeight = 140;
 	var canvasHolder = document.querySelector('.plastic-longevity .canvas-holder');
-	var unitVisContainer = document.querySelector('.plastic-longevity .use-ratio .column-right');
+	var unitVisContainer = document.querySelector('.plastic-longevity .unit-vis-viewport');
+	let message = document.querySelector('.plastic-longevity .message');
 	
 	var center = {
 		x: width / 2,
@@ -72,7 +73,7 @@ module.exports = function () {
 				top: 5,
 				right: 50,
 				bottom: 80,
-				left: 100
+				left: 20
 			};
 			
 			var width = graphicContainer.offsetWidth - padding.left - padding.right;
@@ -173,7 +174,6 @@ module.exports = function () {
 				image.setAttribute('src', material.path);
 			}
 			
-			
 			let title = document.querySelector('.plastic-longevity .stats .material span');
 			let useTime = document.querySelector('.plastic-longevity .stats .use-time span');
 			let mass = document.querySelector('.plastic-longevity .stats .mass span');
@@ -195,7 +195,7 @@ module.exports = function () {
 			
 			let width;
 			let element = document.querySelector('.use-ratio .canvas-holder');
-			let message = element.querySelector('.message');
+
 			if (element) {
 				width = parseInt(element.offsetWidth);
 			}
@@ -261,7 +261,7 @@ module.exports = function () {
 				element.append(cloneCanvas(canvas));
 				canvas.remove();
 				totalCount += countPerCanvas;
-				if (totalCount > 1000000) element.append('1 million times as long as you used it');
+				//if (totalCount > 1000000) element.append('1 million times as long as you used it');
 			}
 			//console.log('Total count: ', totalCount);
 			
@@ -333,9 +333,9 @@ module.exports = function () {
 			}
 			
 			unitVisContainer.addEventListener('scroll', function(event) {
-				let totalProgress = unitVisContainer.scrollTop / canvasHolder.offsetHeight;
+				let totalProgress = (unitVisContainer.scrollTop - message.offsetHeight) / canvasHolder.offsetHeight;
 				let translation = moveableHeight * totalProgress;
-				
+				console.log(totalProgress);
 				dragger.style.transform = 'translateY(' + translation + 'px)';
 			});
 		}

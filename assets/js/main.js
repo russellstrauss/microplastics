@@ -6,6 +6,7 @@ var Scrolling = require('./components/scrolling.js');
 var Sunburst = require('./components/sunburst.js');
 var Pie = require('./components/pie.js');
 var Scatter = require('./components/scatterplot.js');
+var cumulativePlastic = require('./components/cumulative-plastics.js');
 var Utilities = require('./utils.js');
 
 (function () {
@@ -20,5 +21,6 @@ var Utilities = require('./utils.js');
 		Sunburst().init();
 		Pie().init();
 		Scatter().init();
+		cumulativePlastic().init();
 	});
 })();

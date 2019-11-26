@@ -18,9 +18,11 @@ module.exports = function () {
 		},
 
 		init: function () {
-
-			this.toolTip();
-			this.scatterplot();
+			
+			if (svg) {
+				this.toolTip();
+				this.scatterplot();
+			}
 		},
 
 		scatterplot: function() {

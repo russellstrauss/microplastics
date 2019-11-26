@@ -8,40 +8,49 @@ module.exports = function () {
 	var svg;
 	var cupWidth, cupHeight;
 	var timescaleHeight = 140;
+	var canvasHolder = document.querySelector('.plastic-longevity .canvas-holder');
+	var unitVisContainer = document.querySelector('.plastic-longevity .unit-vis-viewport');
+	let message = document.querySelector('.plastic-longevity .message');
 	
 	var center = {
 		x: width / 2,
 		y: height / 2
 	};
 	
+	var settings = {
+		materials: {
+			coffee: {
+				title: '1 Plastic Coffee Lid',
+				path: './assets/svg/coffee.svg',
+				useTime: .5,
+				mass: '157g',
+				breakdownTime: 450
+			},
+			bottle: {
+				title: '1 Plastic Bottle',
+				path: './assets/svg/bottle.svg',
+				useTime: 1,
+				mass: '157g',
+				breakdownTime: 450
+			},
+			vegetable: {
+				title: 'Vegetable',
+				path: './assets/svg/vegetable.svg',
+				useTime: .5,
+				mass: '',
+				breakdownTime: .2
+			}
+		}
+	}
+	
 	return {
 
 		init: function () {
  
-			this.setUpPlot();
+			this.useRatio();
 			this.longevityTimescale();
-		},
-
-		setUpPlot: function () {
-			
-			let self = this;
-
-			svg = d3.select(graphic).append('svg').attr('width', width).attr('height', height);
-			
-
-			// show center
-			//svg.append('circle').attr('class', 'mask').attr('cx', center.x).attr('cy', center.y).attr('r', 10).attr('fill', 'black');
-			
-			let cupWidth = 250, cupHeight = 410;
-			let image = svg.append('svg:image')
-			.attr('xlink:href',  './assets/svg/starbucks.svg')
-			.attr('width', cupWidth)
-			.attr('height', cupHeight)
-			.attr('x', center.x - cupWidth / 2)
-			.attr('y', center.y - cupHeight / 2)
-			.attr('class', 'cup');
-			
-			self.useRatio();
+			this.bindUI();
+			this.miniMap();
 		},
 		
 		longevityTimescale: function() {
@@ -59,13 +68,12 @@ module.exports = function () {
 			];
 				
 			let graph = document.querySelector('.longevity');
-				
 			let graphicContainer = graph.parentElement;
 			var padding = {
 				top: 5,
 				right: 50,
 				bottom: 80,
-				left: 100
+				left: 20
 			};
 			
 			var width = graphicContainer.offsetWidth - padding.left - padding.right;
@@ -146,6 +154,37 @@ module.exports = function () {
 			svg.append('g').call(d3.axisLeft(y).tickSize(0));
 		},
 		
+		bindUI: function() {
+			
+			let self = this;
+			let selector = document.querySelector('#longevitySelector');			
+			if (selector) selector.addEventListener('change', function(event) {
+				self.setMaterial(selector.value);
+			});
+		},
+		
+		setMaterial: function(materialID) {
+			
+			let self = this;
+			let material = settings.materials[materialID];
+			let image = document.querySelector('.plastic-longevity .graphic img');
+			if (image) {
+				image.classList = '';
+				image.classList.add(materialID);
+				image.setAttribute('src', material.path);
+			}
+			
+			let title = document.querySelector('.plastic-longevity .stats .material span');
+			let useTime = document.querySelector('.plastic-longevity .stats .use-time span');
+			let mass = document.querySelector('.plastic-longevity .stats .mass span');
+			let breakdownTime = document.querySelector('.plastic-longevity .stats .generations span');
+			
+			title.textContent = material.title;
+			useTime.textContent = material.useTime;
+			mass.textContent = material.mass;
+			breakdownTime.textContent = material.breakdownTime;
+		},
+		
 		useRatio: function() {
 			
 			let useTimeHours = 3;
@@ -156,7 +195,7 @@ module.exports = function () {
 			
 			let width;
 			let element = document.querySelector('.use-ratio .canvas-holder');
-			let message = element.querySelector('.message');
+
 			if (element) {
 				width = parseInt(element.offsetWidth);
 			}
@@ -200,13 +239,11 @@ module.exports = function () {
 					for (var y = dotRadius * 2; y < vh; y += cellSize) {
 						context.beginPath();
 						context.arc(x-dotRadius/2, y-dotRadius/2, dotRadius, 0, 2 * Math.PI, false);
-						context.fillStyle = '#999';
+						context.fillStyle = 'rgba(204, 204, 204, .7)';
 						context.fill();
-						context.strokeStyle = 'black';
-						context.lineWidth = 1;
-						//context.stroke();
-
+						
 						if (count === 1000000 * millionCount) {
+							console.log(count);
 							let result = millionCount + ' millionX longer than you used it'
 							element.append(result);
 							element.append('test string lkj;lkjdfas;lkj');
@@ -219,14 +256,14 @@ module.exports = function () {
 			}
 			
 			let canvasCopies = Math.floor(ratio / countPerCanvas);
-			console.log('Number of canvases: ', canvasCopies);
+			//console.log('Number of canvases: ', canvasCopies);
 			for (let i = 0; i < canvasCopies + 1; i++) { // duplicate multiple copies of the canvas to avoid millions of loops
 				element.append(cloneCanvas(canvas));
 				canvas.remove();
 				totalCount += countPerCanvas;
-				if (totalCount > 1000000) element.append('1 million times as long as you used it');
+				//if (totalCount > 1000000) element.append('1 million times as long as you used it');
 			}
-			console.log('Total count: ', totalCount);
+			//console.log('Total count: ', totalCount);
 			
 			function cloneCanvas(oldCanvas) {
 				
@@ -239,6 +276,68 @@ module.exports = function () {
 			}
 			
 			window.addEventListener('resize', resizeCanvas, false);
+		},
+		
+		miniMap: function() {
+			
+			var range = document.querySelector('.mini-map');
+			var dragger = document.querySelector('.mini-map .dragger');
+			var dragging = false, startY, currentY, draggerStartY;
+			var moveableHeight = document.querySelector('.plastic-longevity .column-left').getBoundingClientRect().height - dragger.getBoundingClientRect().height;
+			
+			var totalProgress = 0;
+			
+			dragger.addEventListener('mousedown', function(event) {
+				
+				draggerStartY = parseInt(dragger.style.transform.replace(/\D/g,''));
+				if (isNaN(draggerStartY)) draggerStartY = 0;
+				startY = event.clientY;
+				dragging = true;
+				updateDragger(event);
+				return false;
+			});
+		
+			document.addEventListener('mousemove', function(event) {
+				
+				currentY = event.clientY;
+				if (dragging)  {
+					updateDragger(event);
+				}
+			});
+		
+			document.addEventListener('mouseup', function(event) {
+				dragging = false;
+			});
+		
+			function updateDragger(event) {
+				
+				let deltaY = currentY - startY;
+				let currentPos = draggerStartY + deltaY;
+				
+				if (currentPos > 0 && currentPos < moveableHeight) {
+					dragger.style.transform = 'translateY(' + currentPos + 'px)';
+				}
+				else if (currentPos < 0) {
+					currentPos = 0;
+					dragger.style.transform = 'translateY(' + currentPos + 'px)';
+				}
+				else if (currentPos > moveableHeight) {
+					currentPos = (moveableHeight - 1);
+					dragger.style.transform = 'translateY(' + currentPos + 'px)';
+				}
+				
+				totalProgress = currentPos / (moveableHeight - 1);
+				
+				let scrollToY = canvasHolder.offsetHeight * totalProgress;
+				unitVisContainer.scrollTo(0, scrollToY);
+			}
+			
+			unitVisContainer.addEventListener('scroll', function(event) {
+				let totalProgress = (unitVisContainer.scrollTop - message.offsetHeight) / canvasHolder.offsetHeight;
+				let translation = moveableHeight * totalProgress;
+				console.log(totalProgress);
+				dragger.style.transform = 'translateY(' + translation + 'px)';
+			});
 		}
 	}
 }

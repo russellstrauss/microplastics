@@ -1,5 +1,11 @@
+$background: white;
+$foreground: black;
+
 .plastic-longevity {
-	margin: 100px auto;
+	@include disable-highlight;
+	background-color: $background;
+	color: $foreground;
+	padding: 100px 15px;
 	
 	.selector {
 		padding: 0 15px;
@@ -9,18 +15,40 @@
 	
 	.two-column {
 		overflow: visible;
+		
+		@include desktop {
+			width: 75%;
+			margin: auto;
+		}
+	}
+	
+	.graphic {
+		width: 40%;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		
+		img, svg {
+			max-height: 500px;
+			width: 100%;
+			
+			&.coffee {
+				max-width: 250px;
+			}
+		}
 	}
 	
 	.stats {
-		width: 60%;
-		padding-right: 150px;
+		width: 50%;
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
 		
 		ul {
 			font-size: 18px;
 			font-weight: bold;
 			width: 100%;
 			padding-left: 100px;
-			margin-bottom: 50px;
 			
 			li {
 				display: flex;
@@ -32,74 +60,126 @@
 				}
 			}
 		}
+	}
+}
+
+.bar {
+	margin-top: 100px;
+	
+	.generation-glyphs {
+		padding-left: 25px;
+		overflow: auto;
 		
-		.generation-glyphs {
-			overflow: auto;
+		.frame {
+			overflow: hidden;
+			float: left;
 			
-			.frame {
-				overflow: hidden;
-				float: left;
-				
-				img {
-					max-width: 1000px;
-				}
+			img {
+				max-width: 1000px;
 			}
 		}
 	}
 	
-	.graphic {
-		width: 30%;
+	.longevity {
 		
-		svg {
-			overflow: visible;
+		rect, text {
+			fill: $foreground;
+		}
+		path, line {
+			stroke: $foreground;
 		}
 	}
-	
-	canvas {
-		width: 100%;
-	}	
 }
 
 .use-ratio {
-	padding: 0 15px;
+	margin: 50px 0;
+	height: 80vh;
+	display: flex;
+	justify-content: space-between;
+	position: relative;
 	
-	.single-dot {
-		margin-bottom: 10px;
+	.column-left {
+		width: 100px;
+		margin-right: 10px;
+		
+		.mini-map {
+			opacity: .7;
+			position: relative;
+			background-color: #ccc;
+			height: 100%;
+			
+			.dragger {
+				display: block;
+				background: #D2323A;
+				opacity: .5;
+				height: 100px;
+				cursor: grab;
+				width: 100%;
+			}
+		}
 	}
 	
-	svg {
-		margin-left: 1px;
-		margin-right: 4px;
+	.column-right {
+		width: calc(100% - 80px);
 		
-		circle {
-			fill: black;
+		.baseline {
+			height: 30px;
+			background-color: white;
+			
+			svg {
+				margin-left: 1px;
+				margin-right: 4px;
+				
+				circle {
+					fill: $foreground;
+				}
+				
+				line {
+					stroke: $foreground;
+					stroke-width: 1;
+				}
+			}
 		}
 		
-		line {
-			stroke:black;
-			stroke-width: 1;
+		.unit-vis-viewport {
+			position: relative;
+			overflow-y: scroll;
+			height: calc(100% - 30px);
+			
+			.message {
+				position: sticky;
+				text-align: right;
+				top: 0;
+				left: 0;
+				
+				span {
+					background-color: white;
+					padding: 10px;
+					display: inline-block;
+					margin-right: 6px;
+					margin-top: 6px;
+				}
+			}
+			
+			.canvas-holder {
+				
+				canvas {
+					display: block;
+					height: 1200px;
+				}
+			}
 		}
-	}
-	
-	.canvas-holder {
-		position: relative;
 		
-		.message {
-			position: sticky;
-			background-color: rgba(255, 255, 255, 1);
-			padding: 5px;
-			$height: 34px;
-			$width: 280px;
-			$rightOffset: $width + 23px;
-			left: calc(100% - #{$rightOffset});
-			top: 400px;
-			width: $width;
-			height: $height;
-			margin-bottom: -40px;
-		}
-		
-		canvas {
-			display: block;
+		.count {
+			font-size: 8rem;
+			position: absolute;
+			bottom: -10px;
+			line-height: normal;
+			opacity: .1;
+			
+			@include desktop-large {
+				font-size: 12rem;
+			}
 		}
 	}
 }

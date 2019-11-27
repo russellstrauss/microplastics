@@ -8,17 +8,15 @@ module.exports = function () {
 
 		myMethod: function() {
 			
-		var circle = d3.select('monument-visualization').append("svg")
+		var circle = d3.select('.monument-visualization').append("svg")
 		.attr("width", 600)
-		.attr("height", 400)
+		.attr("height", 400);
 
-		var circles = circle.selectAll("circle")
-		.enter()
-		.append("circle")
-		.attr("cx", 300)
+		var circles = circle.append("circle")
+			.attr("cx", 300)
 		   .attr("cy", 150) 
-		   .style("fill", blue)
-		.attr("r", 120);
+		   .style("fill", "blue")
+			.attr("r", 120);
 
 		}
 	}

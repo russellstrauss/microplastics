@@ -50,6 +50,18 @@ p {
 	line-height: 2.25;
 }
 
+section {
+	
+	&.white {
+		background-color: white;
+	}
+	
+	&.black {
+		background-color: black;
+		color: white;
+	}
+}
+
 ol {
 	font-size: .8rem;
 	line-height: 1.75;

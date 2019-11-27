@@ -2,6 +2,7 @@
 "use strict";
 
 module.exports = function () {
+  var dataset;
   return {
     init: function init() {
       this.myMethod();
@@ -13,7 +14,6 @@ module.exports = function () {
       BelowText.append('text').attr('x', 240).attr('y', 100).style('fill', 'black').text('3200000mt').style('font-size', '1.5em');
       BelowText.append('text').attr('x', 750).attr('y', 100).style('fill', 'black').text('effel').style('font-size', '1.5em'); /////////////////////////////////////////////
 
-      var dataset;
       var formatDateIntoYear = d3.timeFormat("%Y");
       var formatDate = d3.timeFormat("%b %Y");
       var parseDate = d3.timeParse("%m/%d/%y");
@@ -48,7 +48,8 @@ module.exports = function () {
 
       var svgPlot = d3.select("#vis").append("svg").attr("width", width + margin.left + margin.right).attr("height", height);
       var plot = svgPlot.append("g").attr("class", "plot").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-      d3.csv("./assets/js/data/circles.csv", prepare, function (data) {
+      d3.csv("./assets/js/data/circles.csv", prepare).then(function (data) {
+        console.log('csv fire');
         dataset = data;
         drawPlot(dataset);
       });
@@ -76,7 +77,7 @@ module.exports = function () {
       function update(h) {
         // update position and text of label according to slider scale
         handle.attr("cx", x(h));
-        label.attr("x", x(h)).text(formatDate(h)); // filter data set and redraw plot
+        label.attr("x", x(h)).text(formatDate(h)); //filter data set and redraw plot
 
         var newData = dataset.filter(function (d) {
           return d.date < h;

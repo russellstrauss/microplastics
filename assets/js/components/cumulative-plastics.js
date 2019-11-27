@@ -16,7 +16,7 @@ module.exports = function () {
 			.attr("cx", 300)
 		   .attr("cy", 150) 
 		   .style("fill", "blue")
-			.attr("r", 120);
+			.attr("r", 100);
 
 		}
 	}

@@ -17,11 +17,7 @@
 	background-color: rgba(255, 255, 255, .97);
 	box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
 }
-.effel {
-	float: right;
-	margin-right: 230px;
 
-}
 .pagination {
 	display: none; //temp
 	position: sticky;
@@ -118,6 +114,31 @@
 	padding-bottom: 5.5rem;
 }
 
+#both {
+	display: table; margin-left: auto; margin-right: auto;
+}
+.effel {
+	display: inline;
+	
+}
+
+#slider svg{
+	display: table; margin-left: auto; margin-right: auto;
+}
+#vis svg{
+	display: inline; margin-right: 10.2em; 
+	visibility: visible;
+  opacity: 1;
+  transition: opacity 2s linear;
+}
+#vis {
+	display: inline; 
+
+}
+.texts {
+	display: table; margin-left: auto; margin-right: auto;
+
+}
   .ticks {
 	font-size: 10px;
   }
@@ -144,6 +165,7 @@
 	stroke-width: 50px;
 	stroke: transparent;
 	cursor: crosshair;
+	position: absolute;
   }
 
   .handle {

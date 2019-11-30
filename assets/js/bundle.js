@@ -62,7 +62,9 @@ module.exports = function () {
       function drawPlot(data) {
         var locations = plot.selectAll(".location").data(data); // if filtered dataset has more circles than already existing, transition new ones in
 
-        locations.enter().append("circle").attr("class", "location").attr("cx", d3.randomNormal(130, 55)()).attr("cy", d3.randomNormal(200, 55)()).style("fill", 'orange').style("stroke", 'orange').style("opacity", 0.4).attr("r", 8).transition().duration(500).attr("r", 12).style("fill", "red").transition().attr("r", 8).style("fill", 'orange');
+        locations.enter().append("circle").attr("class", "location").attr("cx", d3.randomNormal(130, 55)()).attr("cy", 100).style("fill", 'orange').style("stroke", 'orange').style("opacity", 0.4).attr("r", 8).transition().duration(500).attr("r", 10).style("fill", "red").transition().attr("r", 8).style("fill", 'orange').transition().attr("cy", function (d) {
+          if (d.id < 150) return 350;else if (d.id < 350) return 250;
+        });
         locations.exit().remove();
       }
 

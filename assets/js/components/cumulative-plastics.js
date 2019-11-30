@@ -34,7 +34,7 @@ module.exports = function () {
 			
 			var formatYear = d3.timeFormat("%Y");
 			var formatDate = d3.timeFormat("%Y");
-			var parseDate = d3.timeParse("%Y");
+			var parseDate = d3.timeParse("%m/%y");
 
 			var startDate = new Date("1949"),
 				endDate = new Date("2020");
@@ -108,7 +108,7 @@ module.exports = function () {
 				.attr("class", "plot")
 				.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 				
-			d3.csv("./assets/js/data/circles4.csv", prepare).then(function(data) {
+			d3.csv("./assets/js/data/circless.csv", prepare).then(function(data) {
 				dataset = data;
 				drawPlot(dataset);
 			});
@@ -132,15 +132,14 @@ module.exports = function () {
 					.style("fill", 'orange')
 					.style("stroke", 'orange')
 					.style("opacity", 0.4)
-					.attr("r", 3)
+					.attr("r", 8)
 					.transition()
 					.duration(500)
-					.attr("r", 8)
+					.attr("r", 12)
 					.style("fill", "red")
 						.transition()
-						.attr("r", 3).style("fill", 'orange');
+						.attr("r", 8).style("fill", 'orange');
 
-				// if filtered dataset has less circles than already existing, remove excess
 				locations.exit().remove();
 			}
 

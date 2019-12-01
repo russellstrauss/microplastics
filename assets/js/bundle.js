@@ -8,9 +8,14 @@ module.exports = function () {
       this.myMethod();
     },
     myMethod: function myMethod() {
+      d3.csv("./assets/js/data/circless.csv", prepare).then(function (data) {
+        dataset = data;
+        drawPlot(dataset);
+      });
       var BelowText = d3.select('.monument-visualization').append("svg").attr("class", "texts").attr("width", 1000).attr("height", 200);
-      BelowText.append('text').attr('x', 240).attr('y', 100).style('fill', 'black').text('3200000mt').style('font-size', '1.5em');
-      BelowText.append('text').attr('x', 750).attr('y', 100).style('fill', 'black').text('eiffel').style('font-size', '1.5em'); /////////////////////////////////////////////
+      BelowText.append('text').attr('x', 180).attr('y', 100).style('fill', 'black').style('font-size', '1.5em').text('200000000mt');
+      BelowText.append('text').attr('x', 510).attr('y', 105).style('fill', 'black').style('font-size', '2em').text("=");
+      BelowText.append('text').attr('x', 745).attr('y', 100).style('fill', 'black').text('Eiffel Tower').style('font-size', '1.5em'); /////////////////////////////////////////////
 
       var formatYear = d3.timeFormat("%Y");
       var formatDate = d3.timeFormat("%Y");
@@ -48,10 +53,6 @@ module.exports = function () {
 
       var svgPlot = d3.select("#vis").append("svg").attr("width", width + margin.left + margin.right).attr("height", height);
       var plot = svgPlot.append("g").attr("class", "plot").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-      d3.csv("./assets/js/data/circless.csv", prepare).then(function (data) {
-        dataset = data;
-        drawPlot(dataset);
-      });
 
       function prepare(d) {
         d.id = d.id;
@@ -62,8 +63,8 @@ module.exports = function () {
       function drawPlot(data) {
         var locations = plot.selectAll(".location").data(data); // if filtered dataset has more circles than already existing, transition new ones in
 
-        locations.enter().append("circle").attr("class", "location").attr("cx", d3.randomNormal(130, 55)()).attr("cy", 100).style("fill", 'orange').style("stroke", 'orange').style("opacity", 0.4).attr("r", 8).transition().duration(500).attr("r", 10).style("fill", "red").transition().attr("r", 8).style("fill", 'orange').transition().attr("cy", function (d) {
-          if (d.id < 150) return 350;else if (d.id < 350) return 250;
+        locations.enter().append("circle").attr("class", "location").attr("cx", d3.randomNormal(140, 40)()).attr("cy", 100).style("fill", 'orange').style("stroke", 'orange').style("opacity", 0.4).attr("r", 8).transition().duration(500).attr("r", 10).style("fill", "red").transition().attr("r", 8).style("fill", 'orange').transition().attr("cy", function (d) {
+          return 380;
         });
         locations.exit().remove();
       }

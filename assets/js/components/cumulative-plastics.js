@@ -115,7 +115,6 @@ module.exports = function () {
 				.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 				
 			d3.csv("./assets/js/data/circles.csv", prepare).then(function(data) {
-				console.log('csv fire');
 				dataset = data;
 				drawPlot(dataset);
 			});

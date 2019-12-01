@@ -8,78 +8,74 @@ module.exports = function () {
       this.myMethod();
     },
     myMethod: function myMethod() {
-      var circle = d3.select('.monument-visualization').append("svg").attr("width", 500).attr("height", 300);
-      var circles = circle.append("circle").attr("cx", 300).attr("cy", 180).style("fill", "orange").attr("r", 100);
-      var BelowText = d3.select('.monument-visualization').append("svg").attr("width", 1000).attr("height", 200);
-      BelowText.append('text').attr('x', 240).attr('y', 100).style('fill', 'black').text('3200000mt').style('font-size', '1.5em');
-      BelowText.append('text').attr('x', 750).attr('y', 100).style('fill', 'black').text('effel').style('font-size', '1.5em'); /////////////////////////////////////////////
+      d3.csv("./assets/js/data/circless.csv", prepare).then(function (data) {
+        dataset = data;
+        drawPlot(dataset);
+      });
+      var BelowText = d3.select('.monument-visualization').append("svg").attr("class", "texts").attr("width", 1000).attr("height", 200);
+      BelowText.append('text').attr('x', 180).attr('y', 100).style('fill', 'black').style('font-size', '1.5em').text('200000000mt');
+      BelowText.append('text').attr('x', 510).attr('y', 105).style('fill', 'black').style('font-size', '2em').text("=");
+      BelowText.append('text').attr('x', 745).attr('y', 100).style('fill', 'black').text('Eiffel Tower').style('font-size', '1.5em'); /////////////////////////////////////////////
 
-      var formatDateIntoYear = d3.timeFormat("%Y");
-      var formatDate = d3.timeFormat("%b %Y");
-      var parseDate = d3.timeParse("%m/%d/%y");
-      var startDate = new Date("2004-11-01"),
-          endDate = new Date("2017-04-01");
+      var formatYear = d3.timeFormat("%Y");
+      var formatDate = d3.timeFormat("%Y");
+      var parseDate = d3.timeParse("%m/%y");
+      var startDate = new Date("1949"),
+          endDate = new Date("2020");
       var margin = {
         top: 0,
         right: 50,
         bottom: 0,
         left: 50
       },
-          width = 960 - margin.left - margin.right,
-          height = 200 - margin.top - margin.bottom; ////////// slider //////////
+          width = 400 - margin.left - margin.right,
+          height = 400 - margin.top - margin.bottom,
+          heightslider = 200,
+          widthslider = 850; ////////// slider //////////
 
-      var svgSlider = d3.select("#slider").append("svg").attr("width", width + margin.left + margin.right).attr("height", height);
-      var x = d3.scaleTime().domain([startDate, endDate]).range([0, width]).clamp(true);
-      var slider = svgSlider.append("g").attr("class", "slider").attr("transform", "translate(" + margin.left + "," + height / 2 + ")");
-      slider.append("line").attr("class", "track").attr("x1", x.range()[0]).attr("x2", x.range()[1]).select(function () {
+      var svgSlider = d3.select("#slider").append("svg").attr("width", widthslider + margin.left + margin.right).attr("height", heightslider);
+      var scale = d3.scaleTime().domain([startDate, endDate]).range([0, widthslider]).clamp(true);
+      var slider = svgSlider.append("g").attr("class", "slider").attr("transform", "translate(" + margin.left + "," + heightslider / 2 + ")");
+      slider.append("line").attr("class", "track").attr("align", "center").attr("x1", scale.range()[0]).attr("x2", scale.range()[1]).select(function () {
         return this.parentNode.appendChild(this.cloneNode(true));
       }).attr("class", "track-inset").select(function () {
         return this.parentNode.appendChild(this.cloneNode(true));
       }).attr("class", "track-overlay").call(d3.drag().on("start.interrupt", function () {
         slider.interrupt();
       }).on("start drag", function () {
-        update(x.invert(d3.event.x));
+        update(scale.invert(d3.event.x));
       }));
-      slider.insert("g", ".track-overlay").attr("class", "ticks").attr("transform", "translate(0," + 18 + ")").selectAll("text").data(x.ticks(10)).enter().append("text").attr("x", x).attr("y", 10).attr("text-anchor", "middle").text(function (d) {
-        return formatDateIntoYear(d);
+      slider.insert("g", ".track-overlay").attr("class", "ticks").attr("transform", "translate(0," + 18 + ")").selectAll("text").data(scale.ticks(10)).enter().append("text").attr("x", scale).attr("y", 10).attr("text-anchor", "middle").text(function (d) {
+        return formatYear(d);
       });
       var handle = slider.insert("circle", ".track-overlay").attr("class", "handle").attr("r", 9);
       var label = slider.append("text").attr("class", "label").attr("text-anchor", "middle").text(formatDate(startDate)).attr("transform", "translate(0," + -25 + ")"); ////////// plot //////////
 
       var svgPlot = d3.select("#vis").append("svg").attr("width", width + margin.left + margin.right).attr("height", height);
       var plot = svgPlot.append("g").attr("class", "plot").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-      d3.csv("./assets/js/data/circles.csv", prepare).then(function (data) {
-        dataset = data;
-        drawPlot(dataset);
-      });
 
       function prepare(d) {
         d.id = d.id;
-        d.date = parseDate(d.date);
+        d.Year = parseDate(d.Year);
         return d;
       }
 
       function drawPlot(data) {
         var locations = plot.selectAll(".location").data(data); // if filtered dataset has more circles than already existing, transition new ones in
 
-        locations.enter().append("circle").attr("class", "location").attr("cx", function (d) {
-          return x(d.date);
-        }).attr("cy", height / 2).style("fill", function (d) {
-          return d3.hsl(d.date / 1000000000, 0.8, 0.8);
-        }).style("stroke", function (d) {
-          return d3.hsl(d.date / 1000000000, 0.7, 0.7);
-        }).style("opacity", 0.5).attr("r", 8).transition().duration(400).attr("r", 25).transition().attr("r", 8); // if filtered dataset has less circles than already existing, remove excess
-
+        locations.enter().append("circle").attr("class", "location").attr("cx", d3.randomNormal(140, 40)()).attr("cy", 100).style("fill", 'orange').style("stroke", 'orange').style("opacity", 0.4).attr("r", 8).transition().duration(500).attr("r", 10).style("fill", "red").transition().attr("r", 8).style("fill", 'orange').transition().attr("cy", function (d) {
+          return 380;
+        });
         locations.exit().remove();
       }
 
       function update(h) {
         // update position and text of label according to slider scale
-        handle.attr("cx", x(h));
-        label.attr("x", x(h)).text(formatDate(h)); //filter data set and redraw plot
+        handle.attr("cx", scale(h));
+        label.attr("x", scale(h)).text(formatDate(h)); //filter data set and redraw plot
 
         var newData = dataset.filter(function (d) {
-          return d.date < h;
+          return d.Year < h;
         });
         drawPlot(newData);
       }
@@ -261,22 +257,19 @@ module.exports = function () {
     "long": 120.998
   };
   var chinaLocation = new L.LatLng(china.lat, china["long"]);
-
-  var _map = L.map('map', {
+  var map = L.map('map', {
     zoomControl: false
   }).setView(chinaLocation, 5);
-
   var svg = d3.select('#map').select('svg');
   var pointsGroup = svg.select('g').attr('class', 'points').append('g');
   var svgLayer = L.svg();
-  svgLayer.addTo(_map);
+  svgLayer.addTo(map);
   return {
     init: function init() {
       var self = this;
-      self.map();
+      self.v5Map();
       self.showCountries();
-      self.exports(); //self.flightPaths();
-      // self.setScrollPoints();
+      self.flightPaths(); // self.setScrollPoints();
     },
     setScrollPoints: function setScrollPoints() {
       var self = this;
@@ -289,24 +282,7 @@ module.exports = function () {
         offset: 0
       });
     },
-    exports: function exports() {
-      var self = this;
-      d3.csv("./assets/js/data/exports.csv", prepare).then(function (data) {//console.log(data);
-        // data = d3.nest().key(function(d) {
-        // 	return d.category;
-        // })
-        // .entries(fate);
-        // console.log(data);
-      });
-
-      function prepare(d) {
-        var row = [];
-        row.amount = d['2017'];
-        row.country = d['Partner Name'];
-        if (row.amount !== '') return row;
-      }
-    },
-    map: function map() {
+    v5Map: function v5Map() {
       var self = this;
       var mapElement = d3.select('.fullscreen-map');
       var mapWidth = parseInt(mapElement.offsetWidth);
@@ -319,21 +295,21 @@ module.exports = function () {
         edgeBufferTiles: 2,
         reuseTiles: true,
         format: 'jpg70'
-      }).addTo(_map);
+      }).addTo(map);
     },
     showLabels: function showLabels() {
       L.tileLayer(mapWithLabels, {
         id: 'mapbox.light',
         accessToken: 'pk.eyJ1IjoiamFnb2R3aW4iLCJhIjoiY2lnOGQxaDhiMDZzMXZkbHYzZmN4ZzdsYiJ9.Uwh_L37P-qUoeC-MBSDteA',
         edgeBufferTiles: 2
-      }).addTo(_map);
+      }).addTo(map);
     },
     hideLabels: function hideLabels() {
       L.tileLayer(mapWithoutLabels, {
         id: 'mapbox.light',
         accessToken: 'pk.eyJ1IjoiamFnb2R3aW4iLCJhIjoiY2lnOGQxaDhiMDZzMXZkbHYzZmN4ZzdsYiJ9.Uwh_L37P-qUoeC-MBSDteA',
         edgeBufferTiles: 2
-      }).addTo(_map);
+      }).addTo(map);
     },
     showCountries: function showCountries() {
       d3.json('./assets/js/data/ne_10m_admin_0_countries.json').then(function (json) {
@@ -629,7 +605,7 @@ module.exports = function () {
       var glyph = document.querySelector('.generation-glyphs .frame');
       var data = [{
         'category': '',
-        'years': 450
+        'years': 425
       }];
       var graph = document.querySelector('.longevity');
       var graphicContainer = graph.parentElement;
@@ -774,7 +750,7 @@ module.exports = function () {
             context.fill();
 
             if (count === 1000000 * millionCount) {
-              //console.log(count);
+              console.log(count);
               var result = millionCount + ' millionX longer than you used it';
               element.append(result);
               element.append('test string lkj;lkjdfas;lkj');
@@ -810,7 +786,6 @@ module.exports = function () {
       window.addEventListener('resize', resizeCanvas, false);
     },
     miniMap: function miniMap() {
-      var self = this;
       var range = document.querySelector('.mini-map');
       var dragger = document.querySelector('.mini-map .dragger');
       var dragging = false,
@@ -822,7 +797,6 @@ module.exports = function () {
       dragger.addEventListener('mousedown', function (event) {
         draggerStartY = parseInt(dragger.style.transform.replace(/\D/g, ''));
         if (isNaN(draggerStartY)) draggerStartY = 0;
-        console.log(self.getTranslateY(document.getElementById('dragger')));
         startY = event.clientY;
         dragging = true;
         updateDragger(event);
@@ -860,16 +834,10 @@ module.exports = function () {
 
       unitVisContainer.addEventListener('scroll', function (event) {
         var totalProgress = (unitVisContainer.scrollTop - message.offsetHeight) / canvasHolder.offsetHeight;
-        var translation = moveableHeight * totalProgress; //console.log(moveableHeight);
-
+        var translation = moveableHeight * totalProgress;
+        console.log(totalProgress);
         dragger.style.transform = 'translateY(' + translation + 'px)';
       });
-    },
-    getTranslateY: function getTranslateY(obj) {
-      var style = obj.style,
-          transform = style.transform || style.webkitTransform || style.moyTransform,
-          yT = transform.match(/translateY\(([0-9]+(px|em|%|ex|ch|rem|vh|vw|vmin|vmax|mm|cm|in|pt|pc))\)/);
-      return yT ? yT[1] : '0'; //Return the value AS STRING (with the unit)
     }
   };
 };

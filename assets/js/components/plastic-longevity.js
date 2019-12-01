@@ -63,7 +63,7 @@ module.exports = function () {
 			var data = [
 				{
 					'category': '',
-					'years': 425
+					'years': 450
 				}
 			];
 				
@@ -243,7 +243,7 @@ module.exports = function () {
 						context.fill();
 						
 						if (count === 1000000 * millionCount) {
-							console.log(count);
+							//console.log(count);
 							let result = millionCount + ' millionX longer than you used it'
 							element.append(result);
 							element.append('test string lkj;lkjdfas;lkj');
@@ -280,6 +280,7 @@ module.exports = function () {
 		
 		miniMap: function() {
 			
+			let self = this;
 			var range = document.querySelector('.mini-map');
 			var dragger = document.querySelector('.mini-map .dragger');
 			var dragging = false, startY, currentY, draggerStartY;
@@ -291,6 +292,7 @@ module.exports = function () {
 				
 				draggerStartY = parseInt(dragger.style.transform.replace(/\D/g,''));
 				if (isNaN(draggerStartY)) draggerStartY = 0;
+				console.log(self.getTranslateY(document.getElementById('dragger')));
 				startY = event.clientY;
 				dragging = true;
 				updateDragger(event);
@@ -314,6 +316,7 @@ module.exports = function () {
 				let deltaY = currentY - startY;
 				let currentPos = draggerStartY + deltaY;
 				
+				
 				if (currentPos > 0 && currentPos < moveableHeight) {
 					dragger.style.transform = 'translateY(' + currentPos + 'px)';
 				}
@@ -335,9 +338,17 @@ module.exports = function () {
 			unitVisContainer.addEventListener('scroll', function(event) {
 				let totalProgress = (unitVisContainer.scrollTop - message.offsetHeight) / canvasHolder.offsetHeight;
 				let translation = moveableHeight * totalProgress;
-				console.log(totalProgress);
+				//console.log(moveableHeight);
 				dragger.style.transform = 'translateY(' + translation + 'px)';
 			});
+		},
+		
+		getTranslateY: function(obj) {
+			var style = obj.style,
+			transform = style.transform || style.webkitTransform || style.moyTransform,
+			yT = transform.match(/translateY\(([0-9]+(px|em|%|ex|ch|rem|vh|vw|vmin|vmax|mm|cm|in|pt|pc))\)/);
+			return yT ? yT[1] : '0';
+			//Return the value AS STRING (with the unit)
 		}
 	}
 }

@@ -49,7 +49,6 @@ module.exports = function () {
       var svgPlot = d3.select("#vis").append("svg").attr("width", width + margin.left + margin.right).attr("height", height);
       var plot = svgPlot.append("g").attr("class", "plot").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
       d3.csv("./assets/js/data/circles.csv", prepare).then(function (data) {
-        console.log('csv fire');
         dataset = data;
         drawPlot(dataset);
       });
@@ -262,19 +261,22 @@ module.exports = function () {
     "long": 120.998
   };
   var chinaLocation = new L.LatLng(china.lat, china["long"]);
-  var map = L.map('map', {
+
+  var _map = L.map('map', {
     zoomControl: false
   }).setView(chinaLocation, 5);
+
   var svg = d3.select('#map').select('svg');
   var pointsGroup = svg.select('g').attr('class', 'points').append('g');
   var svgLayer = L.svg();
-  svgLayer.addTo(map);
+  svgLayer.addTo(_map);
   return {
     init: function init() {
       var self = this;
-      self.v5Map();
+      self.map();
       self.showCountries();
-      self.flightPaths(); // self.setScrollPoints();
+      self.exports(); //self.flightPaths();
+      // self.setScrollPoints();
     },
     setScrollPoints: function setScrollPoints() {
       var self = this;
@@ -287,7 +289,24 @@ module.exports = function () {
         offset: 0
       });
     },
-    v5Map: function v5Map() {
+    exports: function exports() {
+      var self = this;
+      d3.csv("./assets/js/data/exports.csv", prepare).then(function (data) {//console.log(data);
+        // data = d3.nest().key(function(d) {
+        // 	return d.category;
+        // })
+        // .entries(fate);
+        // console.log(data);
+      });
+
+      function prepare(d) {
+        var row = [];
+        row.amount = d['2017'];
+        row.country = d['Partner Name'];
+        if (row.amount !== '') return row;
+      }
+    },
+    map: function map() {
       var self = this;
       var mapElement = d3.select('.fullscreen-map');
       var mapWidth = parseInt(mapElement.offsetWidth);
@@ -300,21 +319,21 @@ module.exports = function () {
         edgeBufferTiles: 2,
         reuseTiles: true,
         format: 'jpg70'
-      }).addTo(map);
+      }).addTo(_map);
     },
     showLabels: function showLabels() {
       L.tileLayer(mapWithLabels, {
         id: 'mapbox.light',
         accessToken: 'pk.eyJ1IjoiamFnb2R3aW4iLCJhIjoiY2lnOGQxaDhiMDZzMXZkbHYzZmN4ZzdsYiJ9.Uwh_L37P-qUoeC-MBSDteA',
         edgeBufferTiles: 2
-      }).addTo(map);
+      }).addTo(_map);
     },
     hideLabels: function hideLabels() {
       L.tileLayer(mapWithoutLabels, {
         id: 'mapbox.light',
         accessToken: 'pk.eyJ1IjoiamFnb2R3aW4iLCJhIjoiY2lnOGQxaDhiMDZzMXZkbHYzZmN4ZzdsYiJ9.Uwh_L37P-qUoeC-MBSDteA',
         edgeBufferTiles: 2
-      }).addTo(map);
+      }).addTo(_map);
     },
     showCountries: function showCountries() {
       d3.json('./assets/js/data/ne_10m_admin_0_countries.json').then(function (json) {
@@ -610,7 +629,7 @@ module.exports = function () {
       var glyph = document.querySelector('.generation-glyphs .frame');
       var data = [{
         'category': '',
-        'years': 425
+        'years': 450
       }];
       var graph = document.querySelector('.longevity');
       var graphicContainer = graph.parentElement;
@@ -755,7 +774,7 @@ module.exports = function () {
             context.fill();
 
             if (count === 1000000 * millionCount) {
-              console.log(count);
+              //console.log(count);
               var result = millionCount + ' millionX longer than you used it';
               element.append(result);
               element.append('test string lkj;lkjdfas;lkj');
@@ -791,6 +810,7 @@ module.exports = function () {
       window.addEventListener('resize', resizeCanvas, false);
     },
     miniMap: function miniMap() {
+      var self = this;
       var range = document.querySelector('.mini-map');
       var dragger = document.querySelector('.mini-map .dragger');
       var dragging = false,
@@ -802,6 +822,7 @@ module.exports = function () {
       dragger.addEventListener('mousedown', function (event) {
         draggerStartY = parseInt(dragger.style.transform.replace(/\D/g, ''));
         if (isNaN(draggerStartY)) draggerStartY = 0;
+        console.log(self.getTranslateY(document.getElementById('dragger')));
         startY = event.clientY;
         dragging = true;
         updateDragger(event);
@@ -839,10 +860,16 @@ module.exports = function () {
 
       unitVisContainer.addEventListener('scroll', function (event) {
         var totalProgress = (unitVisContainer.scrollTop - message.offsetHeight) / canvasHolder.offsetHeight;
-        var translation = moveableHeight * totalProgress;
-        console.log(totalProgress);
+        var translation = moveableHeight * totalProgress; //console.log(moveableHeight);
+
         dragger.style.transform = 'translateY(' + translation + 'px)';
       });
+    },
+    getTranslateY: function getTranslateY(obj) {
+      var style = obj.style,
+          transform = style.transform || style.webkitTransform || style.moyTransform,
+          yT = transform.match(/translateY\(([0-9]+(px|em|%|ex|ch|rem|vh|vw|vmin|vmax|mm|cm|in|pt|pc))\)/);
+      return yT ? yT[1] : '0'; //Return the value AS STRING (with the unit)
     }
   };
 };

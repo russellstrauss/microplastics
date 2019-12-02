@@ -1,6 +1,8 @@
 module.exports = function () {
 	
 	var dataset;
+	var circleRadius = 8;
+	var count = 0;
 	
 	return {
 
@@ -12,8 +14,6 @@ module.exports = function () {
 				
 			d3.csv("./assets/js/data/circless.csv", prepare).then(function(data) {
 				dataset = data;
-				drawPlot(dataset);
-			});
 
 			var BelowText = d3.select('.monument-visualization').append("svg")
 			.attr("class", "texts")
@@ -48,7 +48,7 @@ module.exports = function () {
 			
 			var formatYear = d3.timeFormat("%Y");
 			var formatDate = d3.timeFormat("%Y");
-			var parseDate = d3.timeParse("%m/%y");
+			var parseDate = d3.timeParse("%m/%Y");
 
 			var startDate = new Date("1949"),
 				endDate = new Date("2020");
@@ -69,6 +69,9 @@ module.exports = function () {
 				.domain([startDate, endDate])
 				.range([0, widthslider])
 				.clamp(true);
+				
+			var yScale = d3.scaleLinear().domain([2019, 1950]).range([circleRadius*2, 350]);
+			var xScale = d3.scaleLinear().domain([1950, 2019]).range([100, 10]);
 
 			var slider = svgSlider.append("g")
 				.attr("class", "slider")
@@ -125,7 +128,8 @@ module.exports = function () {
 			
 			function prepare(d) {
 				d.id = d.id;
-				d.Year = parseDate(d.Year);
+				d.Date = parseDate(d.Year);
+				d.Year = parseDate(d.Year).getYear() + 1900
 				return d;
 			}
 
@@ -134,26 +138,29 @@ module.exports = function () {
 				var locations = plot.selectAll(".location").data(data);
 
 				// if filtered dataset has more circles than already existing, transition new ones in
+				
 				locations.enter()
 					.append("circle")
 					.attr("class", "location")
-					.attr("cx", d3.randomNormal(140,40)())
-					.attr("cy", 100)
+					.style("opacity", 0)
+					.attr("cx", function(d) {
+						return d3.randomNormal(140, xScale(d.Year))();
+					})
+					.attr("cy", 10)
 					.style("fill", 'orange')
 					.style("stroke", 'orange')
-					.style("opacity", 0.4)
-					.attr("r", 8)
+					.attr("r", circleRadius)
 					.transition()
 					.duration(500)
 					.attr("r", 10)
 					.style("fill", "red")
 						.transition()
 						.attr("r", 8).style("fill", 'orange')
+						.style('opacity', .4)
 						.transition()
-						.attr("cy", function(d) { 
-							return 380
-						
-						})
+						.attr("cy", function(d) {
+							return yScale(d.Year)
+						});
 					
 
 
@@ -168,7 +175,7 @@ module.exports = function () {
 
 				//filter data set and redraw plot
 				var newData = dataset.filter(function(d) {
-					return d.Year < h;
+					return d.Date < h;
 				});
 				
 				drawPlot(newData);

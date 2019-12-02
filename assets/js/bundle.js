@@ -2,28 +2,31 @@
 "use strict";
 
 module.exports = function () {
+  var plasticProductionData;
   var dataset;
   var circleRadius = 8;
   var count = 0;
+  var plasticProductionTextField;
   return {
     init: function init() {
       this.myMethod();
     },
     myMethod: function myMethod() {
-      d3.csv("./assets/js/data/circless.csv", prepare).then(function (data) {
-        dataset = data; //drawPlot(dataset);
-        // var circles = plot.selectAll(".location").style('opacity', 0);
-        // console.log(circles);
+      d3.csv("./assets/js/data/cumulative.csv").then(function (data) {
+        plasticProductionData = data;
       });
-      var BelowText = d3.select('.monument-visualization').append("svg").attr("class", "texts").attr("width", 1000).attr("height", 200);
-      BelowText.append('text').attr('x', 180).attr('y', 100).style('fill', 'black').style('font-size', '1.5em').text('200000000mt');
+      d3.csv("./assets/js/data/circless.csv", prepare).then(function (data) {
+        dataset = data;
+      });
+      var BelowText = d3.select('.monument-visualization').append("svg").attr("class", "texts").attr('id', 'plasticProduction').attr("width", 1000).attr("height", 200);
+      plasticProductionTextField = BelowText.append('text').attr('x', 180).attr('y', 100).style('fill', 'black').style('font-size', '1.5em').text('2000000mt');
       BelowText.append('text').attr('x', 510).attr('y', 105).style('fill', 'black').style('font-size', '2em').text("=");
       BelowText.append('text').attr('x', 745).attr('y', 100).style('fill', 'black').text('Eiffel Tower').style('font-size', '1.5em'); /////////////////////////////////////////////
 
       var formatYear = d3.timeFormat("%Y");
       var formatDate = d3.timeFormat("%Y");
       var parseDate = d3.timeParse("%m/%Y");
-      var startDate = new Date("1949"),
+      var startDate = new Date("1950"),
           endDate = new Date("2020");
       var margin = {
         top: 0,
@@ -39,7 +42,7 @@ module.exports = function () {
       var svgSlider = d3.select("#slider").append("svg").attr("width", widthslider + margin.left + margin.right).attr("height", heightslider);
       var scale = d3.scaleTime().domain([startDate, endDate]).range([0, widthslider]).clamp(true);
       var yScale = d3.scaleLinear().domain([2019, 1950]).range([circleRadius * 2, 350]);
-      var xScale = d3.scaleLinear().domain([1950, 2019]).range([100, 10]);
+      var xScale = d3.scaleLinear().domain([1950, 2019]).range([60, 10]);
       var slider = svgSlider.append("g").attr("class", "slider").attr("transform", "translate(" + margin.left + "," + heightslider / 2 + ")");
       slider.append("line").attr("class", "track").attr("align", "center").attr("x1", scale.range()[0]).attr("x2", scale.range()[1]).select(function () {
         return this.parentNode.appendChild(this.cloneNode(true));
@@ -50,6 +53,11 @@ module.exports = function () {
       }).on("start drag", function () {
         update(scale.invert(d3.event.x));
       }));
+
+      function dragged(d) {
+        circle.raise().attr("cx", d.x = d3.event.x).attr("cy", d.y = d3.event.y);
+      }
+
       slider.insert("g", ".track-overlay").attr("class", "ticks").attr("transform", "translate(0," + 18 + ")").selectAll("text").data(scale.ticks(10)).enter().append("text").attr("x", scale).attr("y", 10).attr("text-anchor", "middle").text(function (d) {
         return formatYear(d);
       });
@@ -80,7 +88,19 @@ module.exports = function () {
       function update(h) {
         // update position and text of label according to slider scale
         handle.attr("cx", scale(h));
-        label.attr("x", scale(h)).text(formatDate(h)); //filter data set and redraw plot
+        label.attr("x", scale(h)).text(formatDate(h));
+        var year = 1950;
+        var index = Object.keys(plasticProductionData).indexOf(year.toString());
+        var production = 0;
+        Object.keys(plasticProductionData).forEach(function eachKey(key) {
+          year = formatYear(h);
+
+          if (parseInt(plasticProductionData[key].Year) === parseInt(year)) {
+            plasticProductionTextField.text(plasticProductionData[key].Cumulative + 'mt');
+          }
+
+          ;
+        }); //filter data set and redraw plot
 
         var newData = dataset.filter(function (d) {
           return d.Date < h;
@@ -265,19 +285,22 @@ module.exports = function () {
     "long": 120.998
   };
   var chinaLocation = new L.LatLng(china.lat, china["long"]);
-  var map = L.map('map', {
+
+  var _map = L.map('map', {
     zoomControl: false
   }).setView(chinaLocation, 5);
+
   var svg = d3.select('#map').select('svg');
   var pointsGroup = svg.select('g').attr('class', 'points').append('g');
   var svgLayer = L.svg();
-  svgLayer.addTo(map);
+  svgLayer.addTo(_map);
   return {
     init: function init() {
       var self = this;
-      self.v5Map();
+      self.map();
       self.showCountries();
-      self.flightPaths(); // self.setScrollPoints();
+      self.exports(); //self.flightPaths();
+      // self.setScrollPoints();
     },
     setScrollPoints: function setScrollPoints() {
       var self = this;
@@ -290,7 +313,24 @@ module.exports = function () {
         offset: 0
       });
     },
-    v5Map: function v5Map() {
+    exports: function exports() {
+      var self = this;
+      d3.csv("./assets/js/data/exports.csv", prepare).then(function (data) {//console.log(data);
+        // data = d3.nest().key(function(d) {
+        // 	return d.category;
+        // })
+        // .entries(fate);
+        // console.log(data);
+      });
+
+      function prepare(d) {
+        var row = [];
+        row.amount = d['2017'];
+        row.country = d['Partner Name'];
+        if (row.amount !== '') return row;
+      }
+    },
+    map: function map() {
       var self = this;
       var mapElement = d3.select('.fullscreen-map');
       var mapWidth = parseInt(mapElement.offsetWidth);
@@ -303,21 +343,21 @@ module.exports = function () {
         edgeBufferTiles: 2,
         reuseTiles: true,
         format: 'jpg70'
-      }).addTo(map);
+      }).addTo(_map);
     },
     showLabels: function showLabels() {
       L.tileLayer(mapWithLabels, {
         id: 'mapbox.light',
         accessToken: 'pk.eyJ1IjoiamFnb2R3aW4iLCJhIjoiY2lnOGQxaDhiMDZzMXZkbHYzZmN4ZzdsYiJ9.Uwh_L37P-qUoeC-MBSDteA',
         edgeBufferTiles: 2
-      }).addTo(map);
+      }).addTo(_map);
     },
     hideLabels: function hideLabels() {
       L.tileLayer(mapWithoutLabels, {
         id: 'mapbox.light',
         accessToken: 'pk.eyJ1IjoiamFnb2R3aW4iLCJhIjoiY2lnOGQxaDhiMDZzMXZkbHYzZmN4ZzdsYiJ9.Uwh_L37P-qUoeC-MBSDteA',
         edgeBufferTiles: 2
-      }).addTo(map);
+      }).addTo(_map);
     },
     showCountries: function showCountries() {
       d3.json('./assets/js/data/ne_10m_admin_0_countries.json').then(function (json) {
@@ -613,7 +653,7 @@ module.exports = function () {
       var glyph = document.querySelector('.generation-glyphs .frame');
       var data = [{
         'category': '',
-        'years': 425
+        'years': 450
       }];
       var graph = document.querySelector('.longevity');
       var graphicContainer = graph.parentElement;
@@ -758,7 +798,7 @@ module.exports = function () {
             context.fill();
 
             if (count === 1000000 * millionCount) {
-              console.log(count);
+              //console.log(count);
               var result = millionCount + ' millionX longer than you used it';
               element.append(result);
               element.append('test string lkj;lkjdfas;lkj');
@@ -794,6 +834,7 @@ module.exports = function () {
       window.addEventListener('resize', resizeCanvas, false);
     },
     miniMap: function miniMap() {
+      var self = this;
       var range = document.querySelector('.mini-map');
       var dragger = document.querySelector('.mini-map .dragger');
       var dragging = false,
@@ -805,6 +846,7 @@ module.exports = function () {
       dragger.addEventListener('mousedown', function (event) {
         draggerStartY = parseInt(dragger.style.transform.replace(/\D/g, ''));
         if (isNaN(draggerStartY)) draggerStartY = 0;
+        console.log(self.getTranslateY(document.getElementById('dragger')));
         startY = event.clientY;
         dragging = true;
         updateDragger(event);
@@ -842,10 +884,16 @@ module.exports = function () {
 
       unitVisContainer.addEventListener('scroll', function (event) {
         var totalProgress = (unitVisContainer.scrollTop - message.offsetHeight) / canvasHolder.offsetHeight;
-        var translation = moveableHeight * totalProgress;
-        console.log(totalProgress);
+        var translation = moveableHeight * totalProgress; //console.log(moveableHeight);
+
         dragger.style.transform = 'translateY(' + translation + 'px)';
       });
+    },
+    getTranslateY: function getTranslateY(obj) {
+      var style = obj.style,
+          transform = style.transform || style.webkitTransform || style.moyTransform,
+          yT = transform.match(/translateY\(([0-9]+(px|em|%|ex|ch|rem|vh|vw|vmin|vmax|mm|cm|in|pt|pc))\)/);
+      return yT ? yT[1] : '0'; //Return the value AS STRING (with the unit)
     }
   };
 };

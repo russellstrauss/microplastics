@@ -1,8 +1,10 @@
 module.exports = function () {
 	
+	var plasticProductionData;
 	var dataset;
 	var circleRadius = 8;
 	var count = 0;
+	var plasticProductionTextField;
 	
 	return {
 
@@ -11,31 +13,33 @@ module.exports = function () {
 		},
 
 		myMethod: function() {
-				
+			
+			d3.csv("./assets/js/data/cumulative.csv").then(function(data) {
+				plasticProductionData = data;
+			});
 			d3.csv("./assets/js/data/circless.csv", prepare).then(function(data) {
 				dataset = data;
-
+			});
+			
 			var BelowText = d3.select('.monument-visualization').append("svg")
 			.attr("class", "texts")
+			.attr('id', 'plasticProduction')
 			.attr("width", 1000)
 			.attr("height", 200);
 
-				BelowText.append('text')
+				plasticProductionTextField = BelowText.append('text')
 				.attr('x', 180)
 				.attr('y', 100)
 				.style('fill', 'black')
 				.style('font-size', '1.5em')
-				.text('200000000mt')
-				;
+				.text('2000000mt');
 
 				BelowText.append('text')
 				.attr('x', 510)
 				.attr('y', 105)
 				.style('fill', 'black')
 				.style('font-size', '2em')
-				.text("=")
-
-				;
+				.text("=");
 
 				BelowText.append('text')
 				.attr('x', 745)
@@ -50,7 +54,7 @@ module.exports = function () {
 			var formatDate = d3.timeFormat("%Y");
 			var parseDate = d3.timeParse("%m/%Y");
 
-			var startDate = new Date("1949"),
+			var startDate = new Date("1950"),
 				endDate = new Date("2020");
 
 			var margin = {top:0, right:50, bottom:0, left:50},
@@ -71,7 +75,7 @@ module.exports = function () {
 				.clamp(true);
 				
 			var yScale = d3.scaleLinear().domain([2019, 1950]).range([circleRadius*2, 350]);
-			var xScale = d3.scaleLinear().domain([1950, 2019]).range([100, 10]);
+			var xScale = d3.scaleLinear().domain([1950, 2019]).range([60, 10]);
 
 			var slider = svgSlider.append("g")
 				.attr("class", "slider")
@@ -91,6 +95,11 @@ module.exports = function () {
 					.on("start drag", function() {
 						update(scale.invert(d3.event.x));
 					}));
+					
+
+			function dragged(d) {
+				circle.raise().attr("cx", d.x = d3.event.x).attr("cy", d.y = d3.event.y);
+			}
 
 			slider.insert("g", ".track-overlay")
 				.attr("class", "ticks")
@@ -172,7 +181,22 @@ module.exports = function () {
 				handle.attr("cx", scale(h));
 				label.attr("x", scale(h))
 					.text(formatDate(h));
-
+					
+					
+					var year = 1950;
+					var index = Object.keys(plasticProductionData).indexOf(year.toString());
+					var production = 0;
+					
+					Object.keys(plasticProductionData).forEach(function eachKey(key) {
+						year = formatYear(h);
+						if (parseInt(plasticProductionData[key].Year) === parseInt(year)) {
+							plasticProductionTextField.text(plasticProductionData[key].Cumulative + 'mt');
+						};
+					});
+					
+					
+					
+					
 				//filter data set and redraw plot
 				var newData = dataset.filter(function(d) {
 					return d.Date < h;

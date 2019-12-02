@@ -10,10 +10,12 @@ module.exports = function () {
 	var timescaleHeight = 140;
 	var canvas = document.querySelector('#dotCanvas');
 	var canvasHolder = document.querySelector('.plastic-longevity .canvas-holder');
-	let totalCount = 0;
+	var draggerTransform = 0;
+	var previousDraggerTransform = 0;
+	var totalCount = 0;
 	var unitVisContainer = document.querySelector('.plastic-longevity .unit-vis-viewport');
-	let message = document.querySelector('.plastic-longevity .message');
-	let countElement = document.querySelector('.use-ratio .count');
+	var message = document.querySelector('.plastic-longevity .message');
+	var countElement = document.querySelector('.use-ratio .count');
 	
 	var center = {
 		x: width / 2,
@@ -177,7 +179,6 @@ module.exports = function () {
 			let selector = document.querySelector('#longevitySelector');			
 			if (selector) selector.addEventListener('change', function(event) {
 				self.setMaterial(selector.value);
-				console.log(settings.materials[selector.value].breakdownTime);
 				canvasHolder.innerHTML = '';
 				self.useRatio(settings.materials[selector.value].useTimeHours, settings.materials[selector.value].breakdownTime);
 			});
@@ -280,7 +281,6 @@ module.exports = function () {
 				canvas.remove();
 				totalCount += countPerCanvas;
 			}
-			console.log(totalCount);
 			
 			function cloneCanvas(oldCanvas) {
 				
@@ -307,9 +307,8 @@ module.exports = function () {
 			
 			dragger.addEventListener('mousedown', function(event) {
 				
-				draggerStartY = parseInt(dragger.style.transform.replace(/\D/g,''));
+				draggerStartY = previousDraggerTransform;
 				if (isNaN(draggerStartY)) draggerStartY = 0;
-				console.log(self.getTranslateY(document.getElementById('dragger')));
 				startY = event.clientY;
 				dragging = true;
 				updateDragger(event);
@@ -331,22 +330,22 @@ module.exports = function () {
 			function updateDragger(event) {
 				
 				let deltaY = currentY - startY;
-				let currentPos = draggerStartY + deltaY;
+				draggerTransform = draggerStartY + deltaY;
+				previousDraggerTransform = draggerTransform;
 				
+				if (draggerTransform > 0 && draggerTransform < moveableHeight) {
+					dragger.style.transform = 'translateY(' + draggerTransform + 'px)';
+				}
+				else if (draggerTransform < 0) {
+					draggerTransform = 0;
+					dragger.style.transform = 'translateY(' + draggerTransform + 'px)';
+				}
+				else if (draggerTransform > moveableHeight) {
+					draggerTransform = (moveableHeight - 1);
+					dragger.style.transform = 'translateY(' + draggerTransform + 'px)';
+				}
 				
-				if (currentPos > 0 && currentPos < moveableHeight) {
-					dragger.style.transform = 'translateY(' + currentPos + 'px)';
-				}
-				else if (currentPos < 0) {
-					currentPos = 0;
-					dragger.style.transform = 'translateY(' + currentPos + 'px)';
-				}
-				else if (currentPos > moveableHeight) {
-					currentPos = (moveableHeight - 1);
-					dragger.style.transform = 'translateY(' + currentPos + 'px)';
-				}
-				
-				totalProgress = currentPos / (moveableHeight - 1);
+				totalProgress = draggerTransform / (moveableHeight - 1);
 				
 				let scrollToY = canvasHolder.offsetHeight * totalProgress;
 				unitVisContainer.scrollTo(0, scrollToY);
@@ -358,19 +357,11 @@ module.exports = function () {
 				let number = countElement.querySelector('.number');
 				let caption = countElement.querySelector('.caption');
 				if (number) number.textContent = (Math.floor(totalCount * totalProgress)).toLocaleString() + 'x';
-				if (caption) countElement.querySelector('.caption').style.opacity = '1';
+				if (caption) countElement.querySelector('.caption').style.opacity = '1'
 				
-				let translation = moveableHeight * totalProgress;
-				dragger.style.transform = 'translateY(' + translation + 'px)';
+				let draggerTransform = moveableHeight * totalProgress;
+				dragger.style.transform = 'translateY(' + draggerTransform + 'px)';
 			});
-		},
-		
-		getTranslateY: function(obj) {
-			var style = obj.style,
-			transform = style.transform || style.webkitTransform || style.moyTransform,
-			yT = transform.match(/translateY\(([0-9]+(px|em|%|ex|ch|rem|vh|vw|vmin|vmax|mm|cm|in|pt|pc))\)/);
-			return yT ? yT[1] : '0';
-			//Return the value AS STRING (with the unit)
 		}
 	}
 }

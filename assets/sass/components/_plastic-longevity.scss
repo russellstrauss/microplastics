@@ -11,6 +11,12 @@ $foreground: black;
 		padding: 0 15px;
 		text-align: center;
 		margin-bottom: 50px;
+		
+		.material {
+			margin-top: 50px;
+			font-size: 22px;
+			padding: 5px 10px;
+		}
 	}
 	
 	.two-column {
@@ -171,14 +177,25 @@ $foreground: black;
 		}
 		
 		.count {
-			font-size: 8rem;
 			position: absolute;
 			bottom: -10px;
-			line-height: normal;
-			opacity: .1;
+			padding-left: 50px;
 			
-			@include desktop-large {
-				font-size: 12rem;
+			.number	{
+				opacity: .1;
+				font-size: 8rem;
+				line-height: normal;
+				margin-right: 40px;
+				
+				@include desktop-large {
+					font-size: 12rem;
+				}
+			}
+			
+			.caption {
+				opacity: 0;
+				font-size: 1rem;
+				color: #666;
 			}
 		}
 	}

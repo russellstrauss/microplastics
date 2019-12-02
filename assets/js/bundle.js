@@ -620,41 +620,58 @@ module.exports = function () {
   var svg;
   var cupWidth, cupHeight;
   var timescaleHeight = 140;
+  var canvas = document.querySelector('#dotCanvas');
   var canvasHolder = document.querySelector('.plastic-longevity .canvas-holder');
+  var totalCount = 0;
   var unitVisContainer = document.querySelector('.plastic-longevity .unit-vis-viewport');
   var message = document.querySelector('.plastic-longevity .message');
+  var countElement = document.querySelector('.use-ratio .count');
   var center = {
     x: width / 2,
     y: height / 2
   };
   var settings = {
     materials: {
-      coffee: {
-        title: '1 Plastic Coffee Lid',
-        path: './assets/svg/coffee.svg',
-        useTime: .5,
-        mass: '157g',
-        breakdownTime: 450
-      },
       bottle: {
         title: '1 Plastic Bottle',
         path: './assets/svg/bottle.svg',
-        useTime: 1,
-        mass: '157g',
-        breakdownTime: 450
+        useTimeHours: 1,
+        useTimeDisplay: '1 hour',
+        mass: '24g',
+        breakdownTime: 450,
+        breakdownTimeDisplay: '450 years'
+      },
+      coffee: {
+        title: '1 Plastic Coffee Lid',
+        path: './assets/svg/coffee.svg',
+        useTimeHours: 2,
+        useTimeDisplay: '2 hours',
+        mass: '4.48g',
+        breakdownTime: 450,
+        breakdownTimeDisplay: '450 years'
       },
       vegetable: {
         title: 'Vegetable',
         path: './assets/svg/vegetable.svg',
-        useTime: .5,
+        useTimeHours: 1,
+        useTimeDisplay: '1 hour',
         mass: '',
-        breakdownTime: .2
+        breakdownTime: .246575,
+        breakdownTimeDisplay: '3 months'
+      },
+      cardboard: {
+        title: 'Cardboard',
+        path: './assets/img/cardboard.png',
+        useTimeHours: 72,
+        useTimeDisplay: '3 days',
+        mass: 'Variable',
+        breakdownTime: .249315
       }
     }
   };
   return {
     init: function init() {
-      this.useRatio();
+      this.useRatio(3, 450);
       this.longevityTimescale();
       this.bindUI();
       this.miniMap();
@@ -736,6 +753,9 @@ module.exports = function () {
       var selector = document.querySelector('#longevitySelector');
       if (selector) selector.addEventListener('change', function (event) {
         self.setMaterial(selector.value);
+        console.log(settings.materials[selector.value].breakdownTime);
+        canvasHolder.innerHTML = '';
+        self.useRatio(settings.materials[selector.value].useTimeHours, settings.materials[selector.value].breakdownTime);
       });
     },
     setMaterial: function setMaterial(materialID) {
@@ -754,16 +774,15 @@ module.exports = function () {
       var mass = document.querySelector('.plastic-longevity .stats .mass span');
       var breakdownTime = document.querySelector('.plastic-longevity .stats .generations span');
       title.textContent = material.title;
-      useTime.textContent = material.useTime;
+      useTime.textContent = material.useTimeDisplay;
       mass.textContent = material.mass;
-      breakdownTime.textContent = material.breakdownTime;
+      breakdownTime.textContent = material.breakdownTimeDisplay;
     },
-    useRatio: function useRatio() {
-      var useTimeHours = 3;
-      var decomposeYears = 450;
+    useRatio: function useRatio(useTimeHours, decomposeYears) {
+      //let useTimeHours = 3;
+      //let decomposeYears = 450;
       var decomposeHours = decomposeYears * 8760;
       var ratio = decomposeHours / useTimeHours;
-      var totalCount = 0;
       var width;
       var element = document.querySelector('.use-ratio .canvas-holder');
 
@@ -771,7 +790,6 @@ module.exports = function () {
         width = parseInt(element.offsetWidth);
       }
 
-      var canvas = document.querySelector('#dotCanvas');
       var context = canvas.getContext('2d');
       var waypoint = new Waypoint({
         element: element,
@@ -801,6 +819,7 @@ module.exports = function () {
 
       function drawDots() {
         var count = 0;
+        totalCount = 0;
         var millionCount = 1;
 
         for (var x = dotRadius * 2; x < vw; x += cellSize) {
@@ -825,15 +844,16 @@ module.exports = function () {
         return count;
       }
 
-      var canvasCopies = Math.floor(ratio / countPerCanvas); //console.log('Number of canvases: ', canvasCopies);
+      var canvasCopies = Math.floor(ratio / countPerCanvas);
 
       for (var i = 0; i < canvasCopies + 1; i++) {
         // duplicate multiple copies of the canvas to avoid millions of loops
         element.append(cloneCanvas(canvas));
         canvas.remove();
-        totalCount += countPerCanvas; //if (totalCount > 1000000) element.append('1 million times as long as you used it');
-      } //console.log('Total count: ', totalCount);
+        totalCount += countPerCanvas;
+      }
 
+      console.log(totalCount);
 
       function cloneCanvas(oldCanvas) {
         var newCanvas = document.createElement('canvas');
@@ -896,9 +916,12 @@ module.exports = function () {
       }
 
       unitVisContainer.addEventListener('scroll', function (event) {
-        var totalProgress = (unitVisContainer.scrollTop - message.offsetHeight) / canvasHolder.offsetHeight;
-        var translation = moveableHeight * totalProgress; //console.log(moveableHeight);
-
+        var totalProgress = unitVisContainer.scrollTop / (canvasHolder.offsetHeight - 1000);
+        var number = countElement.querySelector('.number');
+        var caption = countElement.querySelector('.caption');
+        if (number) number.textContent = Math.floor(totalCount * totalProgress).toLocaleString() + 'x';
+        if (caption) countElement.querySelector('.caption').style.opacity = '1';
+        var translation = moveableHeight * totalProgress;
         dragger.style.transform = 'translateY(' + translation + 'px)';
       });
     },

@@ -54,19 +54,18 @@
 			
 			<img class="bag" src="./assets/img/bag.png" alt="">
 			
-			<div class="video-frame">
-				<video autoplay="autoplay" loop autoplay>
-					<source src="http://jrstrauss.net/information-visualization/ocean.mp4" type="video/mp4">
-				</video>
-			</div>
 			
 			<div class="gradient-fade black">
 				<h2>Plastics in our world.</h2>
 			</div>
-		</section>
-		
-		<section class="black">
-		
+			
+			<div class="video-frame">
+				<div class="gradient-black"></div>
+				<video autoplay="autoplay" loop autoplay>
+					<source src="http://jrstrauss.net/information-visualization/ocean.mp4" type="video/mp4">
+				</video>
+				<div class="gradient-white"></div>
+			</div>
 		</section>
 
 		<section>
@@ -89,7 +88,7 @@
 		</section>
 	</div>
 		
-	<section class="bubble-chart white">
+	<section class="waste-vs-gdp white">
 		<div class="scatterplot">
 			<svg></svg>
 		</div>
@@ -98,8 +97,12 @@
 	<div class="plastic-longevity">
 		
 		<div class="selector">
-			<h3>Plastic Longevity</h3>
-			<p>We grapple with these choices every day. See how the waste you produce might end up on the plates of your great, great grandchildren. </p>
+			<h3>The Danger of Single-use Plastics</h3>
+			<p>With 7.7 billion people on planet Earth as of 2019, the use of single-use plastics presents a dangerous habit that society has adopted. With populations rising at exponential rates and billions of single-use plastics 
+				being used and discarded every single day, the rate at which we use plastic is far out of proportion with the time it takes for that plastic to break down. While we continue to pile on the plastic each day, there doesn't seem to be anything
+				to stop it. See how the plastic you use on a daily basis, possibly even a coffee cup or plastic bottle you used today will be around long after you, your children, and grandchildren are no longer living. If we are only using
+				the materials for hours or even minutes, shouldn't we choose materials that degrade in less than 450 years?
+			</p>
 			<select name="longevitySelector" class="material" id="longevitySelector">
 				<option value="bottle">Bottle</option>
 				<option value="coffee">Coffee Cup</option>
@@ -115,7 +118,7 @@
 				<ul>
 					<li class="material">Material: <span>1 Plastic cup</span></li>
 					<li class="use-time">Average use time: <span>4 hours</span></li>
-					<li class="mass">Mass: <span>157g</span></li>
+					<li class="mass">Mass: <span>24g</span></li>
 					<li class="generations">Will break down after: <span>450 years</span></li>
 					<li class="lifetimes" style="justify-content: flex-end;"><span>5.2 lifetimes</span></li>
 				</ul>
@@ -153,7 +156,7 @@
 						<canvas id="dotCanvas"></canvas>
 					</div>
 				</div>
-				<div class="count">1,000,000x</div>
+				<div class="count"><span class="number"></span><span class="caption">longer than the material was used</span></div>
 			</div>
 		</div>
 	</div>
@@ -162,7 +165,7 @@
 	
 	<div class="empty" id="showAsia"></div>
 		
-	<div class="full" id="references">
+	<div class="references">
 		
 		<div class="container">
 			
@@ -171,52 +174,6 @@
 				<li>Lebreton, Laurent C. M.; Van der Zwet, Joost. Damsteeg, Jan-Willem; Slat, Boyan; Andrady, Anthony; Reisser, Julia (2017/06/07): River plastic emissions to the world’s oceans. Nature Communications. <a href="https://www.nature.com/articles/ncomms15611">https://www.nature.com/articles/ncomms15611</a></li>
 				<li>Cox, Kieran D.; Covernton, Garth A.; Davies, Hailey L.; Dower, John F.; Juanes, Francis; Dudas, Sarah E. (2019): Human Consumption of Microplastics. ACS Publications. Journal contribution. <a href="https://doi.org/10.1021/acs.est.9b01517">https://doi.org/10.1021/acs.est.9b01517</a></li>
 			</ol>
-			
-			<hr>
-			<h3>Notes for ideas to add</h3>
-			
-			<h4>Potential data points to explore</h4>
-			
-			<ul>
-				<li><a href="https://reneweconomy.com.au/oceans-full-plastic-heres-can-83949/">https://reneweconomy.com.au/oceans-full-plastic-heres-can-83949/</a></li>
-				<li><a href="https://ourworldindata.org/plastic-pollution">https://ourworldindata.org/plastic-pollution</a></li>
-				<li><a href="https://ourworldindata.org/faq-on-plastics">https://ourworldindata.org/faq-on-plastics</a></li>
-				<li><a href="https://sdg-tracker.org/sustainable-consumption-production">https://sdg-tracker.org/sustainable-consumption-production</a></li>		
-				<li>What research is available on how much plastic a typical human consumes on average and what percentage of these plastics are toxic to humans?</li>
-				<li>Ratios of time plastics are used vs. how long they take to break down or decompose; lifespan use ratios</li>
-				<li>Amount of plastic production in various industries</li>
-				<li>Different types of plastics, their benefits and downsides</li>
-				<li>Plastic production/disposal/improper disposal as related to geographic location or culture</li>
-				<li>Do certain foods or habits have more risk to plastic ingestion? Or toxic plastic ingestion?</li>
-				<li>Costs of inputs as related to plastic raw material in various industries and products</li>
-				<li>Data related to the physical travel of plastics in space-time, whether re-used, disposed in land, or unintentionally into the ocean through the natural flow of water</li>
-				<li>Percentage of toxic to humans vs. food safe plastics into the human diet</li>
-				<li>Volume/mass of plastics produced since the 1950’s</li>
-				<li>How much plastic has been produced overall (high, 70-year scale) vs. decomposed (none, 1000-year scale) since the 1950’s</li>
-				<li>Effectiveness and cost of alternatives</li>
-				<li>Hopefully many others as we begin to search for and explore data and develop new ideas</li>
-			</ul>
-			
-			<h4>Other Sources to Explore</h4>
-			
-			<ul>
-				<li>Experts for possible contact:
-					<ul>
-						<li>Hannah Ritchie (Our World in Data, Oxford University);</li>
-						<li>Rhiannon Moore (Ocean Wise, ocean.org);</li>
-						<li>Heidi Savelli-Soderberg (UN Environment)</li>
-					</ul>
-				</li>
-				<li>https://reneweconomy.com.au/oceans-full-plastic-heres-can-83949/</li>
-				<li>https://theoceancleanup.com/great-pacific-garbage-patch/</li>
-				<li>Our World in Data
-					<ul>
-						<li>https://ourworldindata.org/plastic-pollution (many relevant subsections condensed to one link such as Global Plastic Production, Global Plastic Fate, Ocean Plastic Sources, Marine vs. Land, Microplastics: Impact on Health, etc)</li>
-						<li>https://ourworldindata.org/faq-on-plastics</li>
-					</ul>
-				</li>
-				<li>Sustainable Development Goals Tracker - https://sdg-tracker.org/sustainable-consumptionproduction</li>
-			</ul>
 		</div>
 		
 	</div>

@@ -7,6 +7,7 @@ module.exports = function () {
   var circleRadius = 8;
   var count = 0;
   var plasticProductionTextField;
+  var monumentImage = document.querySelector('.monument');
   return {
     init: function init() {
       this.myMethod();
@@ -21,7 +22,7 @@ module.exports = function () {
       var BelowText = d3.select('.monument-visualization').append("svg").attr("class", "texts").attr('id', 'plasticProduction').attr("width", 1000).attr("height", 200);
       plasticProductionTextField = BelowText.append('text').attr('x', 180).attr('y', 100).style('fill', 'black').style('font-size', '1.5em').text('2000000mt');
       BelowText.append('text').attr('x', 510).attr('y', 105).style('fill', 'black').style('font-size', '2em').text("=");
-      BelowText.append('text').attr('x', 745).attr('y', 100).style('fill', 'black').text('Eiffel Tower').style('font-size', '1.5em'); /////////////////////////////////////////////
+      var monumentText = BelowText.append('text').attr('x', 745).attr('y', 100).style('fill', 'black').text('Eiffel Tower').style('font-size', '1.5em'); /////////////////////////////////////////////
 
       var formatYear = d3.timeFormat("%Y");
       var formatDate = d3.timeFormat("%Y");
@@ -96,7 +97,19 @@ module.exports = function () {
           year = formatYear(h);
 
           if (parseInt(plasticProductionData[key].Year) === parseInt(year)) {
+            var plasticAmount = parseInt(plasticProductionData[key].Cumulative);
             plasticProductionTextField.text(plasticProductionData[key].Cumulative + 'mt');
+            console.log(plasticAmount);
+
+            if (plasticAmount < 2000001) {
+              // set image 1
+              console.log(monumentImage);
+              monumentImage.src = './assets/img/sushi.jpg';
+              monumentText.text('Sushi');
+            } else if (plasticAmount > 2000001 && plasticAmount < 5000000) {
+              monumentImage.src = './assets/img/effel.png';
+              monumentText.text('Eiffel');
+            }
           }
 
           ;

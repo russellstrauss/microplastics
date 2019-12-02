@@ -5,6 +5,7 @@ module.exports = function () {
 	var circleRadius = 8;
 	var count = 0;
 	var plasticProductionTextField;
+	var monumentImage = document.querySelector('.monument');
 	
 	return {
 
@@ -41,7 +42,7 @@ module.exports = function () {
 				.style('font-size', '2em')
 				.text("=");
 
-				BelowText.append('text')
+				var monumentText = BelowText.append('text')
 				.attr('x', 745)
 				.attr('y', 100)
 				.style('fill', 'black')
@@ -190,7 +191,24 @@ module.exports = function () {
 					Object.keys(plasticProductionData).forEach(function eachKey(key) {
 						year = formatYear(h);
 						if (parseInt(plasticProductionData[key].Year) === parseInt(year)) {
+							
+							let plasticAmount = parseInt(plasticProductionData[key].Cumulative);
+							
 							plasticProductionTextField.text(plasticProductionData[key].Cumulative + 'mt');
+							
+							console.log(plasticAmount);
+							if (plasticAmount < 2000001) {
+								// set image 1
+								console.log(monumentImage);
+								monumentImage.src = './assets/img/sushi.jpg';
+								monumentText.text('Sushi')
+							}
+							else if (plasticAmount > 2000001 && plasticAmount < 5000000) {
+								monumentImage.src = './assets/img/effel.png';
+								monumentText.text('Eiffel');
+							}
+							
+							
 						};
 					});
 					

@@ -47,12 +47,6 @@
 			<h2>But wait...</h2>
 		</div>
 		
-		<!-- <div class="video-frame">
-			<video autoplay="autoplay" loop autoplay>
-				<source src="./assets/video/ocean.mp4" type="video/mp4">
-			</video>
-		</div> -->
-		
 		<section class="white ocean-rays">
 			<h2>Sushi is made of fish.<br>Fish live in the ocean.</h2>
 			
@@ -60,13 +54,19 @@
 			
 			<img class="bag" src="./assets/img/bag.png" alt="">
 			
+			<div class="video-frame">
+				<video autoplay="autoplay" loop autoplay>
+					<source src="http://jrstrauss.net/information-visualization/ocean.mp4" type="video/mp4">
+				</video>
+			</div>
+			
 			<div class="gradient-fade black">
 				<h2>Plastics in our world.</h2>
 			</div>
 		</section>
 		
 		<section class="black">
-			
+		
 		</section>
 
 		<section>
@@ -79,25 +79,15 @@
 					<img class="effel" src="./assets/img/effel.png" alt="" width="200">
 					</div>
 				</div>
-	<div>
-		<div id="slider"></div>
-
-
-	</div>
-	<div> 
-		<h2> We all know that millions of billions of tons<br> of plastic are created every year.</h2></div>
-			</div>
-		</section>
-
-		<section class="bubble-chart white">
-			<div class="scatterplot">
-				<svg></svg>
+				<div>
+					<div id="slider"></div>
+				</div>
+				<div> 
+					<h2> We all know that millions of billions of tons<br> of plastic are created every year.</h2>
+				</div>
 			</div>
 		</section>
 	</div>
-	</div>
-	
-
 		
 	<section class="bubble-chart white">
 		<div class="scatterplot">
@@ -113,7 +103,8 @@
 			<select name="longevitySelector" class="material" id="longevitySelector">
 				<option value="bottle">Bottle</option>
 				<option value="coffee">Coffee Cup</option>
-				<option value="vegetable">Vegetable</option>
+				<option value="cardboard">Cardboard</option>
+				<option value="vegetable">Organic Matter</option>
 			</select>
 		</div>
 		<div class="two-column">
@@ -142,7 +133,7 @@
 			
 			<div class="column-left">
 				<div class="mini-map">
-					<div class="dragger"></div>
+					<div class="dragger" id="dragger"></div>
 				</div>
 			</div>
 			

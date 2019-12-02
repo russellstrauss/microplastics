@@ -31,9 +31,10 @@ module.exports = function() {
 
 			let self = this;
 			
-			self.v5Map();
+			self.map();
 			self.showCountries();
-			self.flightPaths();
+			self.exports();
+			//self.flightPaths();
 			// self.setScrollPoints();
 		},
 		
@@ -56,8 +57,31 @@ module.exports = function() {
 				offset: 0
 			});
 		},
+		 
+		exports: function() {
+			
+			let self = this;
+			
+			d3.csv("./assets/js/data/exports.csv", prepare).then(function(data) {
+				//console.log(data);
+				
+				// data = d3.nest().key(function(d) {
+				// 	return d.category;
+				// })
+				// .entries(fate);
+				
+				// console.log(data);
+			});
+
+			function prepare(d) {
+				let row = [];
+				row.amount = d['2017'];
+				row.country = d['Partner Name'];
+				if (row.amount !== '') return row;
+			}
+		},
 		
-		v5Map: function() {
+		map: function() {
 			
 			let self = this;
 			var mapElement = d3.select('.fullscreen-map');

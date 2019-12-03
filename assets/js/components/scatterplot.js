@@ -1,5 +1,6 @@
 module.exports = function () {
 	
+	var svgElement = document.querySelector('.waste-vs-gdp svg');
 	var svg = d3.select('.scatterplot svg');
 	let padding = {
 		top: 100,
@@ -19,15 +20,17 @@ module.exports = function () {
 
 		init: function () {
 			
-			if (svg) {
+			if (svgElement) {
 				this.toolTip();
-				this.scatterplot();
+				this.wasteVsGdp();
 			}
 		},
 
 		scatterplot: function() {
 			//./assets/js/data/surface-ocean-particle-count.csv
 			d3.csv('./assets/js/data/exoplanets.csv').then(function(dataset) {
+				
+				console.log(dataset);
 				
 				//./assets/js/data/surface-ocean-particle-count.csv
 				// let xExtent = 'habital_zone_distance';
@@ -108,6 +111,10 @@ module.exports = function () {
 				var title = svg.append('text').attr('class', 'title').text('Title');
 				title.attr('transform','translate(' + (width/2 - title.node().getBBox().width/2).toString() + ', 50)')
 			});
+		},
+		
+		wasteVsGdp: function() {
+			
 		},
 		
 		toolTip: function() {

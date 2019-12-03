@@ -4,21 +4,23 @@ module.exports = function() {
 	
 	var containerWidth = parseInt(document.querySelector('.fullscreen-map').offsetWidth);
 	var containerHeight = parseInt(document.querySelector('.fullscreen-map').offsetHeight);
-	let mapWithLabels = 'https://stamen-tiles-{s}.a.ssl.fastly.net/toner/{z}/{x}/{y}{r}.png?access_token={accessToken}';
-	let mapWithoutLabels = 'https://stamen-tiles-{s}.a.ssl.fastly.net/toner-background/{z}/{x}/{y}{r}.png?access_token={accessToken}';
+	var mapWithLabels = 'https://stamen-tiles-{s}.a.ssl.fastly.net/toner/{z}/{x}/{y}{r}.png?access_token={accessToken}';
+	var mapWithoutLabels = 'https://stamen-tiles-{s}.a.ssl.fastly.net/toner-background/{z}/{x}/{y}{r}.png?access_token={accessToken}';
+	var exportsData, geojson, toolTip;
 	
-	var asia = {
-		width: containerWidth,
-		height: 800,
-		scale: 800
-	};
 	var china = {
-		lat: 23.638,
-		long: 120.998
+		location: new L.LatLng(23.638, 120.998),
+		zoom: 3
 	}
 	
-	var chinaLocation = new L.LatLng(china.lat, china.long);
-	var map = L.map('map', { zoomControl: false }).setView(chinaLocation, 5);
+	var center = {
+		location: new L.LatLng(30, 20),
+		zoom: 2.5
+	}
+	
+	var setLocation = center;
+	
+	var map = L.map('map', { zoomControl: false }).setView(setLocation.location, setLocation.zoom);
 	var svg = d3.select('#map').select('svg');
 	var pointsGroup = svg.select('g').attr('class', 'points').append('g');
 	
@@ -32,10 +34,19 @@ module.exports = function() {
 			let self = this;
 			
 			self.map();
-			self.showCountries();
 			self.exports();
-			//self.flightPaths();
-			// self.setScrollPoints();
+			//self.toolTip();
+		},
+		
+		toolTip: function() {
+			
+			toolTip = d3.tip()
+			.attr("class", "d3-tip")
+			.offset([-12, 0])
+			.html(function(d) {
+				return '<div class="tooltip"><h5>'+d['name']+"</h5></div>"
+			});
+			svg.call(toolTip);
 		},
 		
 		setScrollPoints: function() {
@@ -62,23 +73,30 @@ module.exports = function() {
 			
 			let self = this;
 			
-			d3.csv("./assets/js/data/exports.csv", prepare).then(function(data) {
-				//console.log(data);
+			d3.json('./assets/js/data/ne_10m_admin_0_countries.json').then(function(json) {
 				
-				// data = d3.nest().key(function(d) {
-				// 	return d.category;
-				// })
-				// .entries(fate);
+				geojson = json;
 				
-				// console.log(data);
+				d3.csv("./assets/js/data/exports.csv", prepare).then(function(data) {
+					exportsData = data;
+					
+					self.showCountries();
+				});
+				
+				function prepare(d) {
+					//return d;
+					let row = [];
+					row.amount = d['2017'];
+					if (d['Partner Name'] === 'Europe & Central Asia' || d['Partner Name'] === 'East Asia & Pacific' || d['Partner Name'] === 'North America' || d['Partner Name'] === 'Latin America & Caribbean' || d['Partner Name'] === 'Middle East & North Africa' || d['Partner Name'] === 'South Asia' || d['Partner Name'] === 'Sub-Saharan Africa' || d['Partner Name'] === 'Australia' || d['Partner Name'] === ' World') {
+						row.region = d['Partner Name'];
+					}
+					else {
+						row.country = d['Partner Name'];
+					}
+					
+					if (row.amount !== '' && row.country) return row;
+				}
 			});
-
-			function prepare(d) {
-				let row = [];
-				row.amount = d['2017'];
-				row.country = d['Partner Name'];
-				if (row.amount !== '') return row;
-			}
 		},
 		
 		map: function() {
@@ -98,6 +116,11 @@ module.exports = function() {
 				reuseTiles: true,
 				format: 'jpg70'
 			}).addTo(map);
+			
+			map.dragging.disable();
+			map.touchZoom.disable();
+			map.doubleClickZoom.disable();
+			map.scrollWheelZoom.disable();
 		},
 		
 		showLabels: function() {
@@ -118,64 +141,47 @@ module.exports = function() {
 		
 		showCountries: function() {
 			
-			d3.json('./assets/js/data/ne_10m_admin_0_countries.json').then(function(json){
-				
-				function style(feature) {
-					//console.log(feature.properties.NAME);
-					
-					// if (feature.properties.NAME === 'China') {
-					// 	return {
-					// 		fillColor: 'yellow',
-					// 		weight: 2,
-					// 		opacity: .5,
-					// 		color: 'black',
-					// 		fillOpacity: 0.5
-					// 	};
-					// }
-					
-					// return {
-					// 	fillColor: 'red',
-					// 	weight: 2,
-					// 	opacity: .5,
-					// 	color: 'black',
-					// 	fillOpacity: 0.5
-					// };
-				}
-				
-				// var countriesLayer = L.geoJson(json, {style: style});
-				// countriesLayer.addTo(map);
-			});
-		},
-		
-		flightPaths: function() {
+			let sortAmountDesc = function(a, b) {
+				return b.amount - a.amount;
+			};
 			
-			// var arc = L.Polyline.Arc([23.697809, 120.960518], [35.689487, 139.691711], {
-			// 	color: 'rgba(255, 225, 255, .5)',
-			// 	vertices: 250
-			// }).addTo(map);
+			exportsData = exportsData.sort(sortAmountDesc).slice(0, 20);
+			//console.log(exportsData);
 			
-			var snapMap = Snap("#map");
-			var g = Snap("#svgElem");
-			if (g) {
+			let min = exportsData[19].amount;
+			let max = exportsData[0].amount;
+			
+			function style(feature) {
 				
-				var rect = g.select('#rect'),
-				invisiblePath = g.select('#followPath_invisible'), 
-				//invisiblePath = snapMap.select('path'), 
-				lenPath = Snap.path.getTotalLength(invisiblePath.attr("d")), 
-				path0Pos = invisiblePath.getPointAtLength(0);
+				let result;
 				
-				rect.attr({
-					transform: 't' + [path0Pos.x, path0Pos.y] + 'r' + (path0Pos.alpha - 90)
+				exportsData.forEach(function(exportRow) {
+					//console.log(exportRow.country, exportRow.amount / max);
+					
+					if (feature.properties.NAME === exportRow.country) {
+						result = {
+							fillColor: '#E66200',
+							weight: 2,
+							opacity: 1, // stroke opacity
+							color: 'black',
+							fillOpacity: (exportRow.amount / max) * .4 + .3
+						};
+					}
 				});
 				
-				Snap.animate(0, lenPath, function(val) {
-					var pos = invisiblePath.getPointAtLength(val);
-	
-					rect.attr({
-						transform: 't' + [pos.x, pos.y] + 'r' + (pos.alpha - 90)
-					});
-				}, 4000, mina.easeinout);
+				if (result) return result;
+				
+				return { // for countries not selected otherwise will show the default fill
+					fillColor: 'red',
+					weight: 2,
+					opacity: 0,
+					color: 'black',
+					fillOpacity: 0
+				};
 			}
+			
+			var countriesLayer = L.geoJson(geojson, {style: style});
+			countriesLayer.addTo(map);
 		}
 	}
 }

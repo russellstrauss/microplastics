@@ -289,7 +289,7 @@ module.exports = function () {
   var mapWithLabels = 'https://stamen-tiles-{s}.a.ssl.fastly.net/toner/{z}/{x}/{y}{r}.png?access_token={accessToken}';
   var mapWithoutLabels = 'https://stamen-tiles-{s}.a.ssl.fastly.net/toner-background/{z}/{x}/{y}{r}.png?access_token={accessToken}';
 
-  var exportsData, geojson, _toolTip, barData;
+  var exportsData, importsData, geojson, _toolTip, barData;
 
   var china = {
     location: new L.LatLng(23.638, 120.998),
@@ -339,7 +339,7 @@ module.exports = function () {
       var self = this;
       d3.json('./assets/js/data/ne_10m_admin_0_countries.json').then(function (json) {
         geojson = json;
-        d3.csv("./assets/js/data/exports.csv", prepare).then(function (data) {
+        d3.csv('./assets/js/data/exports.csv', prepare).then(function (data) {
           exportsData = data;
           console.log(exportsData);
           self.showCountries();
@@ -348,6 +348,7 @@ module.exports = function () {
 
         function prepare(d) {
           //return d;
+          console.log(d);
           var row = [];
           row.amount = d['2017'];
 
@@ -449,7 +450,7 @@ module.exports = function () {
         top: 60,
         right: 100,
         bottom: 80,
-        left: 200
+        left: 150
       };
       var width = graphicContainer.offsetWidth - padding.left - padding.right;
       var height = self.settings.barHeight - padding.top - padding.bottom;
@@ -484,7 +485,7 @@ module.exports = function () {
       // title.attr('transform','translate(' + (width/2 - (textWidth/2) - (padding.left/2)) + ', ' + (-1 * (padding.top/2) + 10) + ')');
 
       var xAxisHeight = 20;
-      var xAxisLabel = svg.append('text').attr('class', 'x-axis-label').html('Top 20 Global Plastic Exporters ($USD)');
+      var xAxisLabel = svg.append('text').attr('class', 'x-axis-label').html('Top 20 Global Plastic Exporters (USD)');
       var textWidth = xAxisLabel.node().getBBox().width;
       var textHeight = xAxisLabel.node().getBBox().height;
       xAxisLabel.attr('transform', 'translate(' + (width / 2 - textWidth / 2 - padding.left / 2) + ', ' + (height + xAxisHeight + padding.bottom / 2) + ')'); // let yAxisLabel = svg.append('text') 

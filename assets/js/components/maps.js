@@ -6,7 +6,7 @@ module.exports = function() {
 	var containerHeight = parseInt(document.querySelector('.fullscreen-map').offsetHeight);
 	var mapWithLabels = 'https://stamen-tiles-{s}.a.ssl.fastly.net/toner/{z}/{x}/{y}{r}.png?access_token={accessToken}';
 	var mapWithoutLabels = 'https://stamen-tiles-{s}.a.ssl.fastly.net/toner-background/{z}/{x}/{y}{r}.png?access_token={accessToken}';
-	var exportsData, geojson, toolTip, barData;
+	var exportsData, importsData, geojson, toolTip, barData;
 	
 	var china = {
 		location: new L.LatLng(23.638, 120.998),
@@ -81,7 +81,7 @@ module.exports = function() {
 				
 				geojson = json;
 				
-				d3.csv("./assets/js/data/exports.csv", prepare).then(function(data) {
+				d3.csv('./assets/js/data/exports.csv', prepare).then(function(data) {
 					exportsData = data;
 					console.log(exportsData);
 					
@@ -91,6 +91,7 @@ module.exports = function() {
 				
 				function prepare(d) {
 					//return d;
+					console.log(d);
 					let row = [];
 					row.amount = d['2017'];
 					if (d['Partner Name'] === 'Europe & Central Asia' || d['Partner Name'] === 'East Asia & Pacific' || d['Partner Name'] === 'North America' || d['Partner Name'] === 'Latin America & Caribbean' || d['Partner Name'] === 'Middle East & North Africa' || d['Partner Name'] === 'South Asia' || d['Partner Name'] === 'Sub-Saharan Africa' || d['Partner Name'] === 'Australia' || d['Partner Name'] === ' World') {
@@ -203,7 +204,7 @@ module.exports = function() {
 				top: 60,
 				right: 100,
 				bottom: 80,
-				left: 200
+				left: 150
 			};
 			
 			var width = graphicContainer.offsetWidth - padding.left - padding.right;
@@ -258,7 +259,7 @@ module.exports = function() {
 			let xAxisHeight = 20;
 			let xAxisLabel = svg.append('text') 
 				.attr('class', 'x-axis-label')
-				.html('Top 20 Global Plastic Exporters ($USD)');
+				.html('Top 20 Global Plastic Exporters (USD)');
 			let textWidth = xAxisLabel.node().getBBox().width;
 			let textHeight = xAxisLabel.node().getBBox().height;
 			xAxisLabel.attr('transform','translate(' + (width/2 - (textWidth/2) - (padding.left/2)) + ', ' + (height + xAxisHeight + (padding.bottom/2)) + ')');

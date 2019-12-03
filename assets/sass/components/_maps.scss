@@ -26,41 +26,78 @@
 		}
 	}
 	
-	.bar-graph {
-		//width: 50%;
-		margin: auto;
-		color: white;
-		fill: white;
+	.bar-section {
+		display: flex;
 		
-		text {
-			font-family: 'Open Sans', sans-serif;
-			color: white;
+		* {
+			//border: 1px solid white;
 		}
 		
-		.title {
-			font-size: 28px;
-			font-weight: 600;
-		}
-		
-		.x-axis-label, .y-axis-label {
+		.left {
 			font-family: 'Abel', sans-serif;
-			font-size: 22px;
-			font-weight: 600;
-		}
-		
-		.bar {
-			fill: #E6965B;
+			padding-left: 100px;
+			width: 20%;
+			display: flex;
+			flex-direction: column;
+			justify-content: center;
 			
-			&:last-of-type {
-				fill: #E66200;
+			.percentage-of-total {
+				font-size: 8rem;
+			}
+			
+			.valuation {
+				font-size: 2rem;
+			}
+			
+			.country {
+				font-size: 2rem;
 			}
 		}
 		
-		.tick {
+		.right {
+			width: 80%;
 			
-			text {
-				//transform: translateX(-5px); // give y-axis lables more space
+			.bar-graph {
+				//width: 50%;
+				margin: auto;
+				color: white;
+				fill: white;
+				
+				text {
+					font-family: 'Open Sans', sans-serif;
+					color: white;
+				}
+				
+				.title {
+					font-size: 28px;
+					font-weight: 600;
+				}
+				
+				.x-axis-label, .y-axis-label {
+					font-family: 'Abel', sans-serif;
+					font-size: 22px;
+					font-weight: 600;
+				}
+				
+				.bar {
+					fill: #E6965B;
+					
+					&:last-of-type {
+						fill: #E66200;
+					}
+				}
+				
+				.tick {
+					
+					text {
+						//transform: translateX(-5px); // give y-axis lables more space
+					}
+				}
 			}
 		}
+	}
+	
+	.insights {
+		margin-top: 100px;
 	}
 }

@@ -1,16 +1,21 @@
 module.exports = function () {
 	
 	var graphic = document.querySelector('.plastic-longevity .graphic');
-	var data;
+	var data = [{ 'years': 450 }];
 	var width;
 	if (graphic) width = parseInt(graphic.offsetWidth);
 	var height = 500;
 	var svg;
 	var cupWidth, cupHeight;
 	var timescaleHeight = 140;
+	var canvas = document.querySelector('#dotCanvas');
 	var canvasHolder = document.querySelector('.plastic-longevity .canvas-holder');
+	var draggerTransform = 0;
+	var previousDraggerTransform = 0;
+	var totalCount = 0;
 	var unitVisContainer = document.querySelector('.plastic-longevity .unit-vis-viewport');
-	let message = document.querySelector('.plastic-longevity .message');
+	var message = document.querySelector('.plastic-longevity .message');
+	var countElement = document.querySelector('.use-ratio .count');
 	
 	var center = {
 		x: width / 2,
@@ -19,26 +24,41 @@ module.exports = function () {
 	
 	var settings = {
 		materials: {
-			coffee: {
-				title: '1 Plastic Coffee Lid',
-				path: './assets/svg/coffee.svg',
-				useTime: .5,
-				mass: '157g',
-				breakdownTime: 450
-			},
 			bottle: {
 				title: '1 Plastic Bottle',
 				path: './assets/svg/bottle.svg',
-				useTime: 1,
-				mass: '157g',
-				breakdownTime: 450
+				useTimeHours: 1,
+				useTimeDisplay: '1 hour',
+				mass: '24g',
+				breakdownTime: 450,
+				breakdownTimeDisplay: '450 years'
+			},
+			coffee: {
+				title: '1 Plastic Coffee Lid',
+				path: './assets/svg/coffee.svg',
+				useTimeHours: 2,
+				useTimeDisplay: '2 hours',
+				mass: '4.48g',
+				breakdownTime: 425,
+				breakdownTimeDisplay: '450 years'
 			},
 			vegetable: {
 				title: 'Vegetable',
 				path: './assets/svg/vegetable.svg',
-				useTime: .5,
+				useTimeHours: 2,
+				useTimeDisplay: '2 hour',
 				mass: '',
-				breakdownTime: .2
+				breakdownTime: .246575,
+				breakdownTimeDisplay: '3 months'
+			},
+			cardboard: {
+				title: 'Cardboard',
+				path: './assets/img/cardboard.png',
+				useTimeHours: 72,
+				useTimeDisplay: '3 days',
+				mass: 'Variable',
+				breakdownTime: .249315,
+				breakdownTimeDisplay: '3 months'
 			}
 		}
 	}
@@ -47,7 +67,7 @@ module.exports = function () {
 
 		init: function () {
  
-			this.useRatio();
+			this.useRatio(3, 450);
 			this.longevityTimescale();
 			this.bindUI();
 			this.miniMap();
@@ -59,13 +79,6 @@ module.exports = function () {
 			let generationLength = 76;
 			let ratio, remainder;
 			let glyph = document.querySelector('.generation-glyphs .frame');
-
-			var data = [
-				{
-					'category': '',
-					'years': 450
-				}
-			];
 				
 			let graph = document.querySelector('.longevity');
 			let graphicContainer = graph.parentElement;
@@ -107,9 +120,6 @@ module.exports = function () {
 			
 			// Scale the range of the data in the domains
 			x.domain([0, (maxValue + maxValue * .2)])
-			y.domain(data.map(function (d) {
-				return d.category;
-			}));
 			
 			let xAxisHeight = 20;
 			let xAxisLabel = svg.append('text') 
@@ -129,9 +139,6 @@ module.exports = function () {
 				remainder = x(d.years % generationLength);
 				
 				return x(d.years);
-			})
-			.attr('y', function (d) {
-				return y(d.category) + (y.bandwidth() / 2 - barHeight / 2);
 			})
 			.attr('height', barHeight);
 			
@@ -160,6 +167,21 @@ module.exports = function () {
 			let selector = document.querySelector('#longevitySelector');			
 			if (selector) selector.addEventListener('change', function(event) {
 				self.setMaterial(selector.value);
+				canvasHolder.innerHTML = '';
+				self.useRatio(settings.materials[selector.value].useTimeHours, settings.materials[selector.value].breakdownTime);
+				
+				let newYear = settings.materials[selector.value].breakdownTime;
+				data = [{ 'years': newYear }];
+				if (newYear < 1) {
+					document.querySelector('.generation-glyphs').innerHTML = '';
+					document.querySelector('.longevity').innerHTML = '';
+				}
+				else {
+					document.querySelector('.longevity').innerHTML = '';
+					document.querySelector('.generation-glyphs').innerHTML = '<div class="frame"><img src="./assets/svg/generation.svg" alt="generation icon"></div>';
+					self.longevityTimescale();
+				}
+				console.log(data);
 			});
 		},
 		
@@ -176,22 +198,28 @@ module.exports = function () {
 			
 			let title = document.querySelector('.plastic-longevity .stats .material span');
 			let useTime = document.querySelector('.plastic-longevity .stats .use-time span');
-			let mass = document.querySelector('.plastic-longevity .stats .mass span');
+			//let mass = document.querySelector('.plastic-longevity .stats .mass span');
 			let breakdownTime = document.querySelector('.plastic-longevity .stats .generations span');
+			let lifetimes = document.querySelector('.plastic-longevity .stats .lifetimes span');
 			
 			title.textContent = material.title;
-			useTime.textContent = material.useTime;
-			mass.textContent = material.mass;
-			breakdownTime.textContent = material.breakdownTime;
+			useTime.textContent = material.useTimeDisplay;
+			//mass.textContent = material.mass;
+			breakdownTime.textContent = material.breakdownTimeDisplay;
+			let lifetimesValue = material.breakdownTime / 76;
+			if (lifetimesValue < 1) lifetimesValue = lifetimesValue.toFixed(3);
+			else { 
+				lifetimesValue = lifetimesValue.toFixed(1);
+			}
+			lifetimes.textContent = lifetimesValue.toString() + ' lifetimes';
 		},
 		
-		useRatio: function() {
+		useRatio: function(useTimeHours, decomposeYears) {
 			
-			let useTimeHours = 3;
-			let decomposeYears = 450;
+			//let useTimeHours = 3;
+			//let decomposeYears = 450;
 			let decomposeHours = decomposeYears * 8760;
 			let ratio = decomposeHours / useTimeHours;
-			let totalCount = 0;
 			
 			let width;
 			let element = document.querySelector('.use-ratio .canvas-holder');
@@ -200,7 +228,6 @@ module.exports = function () {
 				width = parseInt(element.offsetWidth);
 			}
 
-			var canvas = document.querySelector('#dotCanvas');
 			var context = canvas.getContext('2d');
 			
 			var waypoint = new Waypoint({
@@ -233,7 +260,7 @@ module.exports = function () {
 			function drawDots() {
 				
 				var count = 0;
-				var millionCount = 1;
+				totalCount = 0;
 				for (var x = dotRadius * 2; x < vw; x += cellSize) {
 					
 					for (var y = dotRadius * 2; y < vh; y += cellSize) {
@@ -241,14 +268,6 @@ module.exports = function () {
 						context.arc(x-dotRadius/2, y-dotRadius/2, dotRadius, 0, 2 * Math.PI, false);
 						context.fillStyle = 'rgba(204, 204, 204, .7)';
 						context.fill();
-						
-						if (count === 1000000 * millionCount) {
-							//console.log(count);
-							let result = millionCount + ' millionX longer than you used it'
-							element.append(result);
-							element.append('test string lkj;lkjdfas;lkj');
-							millionCount++;
-						}
 						count++;
 					}
 				}
@@ -256,14 +275,11 @@ module.exports = function () {
 			}
 			
 			let canvasCopies = Math.floor(ratio / countPerCanvas);
-			//console.log('Number of canvases: ', canvasCopies);
 			for (let i = 0; i < canvasCopies + 1; i++) { // duplicate multiple copies of the canvas to avoid millions of loops
 				element.append(cloneCanvas(canvas));
 				canvas.remove();
 				totalCount += countPerCanvas;
-				//if (totalCount > 1000000) element.append('1 million times as long as you used it');
 			}
-			//console.log('Total count: ', totalCount);
 			
 			function cloneCanvas(oldCanvas) {
 				
@@ -290,9 +306,8 @@ module.exports = function () {
 			
 			dragger.addEventListener('mousedown', function(event) {
 				
-				draggerStartY = parseInt(dragger.style.transform.replace(/\D/g,''));
+				draggerStartY = previousDraggerTransform;
 				if (isNaN(draggerStartY)) draggerStartY = 0;
-				console.log(self.getTranslateY(document.getElementById('dragger')));
 				startY = event.clientY;
 				dragging = true;
 				updateDragger(event);
@@ -314,41 +329,42 @@ module.exports = function () {
 			function updateDragger(event) {
 				
 				let deltaY = currentY - startY;
-				let currentPos = draggerStartY + deltaY;
+				draggerTransform = draggerStartY + deltaY;
+				previousDraggerTransform = draggerTransform;
 				
+				if (draggerTransform > 0 && draggerTransform < moveableHeight) {
+					dragger.style.transform = 'translateY(' + draggerTransform + 'px)';
+				}
+				else if (draggerTransform < 0) {
+					draggerTransform = 0;
+					dragger.style.transform = 'translateY(' + draggerTransform + 'px)';
+				}
+				else if (draggerTransform > moveableHeight) {
+					draggerTransform = (moveableHeight - 1);
+					dragger.style.transform = 'translateY(' + draggerTransform + 'px)';
+				}
 				
-				if (currentPos > 0 && currentPos < moveableHeight) {
-					dragger.style.transform = 'translateY(' + currentPos + 'px)';
-				}
-				else if (currentPos < 0) {
-					currentPos = 0;
-					dragger.style.transform = 'translateY(' + currentPos + 'px)';
-				}
-				else if (currentPos > moveableHeight) {
-					currentPos = (moveableHeight - 1);
-					dragger.style.transform = 'translateY(' + currentPos + 'px)';
-				}
-				
-				totalProgress = currentPos / (moveableHeight - 1);
+				totalProgress = draggerTransform / (moveableHeight - 1);
 				
 				let scrollToY = canvasHolder.offsetHeight * totalProgress;
 				unitVisContainer.scrollTo(0, scrollToY);
 			}
 			
 			unitVisContainer.addEventListener('scroll', function(event) {
-				let totalProgress = (unitVisContainer.scrollTop - message.offsetHeight) / canvasHolder.offsetHeight;
-				let translation = moveableHeight * totalProgress;
-				//console.log(moveableHeight);
-				dragger.style.transform = 'translateY(' + translation + 'px)';
+				
+				let offset = 0;
+				if (canvasHolder.offsetHeight > 10000) offset = 1000;
+				let totalProgress = unitVisContainer.scrollTop / (canvasHolder.offsetHeight - offset);
+				
+				let number = countElement.querySelector('.number');
+				let caption = countElement.querySelector('.caption');
+				if (number) number.textContent = (Math.floor(totalCount * totalProgress)).toLocaleString() + 'x';
+				if (caption) countElement.querySelector('.caption').style.opacity = '1'
+				
+				draggerTransform = moveableHeight * totalProgress;
+				previousDraggerTransform = draggerTransform;
+				dragger.style.transform = 'translateY(' + draggerTransform + 'px)';
 			});
-		},
-		
-		getTranslateY: function(obj) {
-			var style = obj.style,
-			transform = style.transform || style.webkitTransform || style.moyTransform,
-			yT = transform.match(/translateY\(([0-9]+(px|em|%|ex|ch|rem|vh|vw|vmin|vmax|mm|cm|in|pt|pc))\)/);
-			return yT ? yT[1] : '0';
-			//Return the value AS STRING (with the unit)
 		}
 	}
 }

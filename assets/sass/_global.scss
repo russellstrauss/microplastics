@@ -81,23 +81,29 @@
 	}
 }
 
-.reference {
-	margin-left: -1.5em;
-	counter-reset: list;
+.references {
+	background-color: white;
+	padding: 100px 15px;
 	
-	li {
-		list-style: none;
-		position: relative;
-		padding-left: 1em;
+	.reference {
+		margin-left: -1.5em;
+		counter-reset: list;
 		
-		&:before {
-			counter-increment: list;
-			content: "[" counter(list) "] ";
-			position: absolute;
-			left: -1.4em;
+		li {
+			list-style: none;
+			position: relative;
+			padding-left: 1em;
+			
+			&:before {
+				counter-increment: list;
+				content: "[" counter(list) "] ";
+				position: absolute;
+				left: -1.4em;
+			}
 		}
 	}
 }
+
 
 .two-column {
 	display: flex;

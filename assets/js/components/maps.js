@@ -16,7 +16,7 @@ module.exports = function() {
 	
 	var center = {
 		location: new L.LatLng(30, 20),
-		zoom: 1.5
+		zoom: 2.5
 	}
 	
 	var setLocation = center;

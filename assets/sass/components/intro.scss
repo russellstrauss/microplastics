@@ -27,7 +27,7 @@
 		&.black {
 			background-color: black;
 			color: white;
-			padding-top: 200px;
+			padding-top: 600px;
 		}
 		
 		&.intro-text {
@@ -119,7 +119,7 @@
 				animation: spin 200s linear infinite;
 				
 				position: absolute;
-				top: 50%;
+				top: 60%;
 				left: 50%;
 				transform: translate(-50%, -50%);
 			}

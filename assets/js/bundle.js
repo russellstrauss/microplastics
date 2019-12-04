@@ -899,12 +899,16 @@ module.exports = function () {
 
       var graphicWidth = barWidth / ratio;
       var frames = generations.querySelectorAll('.frame');
-      frames.forEach(function (frame) {
-        var image = frame.querySelector('img');
-        frame.style.width = graphicWidth + 'px';
-        image.width = graphicWidth;
-      });
-      frames[frames.length - 1].style.width = remainder - 5 + 'px';
+
+      if (frames.length) {
+        frames.forEach(function (frame) {
+          var image = frame.querySelector('img');
+          frame.style.width = graphicWidth + 'px';
+          image.width = graphicWidth;
+        });
+        frames[frames.length - 1].style.width = remainder - 5 + 'px';
+      }
+
       svg.append('g').attr('transform', 'translate(0,' + (height + 6) + ')').call(d3.axisBottom(x));
       svg.append('g').call(d3.axisLeft(y).tickSize(0));
     },
@@ -918,11 +922,16 @@ module.exports = function () {
         var newYear = settings.materials[selector.value].breakdownTime;
         data = [{
           'years': newYear
-        }];
+        }]; // if (newYear < 1) {
+        // 	document.querySelector('.generation-glyphs').innerHTML = '';
+        // 	document.querySelector('.longevity').innerHTML = '';
+        // 	self.longevityTimescale();
+        // }
 
         if (newYear < 1) {
-          document.querySelector('.generation-glyphs').innerHTML = '';
           document.querySelector('.longevity').innerHTML = '';
+          document.querySelector('.generation-glyphs').innerHTML = '';
+          self.longevityTimescale();
         } else {
           document.querySelector('.longevity').innerHTML = '';
           document.querySelector('.generation-glyphs').innerHTML = '<div class="frame"><img src="./assets/svg/generation.svg" alt="generation icon"></div>';
@@ -1014,14 +1023,20 @@ module.exports = function () {
       }
 
       var yearsPerCanvas = useTimeHours * countPerCanvas / hoursInAYear;
+      var searchingFor = 100;
       var canvasCopies = Math.floor(ratio / countPerCanvas);
 
       for (var i = 0; i < canvasCopies + 1; i++) {
         // duplicate multiple copies of the canvas to avoid millions of loops
         var totalYears = i * yearsPerCanvas;
 
-        if (totalYears > 100) {
-          element.append('100 years');
+        if (totalYears > searchingFor) {
+          var node = document.createElement('div');
+          node.classList.add('year-indicator');
+          var textnode = document.createTextNode(searchingFor.toString() + ' years');
+          node.appendChild(textnode);
+          element.appendChild(node);
+          searchingFor += 100;
         }
 
         element.append(cloneCanvas(canvas));

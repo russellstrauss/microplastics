@@ -149,13 +149,16 @@ module.exports = function () {
 			
 			let graphicWidth = barWidth / ratio;
 			let frames = generations.querySelectorAll('.frame');
-			frames.forEach(function(frame) {
-				let image = frame.querySelector('img');
-				frame.style.width = graphicWidth + 'px';
-				image.width = graphicWidth;
-			});
-			
-			frames[frames.length - 1].style.width = remainder - 5 + 'px';
+			if (frames.length) {
+				
+				frames.forEach(function(frame) {
+					let image = frame.querySelector('img');
+					frame.style.width = graphicWidth + 'px';
+					image.width = graphicWidth;
+				});
+				
+				frames[frames.length - 1].style.width = remainder - 5 + 'px';
+			}
 
 			svg.append('g').attr('transform', 'translate(0,' + (height + 6) + ')').call(d3.axisBottom(x));
 			svg.append('g').call(d3.axisLeft(y).tickSize(0));
@@ -172,9 +175,15 @@ module.exports = function () {
 				
 				let newYear = settings.materials[selector.value].breakdownTime;
 				data = [{ 'years': newYear }];
+				// if (newYear < 1) {
+				// 	document.querySelector('.generation-glyphs').innerHTML = '';
+				// 	document.querySelector('.longevity').innerHTML = '';
+				// 	self.longevityTimescale();
+				// }
 				if (newYear < 1) {
-					document.querySelector('.generation-glyphs').innerHTML = '';
 					document.querySelector('.longevity').innerHTML = '';
+					document.querySelector('.generation-glyphs').innerHTML = '';
+					self.longevityTimescale();
 				}
 				else {
 					document.querySelector('.longevity').innerHTML = '';
@@ -274,13 +283,19 @@ module.exports = function () {
 			}
 			
 			let yearsPerCanvas = useTimeHours * countPerCanvas / hoursInAYear;
+			let searchingFor = 100;
 			
 			let canvasCopies = Math.floor(ratio / countPerCanvas);
 			for (let i = 0; i < canvasCopies + 1; i++) { // duplicate multiple copies of the canvas to avoid millions of loops
 				let totalYears = i * yearsPerCanvas;
 				
-				if (totalYears > 100) {
-					element.append('100 years');
+				if (totalYears > searchingFor) {
+					var node = document.createElement('div');
+					node.classList.add('year-indicator');
+					var textnode = document.createTextNode(searchingFor.toString() + ' years');
+					node.appendChild(textnode);
+					element.appendChild(node);
+					searchingFor += 100;
 				}
 				
 				element.append(cloneCanvas(canvas));

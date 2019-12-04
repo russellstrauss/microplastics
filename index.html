@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 	<meta charset="UTF-8">
-	<title>Plastic in Our World</title>
+	<title>Plastics in Our World</title>
 	<script src="https://d3js.org/d3-random.v2.min.js"></script>
 
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
@@ -39,29 +39,31 @@
 			<h2>Hungry friends?<br>How about some sushi?<br>Let the good times roll!</h2>
 		</section>
 		
-		<div class="gradient-fade white">
-			<h2>But wait...</h2>
-		</div>
-		
 		<section class="white ocean-rays">
-			<h2>Sushi is made of fish.<br>Fish live in the ocean.</h2>
-			
-			<h2>What else lives in the ocean?</h2>
-			
-			<img class="bag" src="./assets/img/bag.png" alt="">
-			
-			
-			<div class="gradient-fade black">
-				<h2>Plastics in our world.</h2>
-			</div>
 			
 			<div class="video-frame">
-				<div class="gradient-black"></div>
-				<video autoplay="autoplay" loop autoplay>
-					<source src="http://jrstrauss.net/information-visualization/ocean.mp4" type="video/mp4">
-				</video>
+				<h2 class="but-wait">But wait...</h2>
 				<div class="gradient-white"></div>
+				<video loop autoplay muted id="vid">
+					<source src="./assets/video/rays_small.mp4" type="video/mp4">
+				</video>
+				<script>
+					document.getElementById('vid').play();
+				</script>
+				<div class="gradient-black"></div>
 			</div>
+			
+			<div class="message">
+				<h2>Sushi is made of fish.<br>Fish live in the ocean.</h2>
+				
+				<h2>Guess what else lives in the ocean.</h2>
+			</div>
+			
+			<img class="bag" src="./assets/img/bag.png" alt="">
+		</section>
+		
+		<section class="black in-our-world">
+			<h2>Plastics in our world.</h2>
 		</section>
 
 		<section>

@@ -216,9 +216,8 @@ module.exports = function () {
 		
 		useRatio: function(useTimeHours, decomposeYears) {
 			
-			//let useTimeHours = 3;
-			//let decomposeYears = 450;
-			let decomposeHours = decomposeYears * 8760;
+			let hoursInAYear = 8760;
+			let decomposeHours = decomposeYears * hoursInAYear;
 			let ratio = decomposeHours / useTimeHours;
 			
 			let width;
@@ -274,8 +273,16 @@ module.exports = function () {
 				return count;
 			}
 			
+			let yearsPerCanvas = useTimeHours * countPerCanvas / hoursInAYear;
+			
 			let canvasCopies = Math.floor(ratio / countPerCanvas);
 			for (let i = 0; i < canvasCopies + 1; i++) { // duplicate multiple copies of the canvas to avoid millions of loops
+				let totalYears = i * yearsPerCanvas;
+				
+				if (totalYears > 100) {
+					element.append('100 years');
+				}
+				
 				element.append(cloneCanvas(canvas));
 				canvas.remove();
 				totalCount += countPerCanvas;

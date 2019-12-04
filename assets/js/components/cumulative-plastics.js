@@ -30,7 +30,7 @@ module.exports = function () {
 				  button.text("Play");
 				} else {
 				  moving = true;
-				  timer = setInterval(step, 260);
+				  timer = setInterval(step, 150);
 				  button.text("Pause");
 				}
 
@@ -52,7 +52,7 @@ module.exports = function () {
 			var margin = {top:0, right:50, bottom:0, left:50},
 				width = 400 - margin.left - margin.right,
 				height = 400 - margin.top - margin.bottom,
-				heightslider = 160,
+				heightslider = 130,
 				widthslider = 850;
 
 				var moving = false;
@@ -76,6 +76,7 @@ module.exports = function () {
 				
 			var yScale = d3.scaleLinear().domain([2019, 1950]).range([circleRadius*2, 390]);
 			var xScale = d3.scaleLinear().domain([1950, 2019]).range([50, 1]);
+			var xScale2 = d3.scaleLinear().domain([1950, 2000]).range([50, 7]);
 
 			var slider = svgSlider.append("g")
 				.attr("class", "slider")
@@ -96,7 +97,45 @@ module.exports = function () {
 						currentValue = d3.event.x;
 						update(scale.invert(currentValue)); 
 					}));
-					
+
+
+
+			var circle1 = d3.select("#what")
+			.append("svg")
+			.attr("width", "300px")
+			.attr("height", "30px")
+
+			var circle2 = circle1.append("circle")
+			.attr("class", "explaincircle")
+			.attr("cx", 10)
+			.attr("cy", 20)
+			.attr("r", 6)
+			.style("fill", 'orange')
+			.style("fill-opactiy", "0.4");
+
+			var circle3 = circle1.append("text")
+			.attr("class", "explaincircle")
+			.text("=  11,837,900(t)")
+			.attr("text-anchor", "middle")
+			.attr("font-size","12px")
+			.attr("transform", "translate(62,25)");
+
+			// var circle3 = circle1.append("text")
+			// .attr("class", "explaincircle")
+			// .text(function(d) { return d.year; })
+			// .attr("text-anchor", "middle")
+			// .attr("font-size","12px")
+			// .attr("transform", "translate(130,25)")
+
+				// 	var gFill = d3
+				// 	.select('div#slider-fill')
+				// 	.append('svg')
+				// 	.attr('width', widthslider)
+				// 	.attr('height', heightslider)
+				// 	.append('g')
+				// 	.attr('transform', 'translate(30,30)');
+				
+				//   gFill.call(slider);
 
 
 			slider.insert("g", ".track-overlay")
@@ -113,12 +152,13 @@ module.exports = function () {
 
 			var handle = slider.insert("circle", ".track-overlay")
 				.attr("class", "handle")
-				.attr("r", 9)
+				.attr("r", 12)
 				.style("fill", "orange");
 
 			var label = slider.append("text")  
-				.attr("class", "label")
+				.attr("id", "label")
 				.attr("text-anchor", "middle")
+				.style("fill", "orange")
 				.text(formatDate(startDate))
 				.attr("transform", "translate(0," + (-25) + ")")
 
@@ -133,7 +173,7 @@ module.exports = function () {
 				.attr("class", "plot")
 				.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-			
+
 			function prepare(d) {
 				d.id = d.id;
 				d.Date = parseDate(d.Year);
@@ -182,9 +222,119 @@ module.exports = function () {
 						.attr("cy", function(d) {
 							return yScale(d.Year)
 						});
-					
+						locations.enter()
+						.append("circle")
+						.attr("class", "location")
+						.style("opacity", 0.1)
 
-
+						.attr("cx", function(d) {
+							return d3.randomNormal(150, xScale(d.Year))();
+						})
+						.attr("cy", 10)
+						.style("fill", 'orange')
+						.style("stroke", 'orange')
+						.attr("r", circleRadius)
+						.transition()
+							.delay(1000)
+							.duration(500)
+							.attr("r", 14)
+							.style("fill", "red")
+								.transition()
+								.attr("r", 8).style("fill", 'orange')
+								.style('opacity', .4)
+								.transition()
+								.attr("cy", function(d) {
+								return yScale(d.Year)
+							});
+						
+							locations.enter()
+							.append("circle")
+							.attr("class", "location")
+							.style("opacity", 0)
+							.attr("cx", function(d) {
+								return d3.randomNormal(130, xScale(d.Year))();
+							})
+							.attr("cy", 10)
+							.style("fill", 'orange')
+							.style("stroke", 'orange')
+							.attr("r", circleRadius)
+							.transition()
+							.duration(500)
+							.attr("r", 14)
+							.style("fill", "red")
+								.transition()
+								.attr("r", 8).style("fill", 'orange')
+								.style('opacity', .4)
+								.transition()
+								.attr("cy", function(d) {
+									return yScale(d.Year)
+								});
+								locations.enter()
+								.append("circle")
+								.attr("class", "location")
+								.style("opacity", 0)
+								.attr("cx", function(d) {
+									return d3.randomNormal(140, xScale2(d.Year))();
+								})
+								.attr("cy", 10)
+								.style("fill", 'orange')
+								.style("stroke", 'orange')
+								.attr("r", circleRadius)
+								.transition()
+								.duration(500)
+								.attr("r", 14)
+								.style("fill", "red")
+									.transition()
+									.attr("r", 8).style("fill", 'orange')
+									.style('opacity', .4)
+									.transition()
+									.attr("cy", function(d) {
+										return yScale(d.Year)
+									});
+									locations.enter()
+									.append("circle")
+									.attr("class", "location")
+									.style("opacity", 0)
+									.attr("cx", function(d) {
+										return d3.randomNormal(130, xScale2(d.Year))();
+									})
+									.attr("cy", 10)
+									.style("fill", 'orange')
+									.style("stroke", 'orange')
+									.attr("r", circleRadius)
+									.transition()
+									.duration(500)
+									.attr("r", 14)
+									.style("fill", "red")
+										.transition()
+										.attr("r", 8).style("fill", 'orange')
+										.style('opacity', .4)
+										.transition()
+										.attr("cy", function(d) {
+											return yScale(d.Year)
+										});
+										locations.enter()
+										.append("circle")
+										.attr("class", "location")
+										.style("opacity", 0)
+										.attr("cx", function(d) {
+											return d3.randomNormal(10, xScale2(d.Year))();
+										})
+										.attr("cy", 10)
+										.style("fill", 'orange')
+										.style("stroke", 'orange')
+										.attr("r", circleRadius)
+										.transition()
+										.duration(500)
+										.attr("r", 14)
+										.style("fill", "red")
+											.transition()
+											.attr("r", 8).style("fill", 'orange')
+											.style('opacity', .4)
+											.transition()
+											.attr("cy", function(d) {
+												return yScale(d.Year)
+											});
 				locations.exit().remove();
 			}
 
@@ -216,68 +366,68 @@ module.exports = function () {
 							if (plasticAmount > 2000001 && plasticAmount < 30000000) {
 								var sushiImage = document.querySelector('img.sushi');
 								sushiImage.style.opacity = '1';
-								monumentText.textContent = 'Statue of Liberty(x10000)';
+								monumentText.innerHTML = 'Statue of Liberty <br> (x10000)';
 
 							}
 							else if (plasticAmount > 30000001 && plasticAmount < 60000000) {
 								var eiffelImage = document.querySelector('img.eiffel');
 								eiffelImage.style.opacity = '1';
 
-								monumentText.textContent = 'Eiffel Tower(x4054)';
+								monumentText.innerHTML = 'Eiffel Tower <br> (x4054)';
 							}
 							else if (plasticAmount > 60000001 && plasticAmount < 300000000) {
-								var pyramidImage = document.querySelector('img.pyramid');
-								pyramidImage.style.opacity = '1';
-
-								monumentText.textContent = 'Pyramid';
-							}
-							else if (plasticAmount > 300000001 && plasticAmount < 500000000) {
 								var gtImage = document.querySelector('img.gt');
 								gtImage.style.opacity = '1';
 
-								monumentText.textContent = 'GT Buildings';
+								monumentText.innerHTML = 'GT Buildings';
 							}
-							else if (plasticAmount > 500000001 && plasticAmount < 700000000) {
+							else if (plasticAmount > 300000001 && plasticAmount < 600000000) {
+								var pyramidImage = document.querySelector('img.pyramid');
+								pyramidImage.style.opacity = '1';
+
+								monumentText.innerHTML = 'All the Pyramids in Egypt';
+							}
+							else if (plasticAmount > 600000001 && plasticAmount < 900000000) {
 								var greatwallImage = document.querySelector('img.greatwall');
 								greatwallImage.style.opacity = '1';
 
-								monumentText.textContent = 'Great Wall';
+								monumentText.innerHTML = 'Great Wall';
 							}
-							else if (plasticAmount > 700000001 && plasticAmount < 900000000) {
+							else if (plasticAmount > 900000001 && plasticAmount < 1300000000) {
 								var populationImage = document.querySelector('img.population');
 								populationImage.style.opacity = '1';
 
-								monumentText.textContent = 'Weight of World Popluation';
+								monumentText.innerHTML = 'Weight of Total Popluation in the world';
 							}
-							else if (plasticAmount > 900000001 && plasticAmount < 1100000000) {
+							else if (plasticAmount > 1300000001 && plasticAmount < 2100000000) {
 								var skyscrapperImage = document.querySelector('img.skyscrapper');
 								skyscrapperImage.style.opacity = '1';
 
-								monumentText.textContent = 'Weight of Skyscrappers \n in the world';
+								monumentText.innerHTML = 'Weight of All <br> Skyscrappers in the world';
 							}
-							else if (plasticAmount > 1100000001 && plasticAmount < 3000000000) {
+							else if (plasticAmount > 2100000001 && plasticAmount < 3000000000) {
 								var roadImage = document.querySelector('img.road');
 								roadImage.style.opacity = '1';
 
-								monumentText.textContent = 'Weight of US Road System';
+								monumentText.innerHTML = 'Weight of <br> the entire US Road System';
 							}
 							else if (plasticAmount > 3000000001 && plasticAmount < 5100000000) {
 								var icebergImage = document.querySelector('img.iceberg');
 								icebergImage.style.opacity = '1';
 
-								monumentText.textContent = 'Weight of Icebergs in Antartica';
+								monumentText.innerHTML = 'Weight of All <br> Icebergs in Antartica';
 							}
 							else if (plasticAmount > 5100000001 && plasticAmount < 7500000000) {
 								var carImage = document.querySelector('img.car');
 								carImage.style.opacity = '1';
 
-								monumentText.textContent = 'Weight of total Car';
+								monumentText.innerHTML = 'Total Car weight <br> in the world';
 							}
-							else if (plasticAmount > 7500000001 && plasticAmount < 10000000000) {
+							else if (plasticAmount > 7500000001 && plasticAmount < 10000000001) {
 								var cometImage = document.querySelector('img.comet');
 								cometImage.style.opacity = '1';
 
-								monumentText.textContent = 'Chicxulub Asteroid';
+								monumentText.innerHTML = 'Chicxulub Asteroid <br> (caused extinction of dinosaurs)';
 							}
 						};
 					});

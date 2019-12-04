@@ -119,6 +119,12 @@
 	padding-top: 10.5rem;
 	padding-bottom: 5.5rem;
 }
+.monumentviss {
+    font-size: 0.9rem; 
+	text-align: right;
+	margin-left: 100px;
+
+}
 
 #both {
 	display: flex; margin-left: auto; margin-right: auto;
@@ -138,6 +144,10 @@
 	#both {
 		
 		#vis {
+			display: flex;
+			flex-direction: column;
+			justify-content: flex-end;
+			margin-bottom: 10px;
 			width: 50%;
 			
 			svg {
@@ -152,7 +162,7 @@
 			//border: 1px solid black;
 			position: relative;
 			height: 500px;
-			
+			border-bottom: 1px;
 			img {
 				//opacity: 0;
 				display: block;
@@ -160,6 +170,9 @@
 				opacity: 0;
 				top: 50%;
 				left: 50%;
+				max-height: 400px;
+				max-width: 400px;
+
 				transform: translate(-50%, -50%);
 			
 				transition: opacity 1500ms ease;
@@ -172,6 +185,7 @@
 		justify-content: center;
 		text-align: center;
 		font-size: 1.2rem;
+		min-height: 60px;
 		
 		.equals {
 			flex-basis: 100px;
@@ -230,7 +244,7 @@
   #play-button {
 	display: table; margin-left: auto; margin-right: auto;
 
-	background: orange;
+	background: rgb(254, 177, 33);
 	border-radius: 15px;
 	border: none;
 	color: white;
@@ -245,3 +259,20 @@
   #play-button:hover {
 	background-color: #a2a2a2;
   }    
+
+  #text3 {
+	  margin-top: 100px;
+  }
+  #label{
+	  font-size: 25px;
+	
+  }
+
+  #what {
+	display: flex;
+	margin-bottom: 30px;
+}
+
+.plot{
+	border-bottom: 1px;
+}

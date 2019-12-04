@@ -351,7 +351,7 @@ module.exports = function () {
   var containerHeight = parseInt(document.querySelector('.fullscreen-map').offsetHeight);
   var mapWithLabels = 'https://stamen-tiles-{s}.a.ssl.fastly.net/toner/{z}/{x}/{y}{r}.png?access_token={accessToken}';
   var mapWithoutLabels = 'https://stamen-tiles-{s}.a.ssl.fastly.net/toner-background/{z}/{x}/{y}{r}.png?access_token={accessToken}';
-  var graph, countriesLayer, barGraphTitle;
+  var graph, countriesLayer, barGraphTitle, worldTotal;
 
   var mapData, exportsData, importsData, geojson, _toolTip, barData;
 
@@ -410,7 +410,12 @@ module.exports = function () {
         var row = [];
         row.amount = d['2017'];
 
-        if (d['Partner Name'] === 'Europe & Central Asia' || d['Partner Name'] === 'East Asia & Pacific' || d['Partner Name'] === 'North America' || d['Partner Name'] === 'Latin America & Caribbean' || d['Partner Name'] === 'Middle East & North Africa' || d['Partner Name'] === 'South Asia' || d['Partner Name'] === 'Sub-Saharan Africa' || d['Partner Name'] === 'Australia' || d['Partner Name'] === ' World') {
+        if (d['Partner Name'] === 'World') {
+          worldTotal = row.amount;
+          console.log(worldTotal);
+        }
+
+        if (d['Partner Name'] === 'Europe & Central Asia' || d['Partner Name'] === 'East Asia & Pacific' || d['Partner Name'] === 'North America' || d['Partner Name'] === 'Latin America & Caribbean' || d['Partner Name'] === 'Middle East & North Africa' || d['Partner Name'] === 'South Asia' || d['Partner Name'] === 'Sub-Saharan Africa' || d['Partner Name'] === 'Australia' || d['Partner Name'] === 'World') {
           row.region = d['Partner Name'];
         } else {
           row.country = d['Partner Name'];
@@ -433,7 +438,11 @@ module.exports = function () {
           var row = [];
           row.amount = d['2017'];
 
-          if (d['Partner Name'] === 'Europe & Central Asia' || d['Partner Name'] === 'East Asia & Pacific' || d['Partner Name'] === 'North America' || d['Partner Name'] === 'Latin America & Caribbean' || d['Partner Name'] === 'Middle East & North Africa' || d['Partner Name'] === 'South Asia' || d['Partner Name'] === 'Sub-Saharan Africa' || d['Partner Name'] === 'Australia' || d['Partner Name'] === ' World') {
+          if (d['Partner Name'] === 'World') {
+            worldTotal = row.amount;
+          }
+
+          if (d['Partner Name'] === 'Europe & Central Asia' || d['Partner Name'] === 'East Asia & Pacific' || d['Partner Name'] === 'North America' || d['Partner Name'] === 'Latin America & Caribbean' || d['Partner Name'] === 'Middle East & North Africa' || d['Partner Name'] === 'South Asia' || d['Partner Name'] === 'Sub-Saharan Africa' || d['Partner Name'] === 'Australia' || d['Partner Name'] === 'World') {
             row.region = d['Partner Name'];
           } else {
             row.country = d['Partner Name'];
@@ -544,17 +553,22 @@ module.exports = function () {
       };
 
       mapData = mapData.sort(compare);
+      var top = mapData.slice(0)[19];
+      var worldPercent = Math.round(10 * worldTotal / top.amount) / 10;
+      self.updateStats(worldPercent, top.country, top.amount);
       var count = 21;
       var y = d3.scaleBand().domain(mapData.map(function (d) {
         return d.country;
       })).range([height, 0]);
       var x = d3.scaleLinear().domain([0, maxValue]).range([0, width - 100]);
       var svg = d3.select(graph).append('svg').attr('width', width + padding.left + padding.right).attr('height', height + padding.top + padding.bottom).append('g').attr('transform', 'translate(' + padding.left + ',' + padding.top + ')');
-      svg.selectAll('.bar').data(mapData).enter().append('rect').attr('class', 'bar').attr('width', function (d) {
-        return x(d.amount);
-      }).attr('y', function (d) {
+      svg.selectAll('.bar').data(mapData).enter().append('rect').attr('class', 'bar').attr('y', function (d) {
         return y(d.country) + (y.bandwidth() / 2 - barHeight / 2);
-      }).attr('height', barHeight);
+      }).attr('height', barHeight).attr('width', 0).transition().delay(function (d, i) {
+        return i * 40;
+      }).ease(d3.easeCubicOut).duration(300).attr('width', function (d) {
+        return x(d.amount);
+      });
       svg.append('g').attr('transform', 'translate(0,' + (height + 6) + ')').call(d3.axisBottom(x));
       svg.append('g').call(d3.axisLeft(y).tickSize(0));
       var xAxisHeight = 20;
@@ -562,6 +576,14 @@ module.exports = function () {
       var textWidth = barGraphTitle.node().getBBox().width;
       var textHeight = barGraphTitle.node().getBBox().height;
       barGraphTitle.attr('transform', 'translate(' + (width / 2 - textWidth / 2 - padding.left / 2) + ', ' + (height + xAxisHeight + padding.bottom / 2) + ')');
+    },
+    updateStats: function updateStats(percent, region, value) {
+      var percentageOfTotal = document.querySelector('.percentage-of-total');
+      var country = document.querySelector('.country');
+      var valuation = document.querySelector('.valuation span');
+      percentageOfTotal.textContent = percent + '%';
+      country.textContent = region;
+      valuation.textContent = parseInt(value).toLocaleString();
     },
     bindUI: function bindUI() {
       var self = this;

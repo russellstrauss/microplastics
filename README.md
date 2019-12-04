@@ -17,6 +17,7 @@ Run local webserver in root directory (index.html).
 ### Prerequisites
 
 [Node.js](https://nodejs.org/en/)
+[git](https://git-scm.com/downloads) - must be installed system-wide
 
 ### Installing
 

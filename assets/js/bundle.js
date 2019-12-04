@@ -418,7 +418,7 @@ module.exports = function () {
           if (feature.properties.NAME === exportRow.country) {
             result = {
               fillColor: '#E66200',
-              weight: 2,
+              weight: .25,
               opacity: 1,
               // stroke opacity
               color: 'black',
@@ -460,6 +460,7 @@ module.exports = function () {
       });
 
       var compare = function compare(a, b) {
+        // sort vertical direction of bars
         return a.amount - b.amount;
       };
 

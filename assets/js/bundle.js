@@ -937,8 +937,6 @@ module.exports = function () {
           document.querySelector('.generation-glyphs').innerHTML = '<div class="frame"><img src="./assets/svg/generation.svg" alt="generation icon"></div>';
           self.longevityTimescale();
         }
-
-        console.log(data);
       });
     },
     setMaterial: function setMaterial(materialID) {
@@ -1107,7 +1105,7 @@ module.exports = function () {
       unitVisContainer.addEventListener('scroll', function (event) {
         var offset = 0;
         if (canvasHolder.offsetHeight > 10000) offset = 1000;
-        var totalProgress = unitVisContainer.scrollTop / (canvasHolder.offsetHeight - offset);
+        var totalProgress = unitVisContainer.scrollTop / (unitVisContainer.scrollHeight - unitVisContainer.clientHeight);
         var number = countElement.querySelector('.number');
         var caption = countElement.querySelector('.caption');
         if (number) number.textContent = Math.floor(totalCount * totalProgress).toLocaleString() + 'x';

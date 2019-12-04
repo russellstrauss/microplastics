@@ -4,7 +4,6 @@ module.exports = function () {
 	var dataset;
 	var circleRadius = 8;
 	var count = 0;
-	var plasticProductionTextField;
 
 
 	return {
@@ -39,33 +38,8 @@ module.exports = function () {
 		
 			});
 			
-			var BelowText = d3.select('.monument-visualization').append("svg")
-			.attr("class", "texts")
-			.attr('id', 'plasticProduction')
-			.attr("width", 1200)
-			.attr("height", 140);
-
-				plasticProductionTextField = BelowText.append('text')
-				.attr('x', 200)
-				.attr('y', 100)
-				.style('fill', 'black')
-				.style('font-size', '1.2em')
-				.text('Plastics Amount');
-
-				BelowText.append('text')
-				.attr('x', 580)
-				.attr('y', 105)
-				.style('fill', 'black')
-				.style('font-size', '2em')
-				.text("=");
-
-				var monumentText = BelowText.append('text')
-				.attr('x', 845)
-				.attr('y', 100)
-				.style('fill', 'black')
-				.text('Real World')
-				.style('font-size', '1.2em')
-
+			var monumentText = document.querySelector('.monument-visualization .label-container .monument-title');
+			var totalWeightText = document.querySelector('.monument-visualization .label-container .weight');
 			/////////////////////////////////////////////
 			
 			var formatYear = d3.timeFormat("%Y");
@@ -231,80 +205,79 @@ module.exports = function () {
 							
 							let plasticAmount = parseInt(plasticProductionData[key].Cumulative.toLocaleString());
 							
-							plasticProductionTextField.text(plasticProductionData[key].Cumulative +'(t)');
+							totalWeightText.textContent = parseInt(plasticProductionData[key].Cumulative).toLocaleString() +'(t)';
 							
-							let monumentImages = document.querySelectorAll('.monument-visualization img');
+							let monumentImages = document.querySelectorAll('.monument-visualization .image-container img');
 							monumentImages.forEach(function(image) {
 								image.style.opacity = "0";
-
 							});
 						
 
 							if (plasticAmount > 2000001 && plasticAmount < 30000000) {
 								var sushiImage = document.querySelector('img.sushi');
 								sushiImage.style.opacity = '1';
-								monumentText.text('Statue of Liberty(x10000)')
+								monumentText.textContent = 'Statue of Liberty(x10000)';
 
 							}
 							else if (plasticAmount > 30000001 && plasticAmount < 60000000) {
 								var eiffelImage = document.querySelector('img.eiffel');
 								eiffelImage.style.opacity = '1';
 
-								monumentText.text('Eiffel Tower(x4054)');
+								monumentText.textContent = 'Eiffel Tower(x4054)';
 							}
 							else if (plasticAmount > 60000001 && plasticAmount < 300000000) {
 								var pyramidImage = document.querySelector('img.pyramid');
 								pyramidImage.style.opacity = '1';
 
-								monumentText.text('Pyramid');
+								monumentText.textContent = 'Pyramid';
 							}
 							else if (plasticAmount > 300000001 && plasticAmount < 500000000) {
 								var gtImage = document.querySelector('img.gt');
 								gtImage.style.opacity = '1';
 
-								monumentText.text('GT Buildings');
+								monumentText.textContent = 'GT Buildings';
 							}
 							else if (plasticAmount > 500000001 && plasticAmount < 700000000) {
 								var greatwallImage = document.querySelector('img.greatwall');
 								greatwallImage.style.opacity = '1';
 
-								monumentText.text('Great Wall');
+								monumentText.textContent = 'Great Wall';
 							}
 							else if (plasticAmount > 700000001 && plasticAmount < 900000000) {
 								var populationImage = document.querySelector('img.population');
 								populationImage.style.opacity = '1';
 
-								monumentText.text('Weight of World Popluation');
+								monumentText.textContent = 'Weight of World Popluation';
 							}
 							else if (plasticAmount > 900000001 && plasticAmount < 1100000000) {
 								var skyscrapperImage = document.querySelector('img.skyscrapper');
 								skyscrapperImage.style.opacity = '1';
 
-								monumentText.text('Weight of Skyscrappers \n in the world');
+								monumentText.textContent = 'Weight of Skyscrappers \n in the world';
 							}
 							else if (plasticAmount > 1100000001 && plasticAmount < 3000000000) {
 								var roadImage = document.querySelector('img.road');
 								roadImage.style.opacity = '1';
 
-								monumentText.text('Weight of US Road System');
+								monumentText.textContent = 'Weight of US Road System';
 							}
 							else if (plasticAmount > 3000000001 && plasticAmount < 5100000000) {
 								var icebergImage = document.querySelector('img.iceberg');
 								icebergImage.style.opacity = '1';
 
-								monumentText.text('Weight of Icebergs in Antartica');
+								monumentText.textContent = 'Weight of Icebergs in Antartica';
 							}
 							else if (plasticAmount > 5100000001 && plasticAmount < 7500000000) {
 								var carImage = document.querySelector('img.car');
 								carImage.style.opacity = '1';
 
-								monumentText.text('Weight of total Car');
+								monumentText.textContent = 'Weight of total Car';
 							}
 							else if (plasticAmount > 7500000001 && plasticAmount < 10000000000) {
 								var cometImage = document.querySelector('img.comet');
 								cometImage.style.opacity = '1';
 
-								monumentText.text('Chicxulub Asteroid');
+								monumentText.textContent = 'Chicxulub Asteroid';
 							}
 						};
 					});

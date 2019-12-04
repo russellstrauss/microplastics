@@ -121,26 +121,73 @@
 }
 
 #both {
-	display: table; margin-left: auto; margin-right: auto;
+	display: flex; margin-left: auto; margin-right: auto;
 }
 .monument {
 	display: inline; margin-left: 14.2em;
 	
+
+}
+
+.monument-visualization h2{
+	padding-bottom:60px;
+}
+
+.monument-visualization {
+	
+	#both {
+		
+		#vis {
+			width: 50%;
+			
+			svg {
+				margin-left: auto;
+				margin-right: auto;
+				display: block;
+			}
+		}
+		
+		.image-container {
+			width: 50%;
+			//border: 1px solid black;
+			position: relative;
+			height: 500px;
+			
+			img {
+				//opacity: 0;
+				display: block;
+				position: absolute;
+				opacity: 0;
+				top: 50%;
+				left: 50%;
+				transform: translate(-50%, -50%);
+			
+				transition: opacity 1500ms ease;
+			}
+		}
+	}
+	
+	.label-container {
+		display: flex;
+		justify-content: center;
+		text-align: center;
+		font-size: 1.2rem;
+		
+		.equals {
+			flex-basis: 100px;
+			font-size: 2rem;
+		}
+		
+		.weight, .monument-title {
+			flex-basis: 44%;
+		}
+	}
 }
 
 #slider svg{
 	display: table; margin-left: auto; margin-right: auto;
 }
-#vis svg{
-	display: inline; ; 
-	visibility: visible;
-  opacity: 1;
-  transition: opacity 2s linear;
-}
-#vis {
-	display: inline; 
 
-}
 .texts {
 	display: table; margin-left: auto; margin-right: auto;
 
@@ -170,13 +217,31 @@
 	pointer-events: stroke;
 	stroke-width: 50px;
 	stroke: transparent;
-	cursor: crosshair;
+	cursor: pointer;	
 	position: absolute;
   }
 
   .handle {
 	fill: #fff;
-	stroke: #000;
+	stroke: rgb(255, 223, 163);
 	stroke-opacity: 0.5;
-	stroke-width: 1.25px;
+	stroke-width: 6px;
   }
+  #play-button {
+	display: table; margin-left: auto; margin-right: auto;
+
+	background: orange;
+	border-radius: 15px;
+	border: none;
+	color: white;
+	margin-bottom: 40px;
+	width: 80px;
+	cursor: pointer;
+	height: 30px;
+	font-size: 14px;
+// box-shadow: 5px 5px 10px #c6c6c6;
+  }
+
+  #play-button:hover {
+	background-color: #a2a2a2;
+  }    

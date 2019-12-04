@@ -83,7 +83,7 @@ module.exports = function() {
 				
 				d3.csv('./assets/js/data/exports.csv', prepare).then(function(data) {
 					exportsData = data;
-					console.log(exportsData);
+					//console.log(exportsData);
 					
 					self.showCountries();
 					self.addBarGraph();
@@ -91,7 +91,7 @@ module.exports = function() {
 				
 				function prepare(d) {
 					//return d;
-					console.log(d);
+					//console.log(d);
 					let row = [];
 					row.amount = d['2017'];
 					if (d['Partner Name'] === 'Europe & Central Asia' || d['Partner Name'] === 'East Asia & Pacific' || d['Partner Name'] === 'North America' || d['Partner Name'] === 'Latin America & Caribbean' || d['Partner Name'] === 'Middle East & North Africa' || d['Partner Name'] === 'South Asia' || d['Partner Name'] === 'Sub-Saharan Africa' || d['Partner Name'] === 'Australia' || d['Partner Name'] === ' World') {

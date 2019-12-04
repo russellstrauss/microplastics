@@ -1,0 +1,114 @@
+
+svg#paracoords-svg {
+    font: 10px sans-serif;
+    float:left;
+  }
+
+div.paracoords {
+  display:block;
+  padding:10px;
+}
+
+div#selectors {
+  height: 560px;
+}
+  
+  .background path {
+    fill: none;
+    stroke: #ddd;
+    shape-rendering: crispEdges;
+    opacity: 0.3;
+  }
+  
+  .foreground path {
+    fill: none;
+    stroke-width:2px;
+    opacity:0.5;
+  }
+  
+  .brush .extent {
+    fill-opacity: .3;
+    stroke: #fff;
+    shape-rendering: crispEdges;
+  }
+  
+  .axis line,
+  .axis path {
+    fill: none;
+    stroke: #000;
+    shape-rendering: crispEdges;
+  }
+  
+  .axis text {
+    text-shadow: 0 1px 0 #fff, 1px 0 0 #fff, 0 -1px 0 #fff, -1px 0 0 #fff;
+    cursor: move;
+  }
+
+  div.tooltip {
+    color: white;
+    position: absolute;
+    text-align: center;
+    /* width: 60px;
+    height: 28px; */
+    padding: 2px;
+    font: 12px sans-serif;
+    background: rgba(0,0,0,.8);
+    border: 2px solid black;
+    pointer-events: none;
+    text-align:left;
+  }
+
+  div.tooltip b.title {
+    text-align:center;
+  }
+
+  div.country-container {
+    display:block;
+    float:right;
+    overflow-y:auto;
+    height:475px;
+    width: 230px;
+    -webkit-box-sizing: border-box; /* Safari/Chrome, other WebKit */
+    -moz-box-sizing: border-box;    /* Firefox, other Gecko */
+    box-sizing: border-box;         /* Opera/IE 8+ */
+
+  }
+
+  div.country-container div.country {
+    padding: 10px;
+    border:solid;
+    border-color:lightgrey;
+    border-width:1px;
+    margin-bottom:2px;
+    margin-top:0px;
+    border-radius:3px;
+  }
+
+  /* select.country-container option.country span {
+    float:right;
+  } */
+
+  table.slider-table {
+    width: 350px;
+  }
+
+  select.country-container {
+    width:350px;
+  }
+
+  select.country-container option.country img {
+    height: 25px; 
+    width:25px;
+    vertical-align:sub;
+  }
+
+  input.country-selector {
+    width:230px;
+    margin-bottom:2px;
+    padding:5px;
+    border-radius:3px;
+    border-width:1px;
+    -webkit-box-sizing: border-box; /* Safari/Chrome, other WebKit */
+    -moz-box-sizing: border-box;    /* Firefox, other Gecko */
+    box-sizing: border-box;         /* Opera/IE 8+ */
+  }

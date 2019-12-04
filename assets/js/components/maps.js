@@ -6,7 +6,8 @@ module.exports = function() {
 	var containerHeight = parseInt(document.querySelector('.fullscreen-map').offsetHeight);
 	var mapWithLabels = 'https://stamen-tiles-{s}.a.ssl.fastly.net/toner/{z}/{x}/{y}{r}.png?access_token={accessToken}';
 	var mapWithoutLabels = 'https://stamen-tiles-{s}.a.ssl.fastly.net/toner-background/{z}/{x}/{y}{r}.png?access_token={accessToken}';
-	var exportsData, importsData, geojson, toolTip, barData;
+	var graph, countriesLayer, barGraphTitle, worldTotal;
+	var mapData, exportsData, importsData, geojson, toolTip, barData;
 	
 	var china = {
 		location: new L.LatLng(23.638, 120.998),
@@ -15,7 +16,7 @@ module.exports = function() {
 	
 	var center = {
 		location: new L.LatLng(30, 20),
-		zoom: 1.5
+		zoom: 2.5
 	}
 	
 	var setLocation = center;
@@ -39,6 +40,7 @@ module.exports = function() {
 			
 			self.map();
 			self.exports();
+			self.bindUI();
 			//self.toolTip();
 		},
 		
@@ -77,24 +79,51 @@ module.exports = function() {
 			
 			let self = this;
 			
+			d3.csv('./assets/js/data/imports.csv', prepareImports).then(function(data) {
+				importsData = data;
+			});
+			
+			function prepareImports(d) {
+				let row = [];
+				row.amount = d['2017'];
+				
+				if (d['Partner Name'] === 'World') {
+					worldTotal = row.amount;
+					console.log(worldTotal);
+				}
+				
+				if (d['Partner Name'] === 'Europe & Central Asia' || d['Partner Name'] === 'East Asia & Pacific' || d['Partner Name'] === 'North America' || d['Partner Name'] === 'Latin America & Caribbean' || d['Partner Name'] === 'Middle East & North Africa' || d['Partner Name'] === 'South Asia' || d['Partner Name'] === 'Sub-Saharan Africa' || d['Partner Name'] === 'Australia' || d['Partner Name'] === 'World') {
+					row.region = d['Partner Name'];
+				}
+				else {
+					row.country = d['Partner Name'];
+				}
+				
+				if (row.amount !== '' && row.country) return row;
+			}
+			
 			d3.json('./assets/js/data/ne_10m_admin_0_countries.json').then(function(json) {
 				
 				geojson = json;
 				
-				d3.csv('./assets/js/data/exports.csv', prepare).then(function(data) {
+				d3.csv('./assets/js/data/exports.csv', prepareExports).then(function(data) {
 					exportsData = data;
+					mapData = exportsData;
 					//console.log(exportsData);
 					
 					self.showCountries();
 					self.addBarGraph();
 				});
 				
-				function prepare(d) {
-					//return d;
-					//console.log(d);
+				function prepareExports(d) {
 					let row = [];
 					row.amount = d['2017'];
-					if (d['Partner Name'] === 'Europe & Central Asia' || d['Partner Name'] === 'East Asia & Pacific' || d['Partner Name'] === 'North America' || d['Partner Name'] === 'Latin America & Caribbean' || d['Partner Name'] === 'Middle East & North Africa' || d['Partner Name'] === 'South Asia' || d['Partner Name'] === 'Sub-Saharan Africa' || d['Partner Name'] === 'Australia' || d['Partner Name'] === ' World') {
+					
+					if (d['Partner Name'] === 'World') {
+						worldTotal = row.amount;
+					}
+					
+					if (d['Partner Name'] === 'Europe & Central Asia' || d['Partner Name'] === 'East Asia & Pacific' || d['Partner Name'] === 'North America' || d['Partner Name'] === 'Latin America & Caribbean' || d['Partner Name'] === 'Middle East & North Africa' || d['Partner Name'] === 'South Asia' || d['Partner Name'] === 'Sub-Saharan Africa' || d['Partner Name'] === 'Australia' || d['Partner Name'] === 'World') {
 						row.region = d['Partner Name'];
 					}
 					else {
@@ -153,27 +182,25 @@ module.exports = function() {
 				return b.amount - a.amount;
 			};
 			
-			exportsData = exportsData.sort(sortAmountDesc).slice(0, 20);
-			barData = exportsData.sort(sortAmountDesc).slice(0, 20);
-			//console.log(exportsData);
+			mapData = mapData.sort(sortAmountDesc).slice(0, 20);
+			barData = mapData.sort(sortAmountDesc).slice(0, 20);
 			
-			let min = exportsData[19].amount;
-			let max = exportsData[0].amount;
+			let min = mapData[19].amount;
+			let max = mapData[0].amount;
 			
 			function style(feature) {
 				
 				let result;
 				
-				exportsData.forEach(function(exportRow) {
-					//console.log(exportRow.country, exportRow.amount / max);
+				mapData.forEach(function(row) {
 					
-					if (feature.properties.NAME === exportRow.country) {
+					if (feature.properties.NAME === row.country) {
 						result = {
 							fillColor: '#E66200',
-							weight: 2,
+							weight: .25,
 							opacity: 1, // stroke opacity
 							color: 'black',
-							fillOpacity: (exportRow.amount / max) * .4 + .3
+							fillOpacity: (row.amount / max) * .4 + .3
 						};
 					}
 				});
@@ -189,7 +216,7 @@ module.exports = function() {
 				};
 			}
 			
-			var countriesLayer = L.geoJson(geojson, {style: style});
+			countriesLayer = L.geoJson(geojson, {style: style});
 			countriesLayer.addTo(map);
 		},
 		
@@ -197,7 +224,7 @@ module.exports = function() {
 			
 			let self = this;
 				
-			let graph = document.querySelector('.geo-vis .bar-graph');
+			graph = document.querySelector('.geo-vis .bar-graph');
 			
 			let graphicContainer = graph.parentElement;
 			var padding = {
@@ -211,18 +238,25 @@ module.exports = function() {
 			var height = self.settings.barHeight - padding.top - padding.bottom;
 			var barHeight = 5;
 			
-			let maxValue = d3.max(exportsData, function (d) {
+			let maxValue = d3.max(mapData, function (d) {
 				return d.amount;
 			});
 			
-			let compare = function(a, b) {
+			let compare = function(a, b) { // sort vertical direction of bars
 				return a.amount - b.amount;
 			};
 			
-			exportsData = exportsData.sort(compare);
+			mapData = mapData.sort(compare);
+			
+			let top = mapData.slice(0)[19];
+			let worldPercent = Math.round(10*worldTotal/top.amount)/10;
+			self.updateStats(worldPercent, top.country, top.amount);
+			
+			
+			
 
 			let count = 21;
-			var y = d3.scaleBand().domain(exportsData.map(function (d) {
+			var y = d3.scaleBand().domain(mapData.map(function (d) {
 				return d.country;
 			})).range([height, 0]);
 			var x = d3.scaleLinear().domain([0, maxValue]).range([0, width - 100]);
@@ -234,42 +268,73 @@ module.exports = function() {
 			.attr('transform', 'translate(' + padding.left + ',' + padding.top + ')');
 
 			svg.selectAll('.bar')
-				.data(exportsData)
-				.enter().append('rect')
-				.attr('class', 'bar')
-				.attr('width', function(d) {
-					return x(d.amount);
-				})
-				.attr('y', function (d) {
-					return y(d.country) + (y.bandwidth() / 2 - barHeight / 2);
-				})
-				.attr('height', barHeight);
+			.data(mapData)
+			.enter().append('rect')
+			.attr('class', 'bar')
+			.attr('y', function (d) {
+				return y(d.country) + (y.bandwidth() / 2 - barHeight / 2);
+			})
+			.attr('height', barHeight)
+			.attr('width', 0)
+			.transition()
+			.delay(function(d, i) { return i * 40; })
+			.ease(d3.easeCubicOut)
+			.duration(300)
+			.attr('width', function(d) {
+				return x(d.amount);
+			});
+			
 
 			svg.append('g').attr('transform', 'translate(0,' + (height + 6) + ')').call(d3.axisBottom(x));
 			svg.append('g').call(d3.axisLeft(y).tickSize(0));
 			
-			// Add graph title
-			// let title = svg.append('text') 
-			// 	.attr('class', 'title')
-			// 	.text('Top 20 Global Rivers Ranked by Ocean Plastic Input');
-			// let textWidth = title.node().getBBox().width;
-			// let textHeight = title.node().getBBox().height;
-			// title.attr('transform','translate(' + (width/2 - (textWidth/2) - (padding.left/2)) + ', ' + (-1 * (padding.top/2) + 10) + ')');
-			
 			let xAxisHeight = 20;
-			let xAxisLabel = svg.append('text') 
+			barGraphTitle = svg.append('text') 
 				.attr('class', 'x-axis-label')
 				.html('Top 20 Global Plastic Exporters (USD)');
-			let textWidth = xAxisLabel.node().getBBox().width;
-			let textHeight = xAxisLabel.node().getBBox().height;
-			xAxisLabel.attr('transform','translate(' + (width/2 - (textWidth/2) - (padding.left/2)) + ', ' + (height + xAxisHeight + (padding.bottom/2)) + ')');
+			let textWidth = barGraphTitle.node().getBBox().width;
+			let textHeight = barGraphTitle.node().getBBox().height;
+			barGraphTitle.attr('transform','translate(' + (width/2 - (textWidth/2) - (padding.left/2)) + ', ' + (height + xAxisHeight + (padding.bottom/2)) + ')');
+		},
 		
-			// let yAxisLabel = svg.append('text') 
-			// 	.attr('class', 'y-axis-label')
-			// 	.text('y-axis label here');
-			// textWidth = yAxisLabel.node().getBBox().width;
-			// textHeight = yAxisLabel.node().getBBox().height;
-			// yAxisLabel.attr('transform','translate(' + (-1 * padding.left + textHeight * 2.5) + ', ' + (height/2 + (textWidth/2)) + ') rotate(-90)');
+		updateStats: function(percent, region, value) {
+			
+			let percentageOfTotal = document.querySelector('.percentage-of-total');
+			let country = document.querySelector('.country');
+			let valuation = document.querySelector('.valuation span');
+			
+			percentageOfTotal.textContent = percent + '%';
+			country.textContent = region;
+			valuation.textContent = parseInt(value).toLocaleString();
+		},
+		
+		bindUI: function() {
+			
+			let self = this;
+			
+			let exportsButton = document.querySelector('#plasticExports');
+			if (exportsButton) exportsButton.addEventListener('click', function() {
+				mapData = exportsData;
+				self.reset();
+				self.showCountries();
+				self.addBarGraph();
+			});
+			
+			let importsButton = document.querySelector('#plasticImports');
+			if (importsButton) importsButton.addEventListener('click', function() {
+				mapData = importsData;
+				self.reset();
+				
+				barGraphTitle = svg.append('text').html('Top 20 Global Plastic Importers (USD)');
+				self.showCountries();
+				self.addBarGraph();
+			});
+		},
+		
+		reset: function() {
+			
+			graph.innerHTML = '';
+			countriesLayer.remove();
 		}
 	}
 }

@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 	<meta charset="UTF-8">
-	<title>Plastic in Our World</title>
+	<title>Plastics in Our World</title>
 	<script src="https://d3js.org/d3-random.v2.min.js"></script>
 
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
@@ -39,29 +39,31 @@
 			<h2>Hungry friends?<br>How about some sushi?<br>Let the good times roll!</h2>
 		</section>
 		
-		<div class="gradient-fade white">
-			<h2>But wait...</h2>
-		</div>
-		
 		<section class="white ocean-rays">
-			<h2>Sushi is made of fish.<br>Fish live in the ocean.</h2>
-			
-			<h2>What else lives in the ocean?</h2>
-			
-			<img class="bag" src="./assets/img/bag.png" alt="">
-			
-			
-			<div class="gradient-fade black">
-				<h2>Plastics in our world.</h2>
-			</div>
 			
 			<div class="video-frame">
-				<div class="gradient-black"></div>
-				<video autoplay="autoplay" loop autoplay>
-					<source src="http://jrstrauss.net/information-visualization/ocean.mp4" type="video/mp4">
-				</video>
+				<h2 class="but-wait">But wait...</h2>
 				<div class="gradient-white"></div>
+				<video loop autoplay muted id="vid">
+					<source src="./assets/video/rays_small.mp4" type="video/mp4">
+				</video>
+				<script>
+					document.getElementById('vid').play();
+				</script>
+				<div class="gradient-black"></div>
 			</div>
+			
+			<div class="message">
+				<h2>Sushi is made of fish.<br>Fish live in the ocean.</h2>
+				
+				<h2>Guess what else lives in the ocean.</h2>
+			</div>
+			
+			<img class="bag" src="./assets/img/bag.png" alt="">
+		</section>
+		
+		<section class="black in-our-world">
+			<h2>Plastics in our world.</h2>
 		</section>
 
 		<section>
@@ -122,9 +124,9 @@
 		<div class="selector">
 			<h2>The Danger of Single-use Plastics</h2>
 			<p>With 7.7 billion people on planet Earth as of 2019, the use of single-use plastics presents a dangerous habit that society has adopted. With populations rising at exponential rates and billions of single-use plastics 
-				being used and discarded every single day, the rate at which we use plastic is far out of proportion with the time it takes for that plastic to break down. While we continue to pile on the plastic each day, there doesn't seem to be anything
-				to stop it. See how the plastic you use on a daily basis, possibly even a coffee cup or plastic bottle you used today will be around long after you, your children, and grandchildren are no longer living. If we are only using
-				the materials for hours or even minutes, shouldn't we choose materials that degrade in less than 450 years?
+				being used and discarded every single day, the rate at which we use plastic is far out of proportion with the time it takes for that plastic to break down. While we continue to pile on the plastic each day, there doesn't yet seem to be any
+				catalyst to develop a timely solution. See how the plastic you use on a daily basis, possibly even a coffee cup or plastic bottle you used today will be around long after you, your children, and grandchildren are no longer living. If we are only using
+				the materials for hours or even minutes, does it need to last for 450 years?
 			</p>
 			<select name="longevitySelector" class="material" id="longevitySelector">
 				<option value="bottle">Bottle</option>
@@ -201,9 +203,10 @@
 		
 		<div class="bar-section">
 			<div class="left">
-				<div class="percentage-of-total">22%</div>
-				<div class="valuation">84982097 USD</div>
-				<div class="country">United States</div>
+				<div class="percentage-of-total"></div>
+				<div class="label">world total</div>
+				<div class="country"></div>
+				<div class="valuation">$<span></span> USD</div>
 			</div>
 			<div class="right">
 				<div class="bar-graph"></div>
@@ -211,8 +214,12 @@
 		</div>
 		
 		<div class="insights">
-			<p>The United States, China, and Germany are the top in both importation and exportation of plastics worldwide.</p>
+			<p>The United States, China, and Germany are the top three importers and exporters of plastics worldwide. The United States is the top producer by a large margin, even over China who comes in at 2nd. The top 3 export nearly twice as much as </p>
 		</div>
+	</div>
+
+	<div class="paracoords">
+		
 	</div>
 		
 	<div class="references">

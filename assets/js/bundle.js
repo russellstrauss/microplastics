@@ -394,8 +394,9 @@ module.exports = function () {
   var containerHeight = parseInt(document.querySelector('.fullscreen-map').offsetHeight);
   var mapWithLabels = 'https://stamen-tiles-{s}.a.ssl.fastly.net/toner/{z}/{x}/{y}{r}.png?access_token={accessToken}';
   var mapWithoutLabels = 'https://stamen-tiles-{s}.a.ssl.fastly.net/toner-background/{z}/{x}/{y}{r}.png?access_token={accessToken}';
+  var graph, countriesLayer, barGraphTitle, worldTotal;
 
-  var exportsData, importsData, geojson, _toolTip, barData;
+  var mapData, exportsData, importsData, geojson, _toolTip, barData;
 
   var china = {
     location: new L.LatLng(23.638, 120.998),
@@ -403,7 +404,7 @@ module.exports = function () {
   };
   var center = {
     location: new L.LatLng(30, 20),
-    zoom: 1.5
+    zoom: 2.5
   };
   var setLocation = center;
 
@@ -422,7 +423,8 @@ module.exports = function () {
     init: function init() {
       var self = this;
       self.map();
-      self.exports(); //self.toolTip();
+      self.exports();
+      self.bindUI(); //self.toolTip();
     },
     toolTip: function toolTip() {
       _toolTip = d3.tip().attr("class", "d3-tip").offset([-12, 0]).html(function (d) {
@@ -443,22 +445,47 @@ module.exports = function () {
     },
     exports: function exports() {
       var self = this;
+      d3.csv('./assets/js/data/imports.csv', prepareImports).then(function (data) {
+        importsData = data;
+      });
+
+      function prepareImports(d) {
+        var row = [];
+        row.amount = d['2017'];
+
+        if (d['Partner Name'] === 'World') {
+          worldTotal = row.amount;
+          console.log(worldTotal);
+        }
+
+        if (d['Partner Name'] === 'Europe & Central Asia' || d['Partner Name'] === 'East Asia & Pacific' || d['Partner Name'] === 'North America' || d['Partner Name'] === 'Latin America & Caribbean' || d['Partner Name'] === 'Middle East & North Africa' || d['Partner Name'] === 'South Asia' || d['Partner Name'] === 'Sub-Saharan Africa' || d['Partner Name'] === 'Australia' || d['Partner Name'] === 'World') {
+          row.region = d['Partner Name'];
+        } else {
+          row.country = d['Partner Name'];
+        }
+
+        if (row.amount !== '' && row.country) return row;
+      }
+
       d3.json('./assets/js/data/ne_10m_admin_0_countries.json').then(function (json) {
         geojson = json;
-        d3.csv('./assets/js/data/exports.csv', prepare).then(function (data) {
-          exportsData = data; //console.log(exportsData);
+        d3.csv('./assets/js/data/exports.csv', prepareExports).then(function (data) {
+          exportsData = data;
+          mapData = exportsData; //console.log(exportsData);
 
           self.showCountries();
           self.addBarGraph();
         });
 
-        function prepare(d) {
-          //return d;
-          //console.log(d);
+        function prepareExports(d) {
           var row = [];
           row.amount = d['2017'];
 
-          if (d['Partner Name'] === 'Europe & Central Asia' || d['Partner Name'] === 'East Asia & Pacific' || d['Partner Name'] === 'North America' || d['Partner Name'] === 'Latin America & Caribbean' || d['Partner Name'] === 'Middle East & North Africa' || d['Partner Name'] === 'South Asia' || d['Partner Name'] === 'Sub-Saharan Africa' || d['Partner Name'] === 'Australia' || d['Partner Name'] === ' World') {
+          if (d['Partner Name'] === 'World') {
+            worldTotal = row.amount;
+          }
+
+          if (d['Partner Name'] === 'Europe & Central Asia' || d['Partner Name'] === 'East Asia & Pacific' || d['Partner Name'] === 'North America' || d['Partner Name'] === 'Latin America & Caribbean' || d['Partner Name'] === 'Middle East & North Africa' || d['Partner Name'] === 'South Asia' || d['Partner Name'] === 'Sub-Saharan Africa' || d['Partner Name'] === 'Australia' || d['Partner Name'] === 'World') {
             row.region = d['Partner Name'];
           } else {
             row.country = d['Partner Name'];
@@ -511,24 +538,22 @@ module.exports = function () {
         return b.amount - a.amount;
       };
 
-      exportsData = exportsData.sort(sortAmountDesc).slice(0, 20);
-      barData = exportsData.sort(sortAmountDesc).slice(0, 20); //console.log(exportsData);
-
-      var min = exportsData[19].amount;
-      var max = exportsData[0].amount;
+      mapData = mapData.sort(sortAmountDesc).slice(0, 20);
+      barData = mapData.sort(sortAmountDesc).slice(0, 20);
+      var min = mapData[19].amount;
+      var max = mapData[0].amount;
 
       function style(feature) {
         var result;
-        exportsData.forEach(function (exportRow) {
-          //console.log(exportRow.country, exportRow.amount / max);
-          if (feature.properties.NAME === exportRow.country) {
+        mapData.forEach(function (row) {
+          if (feature.properties.NAME === row.country) {
             result = {
               fillColor: '#E66200',
-              weight: 2,
+              weight: .25,
               opacity: 1,
               // stroke opacity
               color: 'black',
-              fillOpacity: exportRow.amount / max * .4 + .3
+              fillOpacity: row.amount / max * .4 + .3
             };
           }
         });
@@ -543,14 +568,14 @@ module.exports = function () {
         };
       }
 
-      var countriesLayer = L.geoJson(geojson, {
+      countriesLayer = L.geoJson(geojson, {
         style: style
       });
       countriesLayer.addTo(_map);
     },
     addBarGraph: function addBarGraph() {
       var self = this;
-      var graph = document.querySelector('.geo-vis .bar-graph');
+      graph = document.querySelector('.geo-vis .bar-graph');
       var graphicContainer = graph.parentElement;
       var padding = {
         top: 60,
@@ -561,50 +586,402 @@ module.exports = function () {
       var width = graphicContainer.offsetWidth - padding.left - padding.right;
       var height = self.settings.barHeight - padding.top - padding.bottom;
       var barHeight = 5;
-      var maxValue = d3.max(exportsData, function (d) {
+      var maxValue = d3.max(mapData, function (d) {
         return d.amount;
       });
 
       var compare = function compare(a, b) {
+        // sort vertical direction of bars
         return a.amount - b.amount;
       };
 
-      exportsData = exportsData.sort(compare);
+      mapData = mapData.sort(compare);
+      var top = mapData.slice(0)[19];
+      var worldPercent = Math.round(10 * worldTotal / top.amount) / 10;
+      self.updateStats(worldPercent, top.country, top.amount);
       var count = 21;
-      var y = d3.scaleBand().domain(exportsData.map(function (d) {
+      var y = d3.scaleBand().domain(mapData.map(function (d) {
         return d.country;
       })).range([height, 0]);
       var x = d3.scaleLinear().domain([0, maxValue]).range([0, width - 100]);
       var svg = d3.select(graph).append('svg').attr('width', width + padding.left + padding.right).attr('height', height + padding.top + padding.bottom).append('g').attr('transform', 'translate(' + padding.left + ',' + padding.top + ')');
-      svg.selectAll('.bar').data(exportsData).enter().append('rect').attr('class', 'bar').attr('width', function (d) {
-        return x(d.amount);
-      }).attr('y', function (d) {
+      svg.selectAll('.bar').data(mapData).enter().append('rect').attr('class', 'bar').attr('y', function (d) {
         return y(d.country) + (y.bandwidth() / 2 - barHeight / 2);
-      }).attr('height', barHeight);
+      }).attr('height', barHeight).attr('width', 0).transition().delay(function (d, i) {
+        return i * 40;
+      }).ease(d3.easeCubicOut).duration(300).attr('width', function (d) {
+        return x(d.amount);
+      });
       svg.append('g').attr('transform', 'translate(0,' + (height + 6) + ')').call(d3.axisBottom(x));
-      svg.append('g').call(d3.axisLeft(y).tickSize(0)); // Add graph title
-      // let title = svg.append('text') 
-      // 	.attr('class', 'title')
-      // 	.text('Top 20 Global Rivers Ranked by Ocean Plastic Input');
-      // let textWidth = title.node().getBBox().width;
-      // let textHeight = title.node().getBBox().height;
-      // title.attr('transform','translate(' + (width/2 - (textWidth/2) - (padding.left/2)) + ', ' + (-1 * (padding.top/2) + 10) + ')');
-
+      svg.append('g').call(d3.axisLeft(y).tickSize(0));
       var xAxisHeight = 20;
-      var xAxisLabel = svg.append('text').attr('class', 'x-axis-label').html('Top 20 Global Plastic Exporters (USD)');
-      var textWidth = xAxisLabel.node().getBBox().width;
-      var textHeight = xAxisLabel.node().getBBox().height;
-      xAxisLabel.attr('transform', 'translate(' + (width / 2 - textWidth / 2 - padding.left / 2) + ', ' + (height + xAxisHeight + padding.bottom / 2) + ')'); // let yAxisLabel = svg.append('text') 
-      // 	.attr('class', 'y-axis-label')
-      // 	.text('y-axis label here');
-      // textWidth = yAxisLabel.node().getBBox().width;
-      // textHeight = yAxisLabel.node().getBBox().height;
-      // yAxisLabel.attr('transform','translate(' + (-1 * padding.left + textHeight * 2.5) + ', ' + (height/2 + (textWidth/2)) + ') rotate(-90)');
+      barGraphTitle = svg.append('text').attr('class', 'x-axis-label').html('Top 20 Global Plastic Exporters (USD)');
+      var textWidth = barGraphTitle.node().getBBox().width;
+      var textHeight = barGraphTitle.node().getBBox().height;
+      barGraphTitle.attr('transform', 'translate(' + (width / 2 - textWidth / 2 - padding.left / 2) + ', ' + (height + xAxisHeight + padding.bottom / 2) + ')');
+    },
+    updateStats: function updateStats(percent, region, value) {
+      var percentageOfTotal = document.querySelector('.percentage-of-total');
+      var country = document.querySelector('.country');
+      var valuation = document.querySelector('.valuation span');
+      percentageOfTotal.textContent = percent + '%';
+      country.textContent = region;
+      valuation.textContent = parseInt(value).toLocaleString();
+    },
+    bindUI: function bindUI() {
+      var self = this;
+      var exportsButton = document.querySelector('#plasticExports');
+      if (exportsButton) exportsButton.addEventListener('click', function () {
+        mapData = exportsData;
+        self.reset();
+        self.showCountries();
+        self.addBarGraph();
+      });
+      var importsButton = document.querySelector('#plasticImports');
+      if (importsButton) importsButton.addEventListener('click', function () {
+        mapData = importsData;
+        self.reset();
+        barGraphTitle = svg.append('text').html('Top 20 Global Plastic Importers (USD)');
+        self.showCountries();
+        self.addBarGraph();
+      });
+    },
+    reset: function reset() {
+      graph.innerHTML = '';
+      countriesLayer.remove();
     }
   };
 };
 
-},{"leaflet-arc":12}],4:[function(require,module,exports){
+},{"leaflet-arc":13}],4:[function(require,module,exports){
+"use strict";
+
+module.exports = function () {
+  return {
+    dimensions: null,
+    settings: {},
+    init: function init() {
+      this.parallelCoordinates();
+    },
+    parallelCoordinates: function parallelCoordinates() {
+      // GLOBALS
+      var DATA_URL = './assets/js/data/aggregated.csv';
+      var DATA = {}; // END GLOBALS
+      // LOAD DATA
+
+      function toTitleCase(str) {
+        return str.replace(/\w\S*/g, function (txt) {
+          return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+        });
+      }
+
+      var svgWidth = 960,
+          svgHeight = 560,
+          margin = {
+        top: 30,
+        right: 100,
+        bottom: 30,
+        left: 100
+      },
+          width = svgWidth - margin.left - margin.right,
+          height = svgHeight - margin.top - margin.bottom;
+      var x,
+          y = {},
+          dimensions,
+          dragging = {},
+          sliders;
+      var foreground_enter, foreground_group, background_enter, background_group, country_container_enter, country_container_group;
+      var selected = [];
+      var div_selector = 'div.paracoords';
+      var svg = d3.select(div_selector).append("svg").attr('id', 'paracoords-svg').attr("width", svgWidth).attr("height", svgHeight).append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+      var foreground = svg.append('g').attr('class', 'foreground');
+      var background = background_group = svg.append('g').attr('class', 'background'); // var country_selector = d3.select('body').append('input')
+      //     .attr('type', 'text')
+      //     .attr('class', 'country-selector')
+      //     .attr('placeholder', 'Country')
+      //     .attr('value', '');
+
+      var selectors = d3.select(div_selector).append('div').attr('id', 'selectors');
+      selectors.append('h2').text('Select Countries');
+      var country_container = selectors.append('select').attr('class', 'country-container').attr('multiple', 'true').attr('size', 10);
+      var function_keys = {
+        fish_consumption: 0.5,
+        coastal_population: 0.5,
+        gdp: 0.5
+      };
+      var tooltip_div = d3.select(div_selector).append('div').attr('class', 'tooltip').style('opacity', 0);
+      d3.csv(DATA_URL).then(function (data) {
+        var scales = {
+          total_population: d3.scaleLinear().domain([0, d3.max(data, function (d) {
+            return d.total_population;
+          })]).range([0, 1]),
+          coastal_population: d3.scaleLinear().domain([0, d3.max(data, function (d) {
+            return d.coastal_population;
+          })]).range([0, 1]),
+          plastic_waste_per_capita: d3.scaleLinear().domain([0, d3.max(data, function (d) {
+            return d.plastic_waste_per_capita;
+          })]).range([0, 1]),
+          plastic_waste_total: d3.scaleLinear().domain([0, d3.max(data, function (d) {
+            return d.plastic_waste_total;
+          })]).range([0, 1]),
+          fish_consumption: d3.scaleLinear().domain([0, d3.max(data, function (d) {
+            return d.fish_consumption;
+          })]).range([0, 1]),
+          gdp: d3.scaleLinear().domain([0, d3.max(data, function (d) {
+            return d.gdp;
+          })]).range([0, 1])
+        };
+        data.forEach(function (d) {
+          d.code = d.code;
+          d.country = d.country;
+          d.total_population = scales.total_population(+d.total_population);
+          d.coastal_population = scales.coastal_population(+d.coastal_population);
+          d.plastic_waste_per_capita = scales.plastic_waste_per_capita(+d.plastic_waste_per_capita);
+          d.plastic_waste_total = scales.plastic_waste_total(+d.plastic_waste_total);
+          d.fish_consumption = scales.fish_consumption(+d.fish_consumption);
+          d.gdp = scales.gdp(+d.gdp);
+        });
+        data = calcImpactMetric(data);
+        data = calcRankings(data);
+        drawCountries('', data);
+        dimensions = d3.keys(data[0]).filter(function (key) {
+          if (key == 'pollute_rank') {
+            y[key] = d3.scaleLinear().domain(d3.extent(data, function (d) {
+              return +d[key];
+            }).reverse()).range([height, 0]);
+            return key;
+          } else if (key == 'impact_rank') {
+            y[key] = d3.scaleLinear().domain(d3.extent(data, function (d) {
+              return +d[key];
+            }).reverse()).range([height, 0]);
+            return key;
+          } // } else if (key == 'inadequately_managed_plastic_rank') {
+          //     y[key] = d3.scaleLinear()
+          //         .domain(d3.extent(data, function(d) {
+          //             return +d[key];
+          //         }).reverse())
+          //         .range([0, height]);
+          //     return key;
+          // }
+
+        });
+        x = d3.scalePoint().domain(dimensions).range([0, width]);
+        draw(data);
+        selectors.append('h2').text('Adjust Ranking');
+        var table = selectors.append('table').attr('class', 'slider-table');
+        Object.keys(function_keys).forEach(function (d) {
+          var tr = table.append('tr');
+          var span_td = tr.append('td');
+          span_td.append('span').text(function () {
+            console.log(d);
+            if (d == 'coastal_population') return 'Coastal Population: ';else if (d == 'gdp') return 'Gross Domestic Product: ';else if (d == 'fish_consumption') return 'Fish Consumption: ';else return 'null';
+          });
+          var slider_td = tr.append('td');
+          var slider = slider_td.append('input').attr('type', 'range').attr('min', '0').attr('max', '100').property('value', '50');
+          slider.on('change', function () {
+            function_keys[d] = slider.property('value') / 100;
+            data = calcImpactMetric(data);
+            data = calcRankings(data);
+            draw(data);
+          });
+        });
+        var g = svg.selectAll(".dimension").data(dimensions).enter().append("g").attr("class", "dimension").attr("transform", function (d) {
+          return "translate(" + x(d) + ")";
+        }).call(d3.drag().on("start", function (d) {
+          dragging[d] = x(d);
+          background_group.attr("visibility", "hidden");
+        }).on("drag", function (d) {
+          dragging[d] = Math.min(width, Math.max(0, d3.event.x));
+          foreground_group.attr("d", line);
+          dimensions.sort(function (a, b) {
+            return position(a) - position(b);
+          });
+          x.domain(dimensions);
+          g.attr("transform", function (d) {
+            return "translate(" + position(d) + ")";
+          });
+        }).on("end", function (d) {
+          delete dragging[d];
+          transition(d3.select(this)).attr("transform", "translate(" + x(d) + ")");
+          transition(foreground_group).attr("d", line);
+          background_group.attr("d", line).transition().delay(500).duration(0).attr("visibility", null);
+        }));
+        g.append("g").attr("class", "axis").each(function (d) {
+          if (d == 'pollute_rank') d3.select(this).call(d3.axisLeft().scale(y[d]));else if (d == 'impact_rank') d3.select(this).call(d3.axisRight().scale(y[d]));
+        }).append("text").style("text-anchor", "middle").attr("fill", "black").attr("font-size", "12").attr("y", -9).text(function (d) {
+          if (d == 'pollute_rank') return "Contribution (rank)";else if (d == 'inadequately_managed_plastic_rank') return "Inadequately Managed Plastic (Rank)";else return "Impact (rank)";
+        });
+        g.append("g").attr("class", "brush").each(function (d) {
+          var _this = this;
+
+          d3.select(this).call(y[d].brush = d3.brushY().extent([[-10, 0], [10, height]]).on("start", brushstart).on("brush", brush).on("end", brush)).on('click', function () {
+            d3.select(_this).call(y[d].brush.move, null);
+          });
+        }).selectAll("rect").attr("x", -8).attr("width", 16);
+      });
+
+      function drawCountries(filt, data) {
+        country_container_group = country_container.selectAll('option').data(data, function (d) {
+          return d.code;
+        });
+        country_container_group.exit().remove();
+        country_container_enter = country_container_group.enter().append('option');
+        country_container_group = country_container_group.merge(country_container_enter).attr('class', 'country').attr('id', function (d) {
+          return d.code;
+        }).html(function (d) {
+          return '<img src="./assets/img/countries/' + d.country + '.svg"></img><span>' + toTitleCase(d.country.replace(new RegExp('-', 'gi'), ' ')) + '</span>';
+        }).on('mousedown', function (d) {
+          d3.event.preventDefault();
+
+          if (selected.indexOf(d.code) >= 0) {
+            for (var i = 0; i < selected.length; i++) {
+              if (selected[i] == d.code) selected.splice(i, 1);
+            }
+
+            document.getElementById(d.code).selected = false;
+          } else {
+            selected.push(d.code);
+            document.getElementById(d.code).selected = true;
+          }
+
+          draw(data);
+        });
+      }
+
+      function draw(data) {
+        // draw the background, make sure it merges so that when the
+        // data gets updated nothing fucky happens
+        // y['impact_rank'] = d3.scaleLinear()
+        //     .domain(d3.extent(data, function(d) {
+        //         return impact(d);
+        //     }).reverse())
+        //     .range([height, 0]);
+        // draw the forerground, do the same thing. Note that tooltips
+        // are also included here. 
+        var color = d3.scaleLinear().domain(d3.extent(data, function (d) {
+          return d.pollute_rank - d.impact_rank;
+        })).range([0, 1]);
+        var filtered_data = data.filter(function (d) {
+          return selected.indexOf(d.code) >= 0;
+        });
+        foreground_group = foreground.selectAll('path').data(filtered_data, function (d) {
+          return d.code;
+        });
+        foreground_group.exit().remove();
+        foreground_enter = foreground_group.enter().append('path').on('mouseover', tooltip).on('mouseout', function () {
+          tooltip_div.style('opacity', 0);
+        }).attr('stroke', function (d) {
+          return d3.interpolateCool(color(d.pollute_rank - d.impact_rank));
+        });
+        foreground_group = foreground_group.merge(foreground_enter).attr('d', line).style('stroke-width', 5).style('opacity', function (d) {
+          return selected.indexOf(d.code) >= 0 ? 1 : 0;
+        });
+        background_group = background.selectAll('path').data(filtered_data, function (d) {
+          return d.code;
+        });
+        background_group.exit().remove();
+        background_enter = background_group.enter().append('path');
+        background_group = background_group.merge(background_enter).attr('d', line).style('display', function (d) {
+          return selected.indexOf(d.code) >= 0 ? 1 : 0;
+        });
+      }
+
+      function tooltip(d) {
+        // tooltip_div is declared as a global variable
+        // at the top of the file. For convenience,
+
+        /*
+        tooltip_div = d3.select('body')
+        	.append('div')
+        	.attr('class', 'tooltip')
+        	.style('opacity', 0);
+        */
+        tooltip_div.style('opacity', 0.9);
+        tooltip_div.html('<b class="title">' + toTitleCase(d.country.replace(new RegExp('-', 'gi'), ' ')) + '</b><br/>Pollution Rank: ' + d.pollute_rank + '<br/>Impact Rank: ' + d.impact_rank).style('left', d3.event.pageX + 10 + 'px').style('top', d3.event.pageY - 28 + 'px');
+      }
+
+      function calcRankings(data) {
+        var rankings = [];
+        data.sort(function (a, b) {
+          return d3.descending(a.plastic_waste_total, b.plastic_waste_total);
+        }).forEach(function (d, i) {
+          d.pollute_rank = i + 1;
+        });
+        data.sort(function (a, b) {
+          return d3.descending(a.impact, b.impact);
+        }).forEach(function (d, i) {
+          d.impact_rank = i + 1;
+        });
+        data.sort(function (a, b) {
+          return d3.descending(a.inadequately_managed_plastic, b.inadequately_managed_plastic);
+        }).forEach(function (d, i) {
+          d.inadequately_managed_plastic_rank = i + 1;
+        });
+        return data;
+      }
+
+      function calcImpactMetric(data) {
+        data.forEach(function (d) {
+          d.impact = function_keys.coastal_population * (d.coastal_population / d.total_population) + function_keys.fish_consumption * d.fish_consumption - function_keys.gdp * d.gdp;
+        });
+        return data;
+      }
+
+      function line(d) {
+        return d3.line()(dimensions.map(function (key) {
+          if (key == 'impact_rank') {
+            return [x(key), y[key](d[key])];
+          } else {
+            return [x(key), y[key](d[key])];
+          }
+        }));
+      }
+
+      function brushstart() {
+        d3.event.sourceEvent.stopPropagation();
+      } // Handles a brush event, toggling the display of foreground lines.
+
+
+      function brush() {
+        // Get a set of dimensions with active brushes and their current extent.
+        var actives = [];
+        svg.selectAll(".brush").filter(function (d) {
+          return d3.brushSelection(this);
+        }).each(function (key) {
+          actives.push({
+            dimension: key,
+            extent: d3.brushSelection(this)
+          });
+        }); // Change line visibility based on brush extent.
+
+        if (actives.length === 0) {
+          foreground_group.style("display", null);
+        } else {
+          foreground_group.style("display", function (d) {
+            return actives.every(function (brushObj) {
+              return brushObj.extent[0] <= y[brushObj.dimension](d[brushObj.dimension]) && y[brushObj.dimension](d[brushObj.dimension]) <= brushObj.extent[1];
+            }) ? null : "none";
+          });
+        }
+      }
+
+      function position(d) {
+        var v = dragging[d];
+        return v == null ? x(d) : v;
+      }
+
+      function transition(g) {
+        return g.transition().duration(500);
+      }
+
+      function impact(d) {
+        return -1 * (function_keys.coastal_population * (d.coastal_population / d.total_population)) - function_keys.fish_consumption * d.fish_consumption + function_keys.gdp * d.gdp;
+      }
+    }
+  };
+};
+
+},{}],5:[function(require,module,exports){
 "use strict";
 
 module.exports = function () {
@@ -788,7 +1165,7 @@ module.exports = function () {
   };
 };
 
-},{}],5:[function(require,module,exports){
+},{}],6:[function(require,module,exports){
 "use strict";
 
 module.exports = function () {
@@ -915,12 +1292,16 @@ module.exports = function () {
 
       var graphicWidth = barWidth / ratio;
       var frames = generations.querySelectorAll('.frame');
-      frames.forEach(function (frame) {
-        var image = frame.querySelector('img');
-        frame.style.width = graphicWidth + 'px';
-        image.width = graphicWidth;
-      });
-      frames[frames.length - 1].style.width = remainder - 5 + 'px';
+
+      if (frames.length) {
+        frames.forEach(function (frame) {
+          var image = frame.querySelector('img');
+          frame.style.width = graphicWidth + 'px';
+          image.width = graphicWidth;
+        });
+        frames[frames.length - 1].style.width = remainder - 5 + 'px';
+      }
+
       svg.append('g').attr('transform', 'translate(0,' + (height + 6) + ')').call(d3.axisBottom(x));
       svg.append('g').call(d3.axisLeft(y).tickSize(0));
     },
@@ -934,18 +1315,21 @@ module.exports = function () {
         var newYear = settings.materials[selector.value].breakdownTime;
         data = [{
           'years': newYear
-        }];
+        }]; // if (newYear < 1) {
+        // 	document.querySelector('.generation-glyphs').innerHTML = '';
+        // 	document.querySelector('.longevity').innerHTML = '';
+        // 	self.longevityTimescale();
+        // }
 
         if (newYear < 1) {
-          document.querySelector('.generation-glyphs').innerHTML = '';
           document.querySelector('.longevity').innerHTML = '';
+          document.querySelector('.generation-glyphs').innerHTML = '';
+          self.longevityTimescale();
         } else {
           document.querySelector('.longevity').innerHTML = '';
           document.querySelector('.generation-glyphs').innerHTML = '<div class="frame"><img src="./assets/svg/generation.svg" alt="generation icon"></div>';
           self.longevityTimescale();
         }
-
-        console.log(data);
       });
     },
     setMaterial: function setMaterial(materialID) {
@@ -975,9 +1359,8 @@ module.exports = function () {
       lifetimes.textContent = lifetimesValue.toString() + ' lifetimes';
     },
     useRatio: function useRatio(useTimeHours, decomposeYears) {
-      //let useTimeHours = 3;
-      //let decomposeYears = 450;
-      var decomposeHours = decomposeYears * 8760;
+      var hoursInAYear = 8760;
+      var decomposeHours = decomposeYears * hoursInAYear;
       var ratio = decomposeHours / useTimeHours;
       var width;
       var element = document.querySelector('.use-ratio .canvas-holder');
@@ -1030,10 +1413,23 @@ module.exports = function () {
         return count;
       }
 
+      var yearsPerCanvas = useTimeHours * countPerCanvas / hoursInAYear;
+      var searchingFor = 100;
       var canvasCopies = Math.floor(ratio / countPerCanvas);
 
       for (var i = 0; i < canvasCopies + 1; i++) {
         // duplicate multiple copies of the canvas to avoid millions of loops
+        var totalYears = i * yearsPerCanvas;
+
+        if (totalYears > searchingFor) {
+          var node = document.createElement('div');
+          node.classList.add('year-indicator');
+          var textnode = document.createTextNode(searchingFor.toString() + ' years');
+          node.appendChild(textnode);
+          element.appendChild(node);
+          searchingFor += 100;
+        }
+
         element.append(cloneCanvas(canvas));
         canvas.remove();
         totalCount += countPerCanvas;
@@ -1102,7 +1498,7 @@ module.exports = function () {
       unitVisContainer.addEventListener('scroll', function (event) {
         var offset = 0;
         if (canvasHolder.offsetHeight > 10000) offset = 1000;
-        var totalProgress = unitVisContainer.scrollTop / (canvasHolder.offsetHeight - offset);
+        var totalProgress = unitVisContainer.scrollTop / (unitVisContainer.scrollHeight - unitVisContainer.clientHeight);
         var number = countElement.querySelector('.number');
         var caption = countElement.querySelector('.caption');
         if (number) number.textContent = Math.floor(totalCount * totalProgress).toLocaleString() + 'x';
@@ -1115,7 +1511,7 @@ module.exports = function () {
   };
 };
 
-},{}],6:[function(require,module,exports){
+},{}],7:[function(require,module,exports){
 "use strict";
 
 module.exports = function () {
@@ -1213,292 +1609,33 @@ module.exports = function () {
   };
 };
 
-},{}],7:[function(require,module,exports){
-"use strict";
-
-module.exports = function () {
-  return {
-    settings: {},
-    init: function init() {
-      var self = this;
-    }
-  };
-};
-
 },{}],8:[function(require,module,exports){
 "use strict";
 
 module.exports = function () {
-  var sunburst = document.querySelector('.sunburst');
-  var data;
-  var width;
-  if (sunburst) width = parseInt(sunburst.offsetWidth);
-  var height = width;
   return {
     settings: {},
     init: function init() {
       var self = this;
-      if (sunburst) self.sunburst();
-    },
-    sunburst: function sunburst() {
-      var radius = Math.min(width, height) / 2; // Breadcrumb dimensions: width, height, spacing, width of tip/tail.
-
-      var b = {
-        w: 75,
-        h: 30,
-        s: 3,
-        t: 10
-      }; // Mapping of step names to colors.
-
-      var colors = {
-        "home": "#ECD078",
-        "product": "#D95B43",
-        "search": "#C02942",
-        "account": "#542437",
-        "other": "#53777A",
-        "end": "#083047"
-      }; // Total size of all segments; we set this later, after loading the data.
-
-      var totalSize = 0;
-      var vis = d3.select(".chart").append("svg:svg").attr("width", width).attr("height", height).append("svg:g").attr("id", "container").attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
-      var partition = d3.partition().size([2 * Math.PI, radius * radius]);
-      var arc = d3.arc().startAngle(function (d) {
-        return d.x0;
-      }).endAngle(function (d) {
-        return d.x1;
-      }).innerRadius(function (d) {
-        return Math.sqrt(d.y0);
-      }).outerRadius(function (d) {
-        return Math.sqrt(d.y1);
-      }); // Use d3.text and d3.csvParseRows so that we do not need to have a header
-      // row, and can receive the csv as an array of arrays.
-
-      d3.text("./assets/js/data/global-plastic-fate.csv", function (text) {// var csv = d3.csvParseRows(text);
-        // var json = buildHierarchy(csv);
-        //console.log(json);
-      });
-      d3.text("./assets/js/data/test-visit-sequences.csv", function (text) {
-        var csv = d3.csvParseRows(text); //console.log(json);
-
-        var json = buildHierarchy(csv);
-        createVisualization(json);
-      }); // Main function to draw and set up the visualization, once we have the data.
-
-      function createVisualization(json) {
-        // Basic setup of page elements.
-        initializeBreadcrumbTrail();
-        drawLegend();
-        d3.select("#togglelegend").on("click", toggleLegend); // Bounding circle underneath the sunburst, to make it easier to detect
-        // when the mouse leaves the parent g.
-
-        vis.append("svg:circle").attr("r", radius).style("opacity", 0); // Turn the data into a d3 hierarchy and calculate the sums.
-
-        var root = d3.hierarchy(json).sum(function (d) {
-          return d.size;
-        }).sort(function (a, b) {
-          return b.value - a.value;
-        }); // For efficiency, filter nodes to keep only those large enough to see.
-
-        var nodes = partition(root).descendants().filter(function (d) {
-          return d.x1 - d.x0 > 0.005; // 0.005 radians = 0.29 degrees
-        });
-        var path = vis.data([json]).selectAll("path").data(nodes).enter().append("svg:path").attr("display", function (d) {
-          return d.depth ? null : "none";
-        }).attr("d", arc).attr("fill-rule", "evenodd").style("fill", function (d) {
-          return colors[d.data.name];
-        }).style("opacity", 1).on("mouseover", mouseover); // Add the mouseleave handler to the bounding circle.
-
-        d3.select("#container").on("mouseleave", mouseleave); // Get total size of the tree = value of root node from partition.
-
-        totalSize = path.datum().value;
-      }
-
-      ; // Fade all but the current sequence, and show it in the breadcrumb trail.
-
-      function mouseover(d) {
-        var percentage = (100 * d.value / totalSize).toPrecision(3);
-        var percentageString = percentage + "%";
-
-        if (percentage < 0.1) {
-          percentageString = "< 0.1%";
-        }
-
-        d3.select(".percentage").text(percentageString);
-        d3.select(".explanation").style("visibility", "");
-        var sequenceArray = d.ancestors().reverse();
-        sequenceArray.shift(); // remove root node from the array
-
-        updateBreadcrumbs(sequenceArray, percentageString); // Fade all the segments.
-
-        d3.selectAll("path").style("opacity", 0.3); // Then highlight only those that are an ancestor of the current segment.
-
-        vis.selectAll("path").filter(function (node) {
-          return sequenceArray.indexOf(node) >= 0;
-        }).style("opacity", 1);
-      } // Restore everything to full opacity when moving off the visualization.
-
-
-      function mouseleave(d) {
-        // Hide the breadcrumb trail
-        d3.select(".trail").style("visibility", "hidden"); // Deactivate all segments during transition.
-
-        d3.selectAll("path").on("mouseover", null); // Transition each segment to full opacity and then reactivate it.
-
-        d3.selectAll("path").transition().duration(1000).style("opacity", 1).on("end", function () {
-          d3.select(this).on("mouseover", mouseover);
-        });
-        d3.select(".explanation").style("visibility", "hidden");
-      }
-
-      function initializeBreadcrumbTrail() {
-        // Add the svg area.
-        var trail = d3.select(".sunburst .sequence").append("svg:svg").attr("width", width).attr("height", 50).attr("class", "trail"); // Add the label at the end, for the percentage.
-
-        trail.append("svg:text").attr("class", "endlabel").style("fill", "#000");
-      } // Generate a string that describes the points of a breadcrumb polygon.
-
-
-      function breadcrumbPoints(d, i) {
-        var points = [];
-        points.push("0,0");
-        points.push(b.w + ",0");
-        points.push(b.w + b.t + "," + b.h / 2);
-        points.push(b.w + "," + b.h);
-        points.push("0," + b.h);
-
-        if (i > 0) {
-          // Leftmost breadcrumb; don't include 6th vertex.
-          points.push(b.t + "," + b.h / 2);
-        }
-
-        return points.join(" ");
-      } // Update the breadcrumb trail to show the current sequence and percentage.
-
-
-      function updateBreadcrumbs(nodeArray, percentageString) {
-        // Data join; key function combines name and depth (= position in sequence).
-        var trail = d3.select(".trail").selectAll("g").data(nodeArray, function (d) {
-          return d.data.name + d.depth;
-        }); // Remove exiting nodes.
-
-        trail.exit().remove(); // Add breadcrumb and label for entering nodes.
-
-        var entering = trail.enter().append("svg:g");
-        entering.append("svg:polygon").attr("points", breadcrumbPoints).style("fill", function (d) {
-          return colors[d.data.name];
-        });
-        entering.append("svg:text").attr("x", (b.w + b.t) / 2).attr("y", b.h / 2).attr("dy", "0.35em").attr("text-anchor", "middle").text(function (d) {
-          return d.data.name;
-        }); // Merge enter and update selections; set position for all nodes.
-
-        entering.merge(trail).attr("transform", function (d, i) {
-          return "translate(" + i * (b.w + b.s) + ", 0)";
-        }); // Now move and update the percentage at the end.
-
-        d3.select(".trail").select(".endlabel").attr("x", (nodeArray.length + 0.5) * (b.w + b.s)).attr("y", b.h / 2).attr("dy", "0.35em").attr("text-anchor", "middle").text(percentageString); // Make the breadcrumb trail visible, if it's hidden.
-
-        d3.select(".trail").style("visibility", "");
-      }
-
-      function drawLegend() {
-        // Dimensions of legend item: width, height, spacing, radius of rounded rect.
-        var li = {
-          w: 75,
-          h: 30,
-          s: 3,
-          r: 3
-        };
-        var legend = d3.select("#legend").append("svg:svg").attr("width", li.w).attr("height", d3.keys(colors).length * (li.h + li.s));
-        var g = legend.selectAll("g").data(d3.entries(colors)).enter().append("svg:g").attr("transform", function (d, i) {
-          return "translate(0," + i * (li.h + li.s) + ")";
-        });
-        g.append("svg:rect").attr("rx", li.r).attr("ry", li.r).attr("width", li.w).attr("height", li.h).style("fill", function (d) {
-          return d.value;
-        });
-        g.append("svg:text").attr("x", li.w / 2).attr("y", li.h / 2).attr("dy", "0.35em").attr("text-anchor", "middle").text(function (d) {
-          return d.key;
-        });
-      }
-
-      function toggleLegend() {
-        var legend = d3.select("#legend");
-
-        if (legend.style("visibility") == "hidden") {
-          legend.style("visibility", "");
-        } else {
-          legend.style("visibility", "hidden");
-        }
-      } // Take a 2-column CSV and transform it into a hierarchical structure suitable
-      // for a partition layout. The first column is a sequence of step names, from
-      // root to leaf, separated by hyphens. The second column is a count of how 
-      // often that sequence occurred.
-
-
-      function buildHierarchy(csv) {
-        var root = {
-          "name": "root",
-          "children": []
-        };
-
-        for (var i = 0; i < csv.length; i++) {
-          var sequence = csv[i][0];
-          var size = +csv[i][1];
-
-          if (isNaN(size)) {
-            // e.g. if this is a header row
-            continue;
-          }
-
-          var parts = sequence.split("-");
-          var currentNode = root;
-
-          for (var j = 0; j < parts.length; j++) {
-            var children = currentNode["children"];
-            var nodeName = parts[j];
-            var childNode;
-
-            if (j + 1 < parts.length) {
-              // Not yet at the end of the sequence; move down the tree.
-              var foundChild = false;
-
-              for (var k = 0; k < children.length; k++) {
-                if (children[k]["name"] == nodeName) {
-                  childNode = children[k];
-                  foundChild = true;
-                  break;
-                }
-              } // If we don't already have a child node for this branch, create it.
-
-
-              if (!foundChild) {
-                childNode = {
-                  "name": nodeName,
-                  "children": []
-                };
-                children.push(childNode);
-              }
-
-              currentNode = childNode;
-            } else {
-              // Reached the end of the sequence; create a leaf node.
-              childNode = {
-                "name": nodeName,
-                "size": size
-              };
-              children.push(childNode);
-            }
-          }
-        }
-
-        return root;
-      }
-
-      ;
     }
   };
 };
 
 },{}],9:[function(require,module,exports){
+"use strict";
+
+module.exports = function () {
+  return {
+    settings: {},
+    init: function init() {
+      this.sunburst();
+    },
+    sunburst: function sunburst() {//alert('sunburst running');
+    }
+  };
+};
+
+},{}],10:[function(require,module,exports){
 "use strict";
 
 module.exports = function () {
@@ -1543,7 +1680,7 @@ module.exports = function () {
   };
 };
 
-},{}],10:[function(require,module,exports){
+},{}],11:[function(require,module,exports){
 "use strict";
 
 var HorizontalBar = require('./components/horizontal-bar.js');
@@ -1557,6 +1694,8 @@ var Maps = require('./components/maps.js');
 var Scrolling = require('./components/scrolling.js');
 
 var Sunburst = require('./components/sunburst.js');
+
+var ParallelCoordinates = require('./components/parallel-coordinates.js');
 
 var Pie = require('./components/pie.js');
 
@@ -1574,13 +1713,14 @@ var Utilities = require('./utils.js');
     Maps().init();
     Scrolling().init();
     Sunburst().init();
+    ParallelCoordinates().init();
     Pie().init();
     Scatter().init();
     cumulativePlastic().init();
   });
 })();
 
-},{"./components/cumulative-plastics.js":1,"./components/horizontal-bar.js":2,"./components/maps.js":3,"./components/pie.js":4,"./components/plastic-longevity.js":5,"./components/scatterplot.js":6,"./components/scrolling.js":7,"./components/sunburst.js":8,"./components/ui.js":9,"./utils.js":11}],11:[function(require,module,exports){
+},{"./components/cumulative-plastics.js":1,"./components/horizontal-bar.js":2,"./components/maps.js":3,"./components/parallel-coordinates.js":4,"./components/pie.js":5,"./components/plastic-longevity.js":6,"./components/scatterplot.js":7,"./components/scrolling.js":8,"./components/sunburst.js":9,"./components/ui.js":10,"./utils.js":12}],12:[function(require,module,exports){
 "use strict";
 
 (function () {
@@ -1706,7 +1846,7 @@ var Utilities = require('./utils.js');
   module.exports = window.utils;
 })();
 
-},{}],12:[function(require,module,exports){
+},{}],13:[function(require,module,exports){
 !function(t,e){"object"==typeof exports&&"object"==typeof module?module.exports=e():"function"==typeof define&&define.amd?define("leaflet-arc",[],e):"object"==typeof exports?exports["leaflet-arc"]=e():t["leaflet-arc"]=e()}(this,function(){return function(t){function e(o){if(r[o])return r[o].exports;var s=r[o]={exports:{},id:o,loaded:!1};return t[o].call(s.exports,s,s.exports,e),s.loaded=!0,s.exports}var r={};return e.m=t,e.c=r,e.p="",e(0)}([function(t,e,r){"use strict";function o(t){return t&&t.__esModule?t:{"default":t}}function s(t,e){if(!t.geometries[0]||!t.geometries[0].coords[0])return[];var r=function(){var r=e.lng-t.geometries[0].coords[0][0]-360;return{v:t.geometries.map(function(t){return r+=360,t.coords.map(function(t){return L.latLng([t[1],t[0]+r])})}).reduce(function(t,e){return t.concat(e)})}}();return"object"===("undefined"==typeof r?"undefined":n(r))?r.v:void 0}var i=Object.assign||function(t){for(var e=1;e<arguments.length;e++){var r=arguments[e];for(var o in r)Object.prototype.hasOwnProperty.call(r,o)&&(t[o]=r[o])}return t},n="function"==typeof Symbol&&"symbol"==typeof Symbol.iterator?function(t){return typeof t}:function(t){return t&&"function"==typeof Symbol&&t.constructor===Symbol?"symbol":typeof t},a=r(2),h=o(a),p=function(t){return{x:t.lng,y:t.lat}};if(!L)throw new Error("Leaflet is not defined");L.Polyline.Arc=function(t,e,r){var o=L.latLng(t),n=L.latLng(e),a=i({vertices:10,offset:10},r),u=new h["default"].GreatCircle(p(o),p(n)),c=u.Arc(a.vertices,{offset:a.offset}),f=s(c,o);return L.polyline(f,a)}},function(t,e){"use strict";var r=Math.PI/180,o=180/Math.PI,s=function(t,e){this.lon=t,this.lat=e,this.x=r*t,this.y=r*e};s.prototype.view=function(){return String(this.lon).slice(0,4)+","+String(this.lat).slice(0,4)},s.prototype.antipode=function(){var t=-1*this.lat,e=this.lon<0?180+this.lon:(180-this.lon)*-1;return new s(e,t)};var i=function(){this.coords=[],this.length=0};i.prototype.move_to=function(t){this.length++,this.coords.push(t)};var n=function(t){this.properties=t||{},this.geometries=[]};n.prototype.json=function(){if(this.geometries.length<=0)return{geometry:{type:"LineString",coordinates:null},type:"Feature",properties:this.properties};if(1==this.geometries.length)return{geometry:{type:"LineString",coordinates:this.geometries[0].coords},type:"Feature",properties:this.properties};for(var t=[],e=0;e<this.geometries.length;e++)t.push(this.geometries[e].coords);return{geometry:{type:"MultiLineString",coordinates:t},type:"Feature",properties:this.properties}},n.prototype.wkt=function(){for(var t="",e="LINESTRING(",r=function(t){e+=t[0]+" "+t[1]+","},o=0;o<this.geometries.length;o++){if(0===this.geometries[o].coords.length)return"LINESTRING(empty)";var s=this.geometries[o].coords;s.forEach(r),t+=e.substring(0,e.length-1)+")"}return t};var a=function(t,e,r){if(!t||void 0===t.x||void 0===t.y)throw new Error("GreatCircle constructor expects two args: start and end objects with x and y properties");if(!e||void 0===e.x||void 0===e.y)throw new Error("GreatCircle constructor expects two args: start and end objects with x and y properties");this.start=new s(t.x,t.y),this.end=new s(e.x,e.y),this.properties=r||{};var o=this.start.x-this.end.x,i=this.start.y-this.end.y,n=Math.pow(Math.sin(i/2),2)+Math.cos(this.start.y)*Math.cos(this.end.y)*Math.pow(Math.sin(o/2),2);if(this.g=2*Math.asin(Math.sqrt(n)),this.g==Math.PI)throw new Error("it appears "+t.view()+" and "+e.view()+" are 'antipodal', e.g diametrically opposite, thus there is no single route but rather infinite");if(isNaN(this.g))throw new Error("could not calculate great circle between "+t+" and "+e)};if(a.prototype.interpolate=function(t){var e=Math.sin((1-t)*this.g)/Math.sin(this.g),r=Math.sin(t*this.g)/Math.sin(this.g),s=e*Math.cos(this.start.y)*Math.cos(this.start.x)+r*Math.cos(this.end.y)*Math.cos(this.end.x),i=e*Math.cos(this.start.y)*Math.sin(this.start.x)+r*Math.cos(this.end.y)*Math.sin(this.end.x),n=e*Math.sin(this.start.y)+r*Math.sin(this.end.y),a=o*Math.atan2(n,Math.sqrt(Math.pow(s,2)+Math.pow(i,2))),h=o*Math.atan2(i,s);return[h,a]},a.prototype.Arc=function(t,e){var r=[];if(!t||t<=2)r.push([this.start.lon,this.start.lat]),r.push([this.end.lon,this.end.lat]);else for(var o=1/(t-1),s=0;s<t;++s){var a=o*s,h=this.interpolate(a);r.push(h)}for(var p=!1,u=0,c=e&&e.offset?e.offset:10,f=180-c,l=-180+c,d=360-c,y=1;y<r.length;++y){var g=r[y-1][0],v=r[y][0],M=Math.abs(v-g);M>d&&(v>f&&g<l||g>f&&v<l)?p=!0:M>u&&(u=M)}var m=[];if(p&&u<c){var w=[];m.push(w);for(var x=0;x<r.length;++x){var b=parseFloat(r[x][0]);if(x>0&&Math.abs(b-r[x-1][0])>d){var L=parseFloat(r[x-1][0]),S=parseFloat(r[x-1][1]),j=parseFloat(r[x][0]),E=parseFloat(r[x][1]);if(L>-180&&L<l&&180==j&&x+1<r.length&&r[x-1][0]>-180&&r[x-1][0]<l){w.push([-180,r[x][1]]),x++,w.push([r[x][0],r[x][1]]);continue}if(L>f&&L<180&&j==-180&&x+1<r.length&&r[x-1][0]>f&&r[x-1][0]<180){w.push([180,r[x][1]]),x++,w.push([r[x][0],r[x][1]]);continue}if(L<l&&j>f){var F=L;L=j,j=F;var C=S;S=E,E=C}if(L>f&&j<l&&(j+=360),L<=180&&j>=180&&L<j){var G=(180-L)/(j-L),I=G*E+(1-G)*S;w.push([r[x-1][0]>f?180:-180,I]),w=[],w.push([r[x-1][0]>f?-180:180,I]),m.push(w)}else w=[],m.push(w);w.push([b,r[x][1]])}else w.push([r[x][0],r[x][1]])}}else{var N=[];m.push(N);for(var A=0;A<r.length;++A)N.push([r[A][0],r[A][1]])}for(var P=new n(this.properties),_=0;_<m.length;++_){var O=new i;P.geometries.push(O);for(var q=m[_],R=0;R<q.length;++R)O.move_to(q[R])}return P},"undefined"!=typeof t&&"undefined"!=typeof t.exports)t.exports.Coord=s,t.exports.Arc=n,t.exports.GreatCircle=a;else{var h={};h.Coord=s,h.Arc=n,h.GreatCircle=a}},function(t,e,r){"use strict";t.exports=r(1)}])});
 
-},{}]},{},[10]);
+},{}]},{},[11]);

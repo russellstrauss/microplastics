@@ -166,7 +166,7 @@ module.exports = function () {
 						.attr('max', '100')
 						.property('value', '50')
 					slider
-						.on('change', () => {
+						.on('input', () => {
 						function_keys[d] = slider.property('value') / 100;
 
 						data = calcImpactMetric(data);

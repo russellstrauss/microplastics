@@ -24,9 +24,11 @@ module.exports = function () {
 					return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
 				});
 			}
-
-			const svgWidth = 960,
-				svgHeight = 560,
+			
+			var parentElement = document.querySelector('.paracoords');
+			
+			const svgWidth = parentElement.offsetWidth * .60, // setting width to 60% of parent container responsive. Adjust if necessary.
+				svgHeight = 800,
 				margin = { top: 30, right: 100, bottom: 30, left: 100 },
 				width = svgWidth - margin.left - margin.right,
 				height = svgHeight - margin.top - margin.bottom;

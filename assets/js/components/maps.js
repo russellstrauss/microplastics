@@ -30,9 +30,8 @@ module.exports = function() {
 	let corner1 = L.latLng(73, -171);
 	let corner2 = L.latLng(-50, -100);
 	let bounds = L.latLngBounds(corner1, corner2);
-	console.log(map.getBoundsZoom(bounds));
 	//map.setZoom(map.getBoundsZoom(bounds));
-	map.fitWorld();
+	//map.fitWorld();
 	
 	var svgLayer = L.svg();
 	svgLayer.addTo(map);
@@ -296,24 +295,31 @@ module.exports = function() {
 			svg.append('g').attr('transform', 'translate(0,' + (height + 6) + ')').call(d3.axisBottom(x));
 			svg.append('g').call(d3.axisLeft(y).tickSize(0));
 			
-			let xAxisHeight = 20;
+			let titleHeight = 20;
 			barGraphTitle = svg.append('text') 
 				.attr('class', 'x-axis-label')
 				.html('Top 20 Global Plastic Exporters (USD)');
 			let textWidth = barGraphTitle.node().getBBox().width;
 			let textHeight = barGraphTitle.node().getBBox().height;
-			barGraphTitle.attr('transform','translate(' + (width/2 - (textWidth/2) - (padding.left/2)) + ', ' + (height + xAxisHeight + (padding.bottom/2)) + ')');
+			barGraphTitle.attr('transform','translate(' + (width/2 - (textWidth/2) - (padding.left/2)) + ', ' + (height + titleHeight + (padding.bottom/2)) + ')');
 		},
 		
 		updateStats: function(percent, region, value) {
 			
-			let percentageOfTotal = document.querySelector('.percentage-of-total');
-			let country = document.querySelector('.country');
-			let valuation = document.querySelector('.valuation span');
+			let country = document.querySelector('.geo-vis .stats .country');
+			let percentageOfTotal = document.querySelector('.geo-vis .stats .percentage-of-total');
+			let valuation = document.querySelector('.geo-vis .stats .valuation span');
 			
-			percentageOfTotal.textContent = percent + '%';
 			country.textContent = region;
+			percentageOfTotal.textContent = percent + '%';
 			valuation.textContent = parseInt(value).toLocaleString();
+			
+		},
+		
+		setStatsLabel: function(label) {
+			
+			let labelElement = document.querySelector('.geo-vis .stats .label');
+			labelElement.textContent = label;
 		},
 		
 		bindUI: function() {
@@ -326,6 +332,8 @@ module.exports = function() {
 				self.reset();
 				self.showCountries();
 				self.addBarGraph();
+				self.setStatsLabel('total global plastic exports');
+				barGraphTitle.html('Top 20 Global Plastic Exporters (USD)');
 			});
 			
 			let importsButton = document.querySelector('#plasticImports');
@@ -333,9 +341,10 @@ module.exports = function() {
 				mapData = importsData;
 				self.reset();
 				
-				barGraphTitle = svg.append('text').html('Top 20 Global Plastic Importers (USD)');
 				self.showCountries();
 				self.addBarGraph();
+				self.setStatsLabel('total global plastic imports');
+				barGraphTitle.html('Top 20 Global Plastic Importers (USD)');
 			});
 		},
 		

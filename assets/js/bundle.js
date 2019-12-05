@@ -371,6 +371,14 @@ module.exports = function () {
 
   var svg = d3.select('#map').select('svg');
   var pointsGroup = svg.select('g').attr('class', 'points').append('g');
+  73.9167295, -178.7613337;
+  var corner1 = L.latLng(73, -171);
+  var corner2 = L.latLng(-50, -100);
+  var bounds = L.latLngBounds(corner1, corner2);
+  console.log(_map.getBoundsZoom(bounds)); //map.setZoom(map.getBoundsZoom(bounds));
+
+  _map.fitWorld();
+
   var svgLayer = L.svg();
   svgLayer.addTo(_map);
   return {
@@ -412,7 +420,6 @@ module.exports = function () {
 
         if (d['Partner Name'] === 'World') {
           worldTotal = row.amount;
-          console.log(worldTotal);
         }
 
         if (d['Partner Name'] === 'Europe & Central Asia' || d['Partner Name'] === 'East Asia & Pacific' || d['Partner Name'] === 'North America' || d['Partner Name'] === 'Latin America & Caribbean' || d['Partner Name'] === 'Middle East & North Africa' || d['Partner Name'] === 'South Asia' || d['Partner Name'] === 'Sub-Saharan Africa' || d['Partner Name'] === 'Australia' || d['Partner Name'] === 'World') {

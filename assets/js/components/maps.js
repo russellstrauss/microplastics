@@ -217,7 +217,7 @@ module.exports = function() {
 				mapData.forEach(function(row) {
 					
 					if (feature.properties.NAME === row.country) {
-						console.log(row.amount / 100)
+						//console.log(row.amount / 100)
 						result = {
 							fillColor: '#E66200',
 							weight: .25,
@@ -330,8 +330,8 @@ module.exports = function() {
 				d3.event.target.style.fill = defaultColor;
 			})
 			.on('click', function(d) {
-				console.log(d);
-				console.log(worldTotal, d.amount);
+				// console.log(d);
+				// console.log(worldTotal, d.amount);
 				
 				let percentage = Math.round(10*parseInt(d.amount)/worldTotal)/10;
 				if (percentage < 1) Math.round(100*parseInt(d.amount)/worldTotal)/100

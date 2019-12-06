@@ -12,6 +12,22 @@ div.paracoords {
 
 div#selectors {
   height: 560px;
+  
+  .button-container {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 30px;
+    
+    button {
+      margin: 0;
+      transition: all 250ms ease;
+      
+      &:hover {
+        background-color: #78909c;
+        color: #546e7a;
+      }
+    }
+  }
 }
   
   .background path {
@@ -92,8 +108,8 @@ div#selectors {
   }
 
   select.country-container {
-	width:350px;
-	margin-bottom: 30px;
+    width:350px;
+    margin-bottom: 10px;
   }
 
   select.country-container option.country img {

@@ -1,5 +1,7 @@
 module.exports = function () {
 	
+	var clearButton;
+	
 	return {
 		dimensions: null,
 		settings: {
@@ -46,6 +48,7 @@ module.exports = function () {
 				country_container_group;
 
 			var selected = [];
+			var country_container_element;
 
 			var div_selector = 'div.paracoords';
 
@@ -71,6 +74,12 @@ module.exports = function () {
 				.attr('class', 'country-container')
 				.attr('multiple', 'true')
 				.attr('size', 10);
+				
+			var clearButton = selectors.append('div').attr('class', 'button-container')
+				.append('button')
+				.attr('class', 'clear-all-countries')
+				.text('Clear All');
+				
 
 			var function_keys = {
 				fish_consumption: 0.5,
@@ -109,7 +118,19 @@ module.exports = function () {
 
 				drawCountries('', data);
 
-				
+				clearButton.on('click', function() {
+					
+					document.querySelector('.country-container').querySelectorAll('option').forEach(function(option) {
+						option.selected = false;
+					});
+					
+					var storedScrollLocation = country_container_element.scrollTop;
+					
+					selected = [];
+					draw(data);
+					
+					setTimeout(function(){country_container_element.scrollTop = storedScrollLocation;}, 0);
+				});
 
 				dimensions = d3.keys(data[0]).filter(function(key) {
 					if (key == 'pollute_rank') {
@@ -265,7 +286,7 @@ module.exports = function () {
 						+ toTitleCase(d.country.replace(new RegExp('-', 'gi'), ' ')) + '</span>'})
 					.on('mousedown', d => {
 						d3.event.preventDefault();
-						var country_container_element = document.querySelector('.country-container');
+						country_container_element = document.querySelector('.country-container');
 						var storedScrollLocation = country_container_element.scrollTop;
 						if (selected.indexOf(d.code) >= 0) {
 							for(var i = 0; i < selected.length; i++) {

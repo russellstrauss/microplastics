@@ -4,23 +4,27 @@
 	h2 {
 		text-align: center;
 	}
+	  
+	
     #play-button {
-		position: absolute;
-		top: 140px;
-		left: 50px;
-		background: #f08080;
-		padding-right: 26px;
+		font-size: 14px;
+		padding: 6px 20px;
+		display: block;
+		margin: 140px auto 40px auto;
+		background: #feb121;
 		border-radius: 3px;
 		border: none;
 		color: white;
-		margin: 0;
-		padding: 0 12px;
-		width: 60px;
+		min-width: 60px;
 		cursor: pointer;
-		height: 30px;
+		border-radius: 20px;
+		
+		&:hover {
+			background-color: #a2a2a2;
+		  }
 	  }
   
-	  #play-button:hover {
-		background-color: #696969;
-	  }    
+	//   #play-button:hover {
+	// 	background-color: #696969;
+	//   }    
 }

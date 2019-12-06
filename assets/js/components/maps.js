@@ -24,6 +24,11 @@ module.exports = function() {
 		zoom: 2.5
 	}
 	
+	var mismanagedCenter = {
+		location: new L.LatLng(10, 100),
+		zoom: 3.5
+	}
+	
 	var setLocation = center;
 	
 	var map = L.map('map', { 
@@ -394,6 +399,7 @@ module.exports = function() {
 				self.addBarGraph();
 				self.setStatsLabel(exportsStatsLabel);
 				barGraphTitle.html('Top 20 Global Plastic Exporters (USD)');
+				map.flyTo(center.location, center.zoom);
 			});
 			
 			let importsButton = document.querySelector('#plasticImports');
@@ -405,6 +411,7 @@ module.exports = function() {
 				self.addBarGraph();
 				self.setStatsLabel(exportsStatsLabel);
 				barGraphTitle.html('Top 20 Global Plastic Importers (USD)');
+				map.flyTo(center.location, center.zoom);
 			});
 			
 			let mismanagedButton = document.querySelector('#plasticMismanaged');
@@ -419,6 +426,8 @@ module.exports = function() {
 				let textWidth = barGraphTitle.node().getBBox().width;
 				let textHeight = barGraphTitle.node().getBBox().height;
 				barGraphTitle.attr('transform','translate(' + (barWidth/2 - (textWidth/2) - (barPadding.left/2)) + ', ' + (barGraphInnerHeight + textHeight + (barPadding.bottom/2)) + ')');
+				
+				map.flyTo(mismanagedCenter.location, mismanagedCenter.zoom);
 			});
 		},
 		

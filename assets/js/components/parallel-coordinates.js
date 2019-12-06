@@ -297,7 +297,7 @@ module.exports = function () {
 
 				var color = d3.scaleLinear()
 					.domain(d3.extent(data, function(d) {
-						return d.pollute_rank - d.impact_rank;
+						return d.inadequately_managed_plastic;
 					}))
 					.range([0, 1]);
 
@@ -313,7 +313,7 @@ module.exports = function () {
 						tooltip_div.style('opacity', 0);
 					})
 					.attr('stroke', function(d) {
-						return d3.interpolateCool(color(d.pollute_rank - d.impact_rank))
+						return d3.interpolateRgb('red', 'blue')(color(d.inadequately_managed_plastic));
 					});
 
 				foreground_group = foreground_group.merge(foreground_enter)

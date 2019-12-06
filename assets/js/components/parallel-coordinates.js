@@ -24,9 +24,11 @@ module.exports = function () {
 					return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
 				});
 			}
-
-			const svgWidth = 960,
-				svgHeight = 560,
+			
+			var parentElement = document.querySelector('.paracoords');
+			
+			const svgWidth = parentElement.offsetWidth * .60, // setting width to 60% of parent container responsive. Adjust if necessary.
+				svgHeight = 800,
 				margin = { top: 30, right: 100, bottom: 30, left: 100 },
 				width = svgWidth - margin.left - margin.right,
 				height = svgHeight - margin.top - margin.bottom;
@@ -166,7 +168,7 @@ module.exports = function () {
 						.attr('max', '100')
 						.property('value', '50')
 					slider
-						.on('change', () => {
+						.on('input', () => {
 						function_keys[d] = slider.property('value') / 100;
 
 						data = calcImpactMetric(data);
@@ -174,6 +176,8 @@ module.exports = function () {
 						draw(data);
 					});
 				});
+				
+				selectors.append('div').attr('class', 'legend').append('div').attr('class', 'colorscale-gradient');
 
 				var g = svg.selectAll(".dimension")
 					.data(dimensions)
@@ -261,6 +265,8 @@ module.exports = function () {
 						+ toTitleCase(d.country.replace(new RegExp('-', 'gi'), ' ')) + '</span>'})
 					.on('mousedown', d => {
 						d3.event.preventDefault();
+						var country_container_element = document.querySelector('.country-container');
+						var storedScrollLocation = country_container_element.scrollTop;
 						if (selected.indexOf(d.code) >= 0) {
 							for(var i = 0; i < selected.length; i++) {
 								if (selected[i] == d.code)
@@ -271,6 +277,7 @@ module.exports = function () {
 							selected.push(d.code);
 							document.getElementById(d.code).selected = true;
 						}
+						setTimeout(function(){country_container_element.scrollTop = storedScrollLocation;}, 0);
 						draw(data);
 					});
 			}

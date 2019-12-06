@@ -1,12 +1,13 @@
 
 svg#paracoords-svg {
     font: 10px sans-serif;
-    float:left;
   }
 
 div.paracoords {
-  display:block;
-  padding:10px;
+  display: flex;
+  justify-content: center;
+  padding: 10px;
+  margin: 600px 0;
 }
 
 div#selectors {
@@ -64,14 +65,12 @@ div#selectors {
 
   div.country-container {
     display:block;
-    float:right;
     overflow-y:auto;
     height:475px;
     width: 230px;
     -webkit-box-sizing: border-box; /* Safari/Chrome, other WebKit */
     -moz-box-sizing: border-box;    /* Firefox, other Gecko */
     box-sizing: border-box;         /* Opera/IE 8+ */
-
   }
 
   div.country-container div.country {
@@ -93,7 +92,8 @@ div#selectors {
   }
 
   select.country-container {
-    width:350px;
+	width:350px;
+	margin-bottom: 30px;
   }
 
   select.country-container option.country img {
@@ -111,4 +111,14 @@ div#selectors {
     -webkit-box-sizing: border-box; /* Safari/Chrome, other WebKit */
     -moz-box-sizing: border-box;    /* Firefox, other Gecko */
     box-sizing: border-box;         /* Opera/IE 8+ */
+  }
+  
+  .legend {
+	  
+    .colorscale-gradient {
+      position: relative;
+      margin-top: 30px;
+	  height: 30px;
+	  background: linear-gradient(90deg, rgba(0,176,255,1) 0%, rgba(255,0,0,1) 100%);
+    }
   }

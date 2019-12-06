@@ -16,6 +16,7 @@ module.exports = function () {
 	var unitVisContainer = document.querySelector('.plastic-longevity .unit-vis-viewport');
 	var message = document.querySelector('.plastic-longevity .message');
 	var countElement = document.querySelector('.use-ratio .count');
+	let generationLength = 76;
 	
 	var center = {
 		x: width / 2,
@@ -40,13 +41,13 @@ module.exports = function () {
 				useTimeDisplay: '2 hours',
 				mass: '4.48g',
 				breakdownTime: 425,
-				breakdownTimeDisplay: '450 years'
+				breakdownTimeDisplay: '425 years'
 			},
 			vegetable: {
 				title: 'Vegetable',
 				path: './assets/svg/vegetable.svg',
 				useTimeHours: 2,
-				useTimeDisplay: '2 hour',
+				useTimeDisplay: '2 hours',
 				mass: '',
 				breakdownTime: .246575,
 				breakdownTimeDisplay: '3 months'
@@ -66,17 +67,17 @@ module.exports = function () {
 	return {
 
 		init: function () {
- 
-			this.useRatio(3, 450);
+			
+			this.useRatio(settings.materials['bottle'].useTimeHours, settings.materials['bottle'].breakdownTime);
 			this.longevityTimescale();
 			this.bindUI();
 			this.miniMap();
+			this.setMaterial('bottle');
 		},
 		
 		longevityTimescale: function() {
 		
 			let self = this;
-			let generationLength = 76;
 			let ratio, remainder;
 			let glyph = document.querySelector('.generation-glyphs .frame');
 				
@@ -175,11 +176,6 @@ module.exports = function () {
 				
 				let newYear = settings.materials[selector.value].breakdownTime;
 				data = [{ 'years': newYear }];
-				// if (newYear < 1) {
-				// 	document.querySelector('.generation-glyphs').innerHTML = '';
-				// 	document.querySelector('.longevity').innerHTML = '';
-				// 	self.longevityTimescale();
-				// }
 				if (newYear < 1) {
 					document.querySelector('.longevity').innerHTML = '';
 					document.querySelector('.generation-glyphs').innerHTML = '';
@@ -220,6 +216,9 @@ module.exports = function () {
 				lifetimesValue = lifetimesValue.toFixed(1);
 			}
 			lifetimes.textContent = lifetimesValue.toString() + ' lifetimes';
+			
+			let averageUseTimeElement = document.querySelector('.baseline span');
+			averageUseTimeElement.textContent = '(' + material.useTimeDisplay + ')';
 		},
 		
 		useRatio: function(useTimeHours, decomposeYears) {
@@ -282,19 +281,23 @@ module.exports = function () {
 			}
 			
 			let yearsPerCanvas = useTimeHours * countPerCanvas / hoursInAYear;
-			let searchingFor = 100;
+			let searchingFor = generationLength;
 			
 			let canvasCopies = Math.floor(ratio / countPerCanvas);
+			let generationCount = 1;
 			for (let i = 0; i < canvasCopies + 1; i++) { // duplicate multiple copies of the canvas to avoid millions of loops
 				let totalYears = i * yearsPerCanvas;
 				
 				if (totalYears > searchingFor) {
 					var node = document.createElement('div');
 					node.classList.add('year-indicator');
-					var textnode = document.createTextNode(searchingFor.toString() + ' years');
+					let stringResult = generationCount + ' human generations';
+					if (generationCount === 1) stringResult = stringResult.slice(0, -1);
+					var textnode = document.createTextNode(stringResult);
 					node.appendChild(textnode);
 					element.appendChild(node);
-					searchingFor += 100;
+					searchingFor += generationLength;
+					generationCount++;
 				}
 				
 				element.append(cloneCanvas(canvas));

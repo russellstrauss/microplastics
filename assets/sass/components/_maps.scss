@@ -76,10 +76,11 @@
 				text {
 					font-family: 'Open Sans', sans-serif;
 					color: white;
+					font-size: 11px;
 				}
 				
 				.title {
-					font-size: 28px;
+					font-size: 16px;
 					font-weight: 600;
 				}
 				
@@ -91,10 +92,6 @@
 				
 				.bar {
 					fill: #E6965B;
-					
-					&:last-of-type {
-						fill: #E66200;
-					}
 				}
 				
 				.tick {
@@ -102,6 +99,10 @@
 					text {
 						//transform: translateX(-5px); // give y-axis lables more space
 					}
+				}
+				
+				rect {
+					cursor: pointer;
 				}
 			}
 		}

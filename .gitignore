@@ -3,3 +3,5 @@
 **/main.css
 assets/js/bundle.js
 assets/sass/main.css
+.DS_Store
+**/.DS_Store

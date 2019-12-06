@@ -4,7 +4,7 @@ module.exports = function () {
 	var dataset;
 	var circleRadius = 8;
 	var count = 0;
-
+	var circleCount = 0;
 
 	return {
 
@@ -95,7 +95,11 @@ module.exports = function () {
 					.on("start.interrupt", function() { slider.interrupt(); })
 					.on("start drag", function() {
 						currentValue = d3.event.x;
+						circleNumber.text(circleCount);
 						update(scale.invert(currentValue)); 
+					})
+					.on("end", function() {
+						circleCount = 0;
 					}));
 
 
@@ -104,7 +108,7 @@ module.exports = function () {
 			.append("svg")
 			.attr("width", "300px")
 			.attr("height", "30px")
-
+			
 			var circle2 = circle1.append("circle")
 			.attr("class", "explaincircle")
 			.attr("cx", 10)
@@ -119,6 +123,12 @@ module.exports = function () {
 			.attr("text-anchor", "middle")
 			.attr("font-size","12px")
 			.attr("transform", "translate(62,25)");
+
+			var circleNumber = circle1.append("text")
+			.attr("class", "circleNumber")
+			.attr("text-anchor", "middle")
+			.attr("font-size","12px")
+			.attr("transform", "translate(120,25)");
 
 			// var circle3 = circle1.append("text")
 			// .attr("class", "explaincircle")
@@ -205,6 +215,7 @@ module.exports = function () {
 					.attr("class", "location")
 					.style("opacity", 0)
 					.attr("cx", function(d) {
+						circleCount++;
 						return d3.randomNormal(140, xScale(d.Year))();
 					})
 					.attr("cy", 10)
@@ -216,125 +227,16 @@ module.exports = function () {
 					.attr("r", 14)
 					.style("fill", "red")
 						.transition()
+						// .delay((d,i) => {
+						// 	return i*100;
+						// })
 						.attr("r", 8).style("fill", 'orange')
 						.style('opacity', .4)
 						.transition()
 						.attr("cy", function(d) {
 							return yScale(d.Year)
 						});
-						locations.enter()
-						.append("circle")
-						.attr("class", "location")
-						.style("opacity", 0.1)
-
-						.attr("cx", function(d) {
-							return d3.randomNormal(150, xScale(d.Year))();
-						})
-						.attr("cy", 10)
-						.style("fill", 'orange')
-						.style("stroke", 'orange')
-						.attr("r", circleRadius)
-						.transition()
-							.delay(1000)
-							.duration(500)
-							.attr("r", 14)
-							.style("fill", "red")
-								.transition()
-								.attr("r", 8).style("fill", 'orange')
-								.style('opacity', .4)
-								.transition()
-								.attr("cy", function(d) {
-								return yScale(d.Year)
-							});
 						
-							locations.enter()
-							.append("circle")
-							.attr("class", "location")
-							.style("opacity", 0)
-							.attr("cx", function(d) {
-								return d3.randomNormal(130, xScale(d.Year))();
-							})
-							.attr("cy", 10)
-							.style("fill", 'orange')
-							.style("stroke", 'orange')
-							.attr("r", circleRadius)
-							.transition()
-							.duration(500)
-							.attr("r", 14)
-							.style("fill", "red")
-								.transition()
-								.attr("r", 8).style("fill", 'orange')
-								.style('opacity', .4)
-								.transition()
-								.attr("cy", function(d) {
-									return yScale(d.Year)
-								});
-								locations.enter()
-								.append("circle")
-								.attr("class", "location")
-								.style("opacity", 0)
-								.attr("cx", function(d) {
-									return d3.randomNormal(140, xScale2(d.Year))();
-								})
-								.attr("cy", 10)
-								.style("fill", 'orange')
-								.style("stroke", 'orange')
-								.attr("r", circleRadius)
-								.transition()
-								.duration(500)
-								.attr("r", 14)
-								.style("fill", "red")
-									.transition()
-									.attr("r", 8).style("fill", 'orange')
-									.style('opacity', .4)
-									.transition()
-									.attr("cy", function(d) {
-										return yScale(d.Year)
-									});
-									locations.enter()
-									.append("circle")
-									.attr("class", "location")
-									.style("opacity", 0)
-									.attr("cx", function(d) {
-										return d3.randomNormal(130, xScale2(d.Year))();
-									})
-									.attr("cy", 10)
-									.style("fill", 'orange')
-									.style("stroke", 'orange')
-									.attr("r", circleRadius)
-									.transition()
-									.duration(500)
-									.attr("r", 14)
-									.style("fill", "red")
-										.transition()
-										.attr("r", 8).style("fill", 'orange')
-										.style('opacity', .4)
-										.transition()
-										.attr("cy", function(d) {
-											return yScale(d.Year)
-										});
-										locations.enter()
-										.append("circle")
-										.attr("class", "location")
-										.style("opacity", 0)
-										.attr("cx", function(d) {
-											return d3.randomNormal(10, xScale2(d.Year))();
-										})
-										.attr("cy", 10)
-										.style("fill", 'orange')
-										.style("stroke", 'orange')
-										.attr("r", circleRadius)
-										.transition()
-										.duration(500)
-										.attr("r", 14)
-										.style("fill", "red")
-											.transition()
-											.attr("r", 8).style("fill", 'orange')
-											.style('opacity', .4)
-											.transition()
-											.attr("cy", function(d) {
-												return yScale(d.Year)
-											});
 				locations.exit().remove();
 			}
 
@@ -344,6 +246,7 @@ module.exports = function () {
 				label.attr("x", scale(h))
 					.text(formatDate(h));
 					
+					console.log(circleCount);
 					
 					var year = 1950;
 					var index = Object.keys(plasticProductionData).indexOf(year.toString());
@@ -356,7 +259,7 @@ module.exports = function () {
 							let plasticAmount = parseInt(plasticProductionData[key].Cumulative.toLocaleString());
 							
 							totalWeightText.textContent = parseInt(plasticProductionData[key].Cumulative).toLocaleString() +'(t)';
-							
+
 							let monumentImages = document.querySelectorAll('.monument-visualization .image-container img');
 							monumentImages.forEach(function(image) {
 								image.style.opacity = "0";
@@ -436,7 +339,8 @@ module.exports = function () {
 					
 					
 				//filter data set and redraw plot
-				var newData = dataset.filter(function(d) {
+				var newData = dataset.filter(function(d, i) {
+					
 					return d.Date < h;
 				});
 				

@@ -93,6 +93,7 @@ module.exports = function () {
 				.style('opacity', 0);
 
 			d3.csv(DATA_URL).then(function(data) {
+				
 				var scales = {
 					total_population: d3.scaleLinear().domain([0, d3.max(data, d => {return d.total_population})]).range([0, 1]),
 					coastal_population: d3.scaleLinear().domain([0, d3.max(data, d => {return d.coastal_population})]).range([0, 1]),
@@ -102,21 +103,25 @@ module.exports = function () {
 					gdp: d3.scaleLinear().domain([0, d3.max(data, d=> {return d.gdp})]).range([0, 1])
 				}
 
-				data.forEach (function(d) {
-					d.code = d.code;
-					d.country = d.country
-					d.total_population = scales.total_population(+d.total_population);
-					d.coastal_population = scales.coastal_population(+d.coastal_population);
-					d.plastic_waste_per_capita = scales.plastic_waste_per_capita(+d.plastic_waste_per_capita);
-					d.plastic_waste_total = scales.plastic_waste_total(+d.plastic_waste_total);
-					d.fish_consumption = scales.fish_consumption(+d.fish_consumption);
-					d.gdp = scales.gdp(+d.gdp);
+				// var data = []
+
+				data.forEach (function(d, i) {
+					d = {
+						code: d.code,
+						country: d.country,
+						total_population: scales.total_population(+d.total_population),
+						coastal_population : scales.coastal_population(+d.coastal_population),
+						plastic_waste_per_capita : scales.plastic_waste_per_capita(+d.plastic_waste_per_capita),
+						plastic_waste_total : scales.plastic_waste_total(+d.plastic_waste_total),
+						fish_consumption : scales.fish_consumption(+d.fish_consumption),
+						gdp : scales.gdp(+d.gdp)
+					};
 				});
+
+				drawCountries('', data);
 
 				data = calcImpactMetric(data);
 				data = calcRankings(data);
-
-				drawCountries('', data);
 
 				clearButton.on('click', function() {
 					
@@ -171,7 +176,6 @@ module.exports = function () {
 					var span_td = tr.append('td');
 					span_td.append('span')
 						.text(() => {
-							console.log(d);
 							if (d == 'coastal_population')
 								return 'Coastal Population: ';
 							else if (d == 'gdp')

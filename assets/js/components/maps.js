@@ -5,14 +5,14 @@ module.exports = function() {
 	var selectColor = '#E66200';
 	var defaultColor = '#E6965B';
 	
-	var exportsStatsLabel = 'total global plastic exports', importsStatsLabel = 'total global plastic imports';
+	var exportsStatsLabel = 'total global plastic exports', importsStatsLabel = 'total global plastic imports', mismanagedStatsLabel = 'of all waste mismanaged';
 	
 	var containerWidth = parseInt(document.querySelector('.fullscreen-map').offsetWidth);
 	var containerHeight = parseInt(document.querySelector('.fullscreen-map').offsetHeight);
 	var mapWithLabels = 'https://stamen-tiles-{s}.a.ssl.fastly.net/toner/{z}/{x}/{y}{r}.png?access_token={accessToken}';
 	var mapWithoutLabels = 'https://stamen-tiles-{s}.a.ssl.fastly.net/toner-background/{z}/{x}/{y}{r}.png?access_token={accessToken}';
 	var graph, countriesLayer, barGraphTitle, worldTotal;
-	var mapData, exportsData, importsData, mismanagedData, geojson, toolTip, barData, barWidth, barPadding, barGraphInnerHeight;
+	var mapData, exportsData, importsData, mismanagedData, geojson, toolTip, barData, barWidth, barPadding, barGraphInnerHeight, mismanagedDataBoolean;
 	
 	var china = {
 		location: new L.LatLng(23.638, 120.998),
@@ -25,7 +25,7 @@ module.exports = function() {
 	}
 	
 	var mismanagedCenter = {
-		location: new L.LatLng(10, 100),
+		location: new L.LatLng(10, 70),
 		zoom: 3.5
 	}
 	
@@ -180,8 +180,6 @@ module.exports = function() {
 				noWrap: true
 			}).addTo(map);
 			
-			map.dragging.disable();
-			map.touchZoom.disable();
 			map.doubleClickZoom.disable();
 			map.scrollWheelZoom.disable();
 		},
@@ -253,23 +251,62 @@ module.exports = function() {
 		},
 		
 		eachGeoFeature: function(feature, layer) {
+
+			let popup;
 			
 			layer.on({
 				mouseover: function(d) {
-					
-					//d.target.feature.bindTooltip("my tooltip text").openTooltip();
+				
 					let countryName = d.target.feature.properties.NAME_EN;
+					let countryExports = '';
+					let countryImports = '';
+					let countryMismanaged = '';
+					
+					let hoveredCountryExports = exportsData.filter(function(row) {
+						
+						console.log(row.country === countryName, row.country, countryName)
+						
+						if (row.country === countryName) return row;
+					});
+					let hoveredCountryImports = importsData.filter(function(row) {
+						if (row.country === countryName) return row;
+					});
+					let hoveredCountryMismanaged = mismanagedData.filter(function(row) {
+						if (row.country === countryName) return row;
+					});
+					
+					if (hoveredCountryExports[0]) {
+						countryExports = parseInt(hoveredCountryExports[0].amount).toLocaleString();
+					}
+					if (hoveredCountryImports[0]) {
+						countryImports = parseInt(hoveredCountryImports[0].amount).toLocaleString();
+					}
+					if (hoveredCountryMismanaged[0]) {
+						countryMismanaged = hoveredCountryMismanaged[0].amount;
+					}
+					
+					let markup = '<div class="popup-custom">';
+					markup += '<h4 class="country">' + countryName + '</h4>';
+					markup += '<div class="exports"><strong>Total exports (USD):</strong> $' + countryExports + '</div>';
+					markup += '<div class="imports"><strong>Total imports (USD):</strong> $' + countryImports + '</div>';
+					markup += '<div class="mismanaged"><strong>Percentage mismanaged waste:</strong> ' + countryMismanaged + '%</div>';
+					markup += '</div>';
 					
 					
-					//L.polygon(d.target.feature.geometry.coordinates).bindTooltip("my tooltip").addTo(map);
-					
-					//console.log(d.target.feature.geometry.coordinates[0][0][0]);
+					popup = L.popup({
+						minWidth: 500
+					}, countriesLayer)
+					.setLatLng(d.latlng)
+					.setContent(markup)
+					.openOn(map);
 				},
-				mouseout: function() {
-					//console.log('out');
+				mouseout: function(d) {
+					
+					if (popup && !d.originalEvent.toElement.classList.contains('leaflet-popup-content-wrapper')) { // don't hide when moving mouse into the popup
+						popup.remove();
+					}
 				},
 				click: function() {
-					//console.log('click');
 				}
 			});
 		},
@@ -304,8 +341,15 @@ module.exports = function() {
 			mapData = mapData.sort(compare);
 			
 			let top = mapData.slice(0)[19];
-			let worldPercent = Math.round(10*worldTotal/top.amount)/10;
+			let worldPercent;
+			if (mismanagedDataBoolean) {
+				worldPercent = top.amount;
+			}
+			else {
+				worldPercent = Math.round(10*worldTotal/top.amount)/10;
+			}
 			self.updateStats(worldPercent, top.country, top.amount);
+			
 			
 			let count = 21;
 			var y = d3.scaleBand().domain(mapData.map(function (d) {
@@ -328,20 +372,21 @@ module.exports = function() {
 			// 	return y(d.country) + (y.bandwidth());
 			// })
 			.append('rect')
-			.on('mouseover', function(event) {
+			.on('mouseover', function(d) {
 				d3.event.target.style.fill = selectColor;
+				
+				let percentage = ((parseInt(d.amount)/parseInt(worldTotal)) * 100).toFixed(1);
+				if (percentage.toString().slice(-2) === '.0') percentage = parseInt(percentage).toFixed(0);
+				if (mismanagedDataBoolean) self.updateStats(d.amount, d.country, '')
+				else {
+					self.updateStats(percentage, d.country, d.amount); // why is percent wrong?
+				}
 			})
             .on('mouseout', function() {
 				d3.event.target.style.fill = defaultColor;
 			})
 			.on('click', function(d) {
-				// console.log(d);
-				// console.log(worldTotal, d.amount);
 				
-				let percentage = Math.round(10*parseInt(d.amount)/worldTotal)/10;
-				if (percentage < 1) Math.round(100*parseInt(d.amount)/worldTotal)/100
-				
-				self.updateStats(percentage, d.country, d.amount); // why is percent wrong?
 			})
 			.attr('class', 'bar')
 			.attr('y', function (d) {
@@ -377,8 +422,13 @@ module.exports = function() {
 			
 			country.textContent = region;
 			percentageOfTotal.textContent = percent + '%';
-			valuation.textContent = parseInt(value).toLocaleString();
-			
+			if (value !== '') {
+				valuation.parentElement.style.display = 'block';
+				valuation.textContent = parseInt(value).toLocaleString();
+			}
+			else {
+				valuation.parentElement.style.display = 'none';
+			}
 		},
 		
 		setStatsLabel: function(label) {
@@ -394,40 +444,62 @@ module.exports = function() {
 			let exportsButton = document.querySelector('#plasticExports');
 			if (exportsButton) exportsButton.addEventListener('click', function() {
 				mapData = exportsData;
+				mismanagedDataBoolean = false;
 				self.reset();
 				self.showCountries();
 				self.addBarGraph();
 				self.setStatsLabel(exportsStatsLabel);
 				barGraphTitle.html('Top 20 Global Plastic Exporters (USD)');
-				map.flyTo(center.location, center.zoom);
+				setTimeout(function() {
+					map.flyTo(center.location, center.zoom);
+				}, 1000);
 			});
 			
 			let importsButton = document.querySelector('#plasticImports');
 			if (importsButton) importsButton.addEventListener('click', function() {
 				mapData = importsData;
+				mismanagedDataBoolean = false;
 				self.reset();
 				
 				self.showCountries();
 				self.addBarGraph();
-				self.setStatsLabel(exportsStatsLabel);
+				self.setStatsLabel(importStatsLabel);
 				barGraphTitle.html('Top 20 Global Plastic Importers (USD)');
-				map.flyTo(center.location, center.zoom);
+				setTimeout(function() {
+					map.flyTo(center.location, center.zoom);
+				}, 1000);
 			});
 			
 			let mismanagedButton = document.querySelector('#plasticMismanaged');
 			if (mismanagedButton) mismanagedButton.addEventListener('click', function() {
 				mapData = mismanagedData;
+				mismanagedDataBoolean = true;
 				self.reset();
 				
 				self.showCountries();
 				self.addBarGraph();
-				self.setStatsLabel(exportsStatsLabel);
+				self.setStatsLabel(mismanagedStatsLabel);
 				barGraphTitle.html('Percentage of Country\'s Plastic Waste that is Mismanaged, Global Top 20');
 				let textWidth = barGraphTitle.node().getBBox().width;
 				let textHeight = barGraphTitle.node().getBBox().height;
 				barGraphTitle.attr('transform','translate(' + (barWidth/2 - (textWidth/2) - (barPadding.left/2)) + ', ' + (barGraphInnerHeight + textHeight + (barPadding.bottom/2)) + ')');
 				
-				map.flyTo(mismanagedCenter.location, mismanagedCenter.zoom);
+				let valuation = document.querySelector('.geo-vis .stats .valuation');
+				valuation.style.display = 'none';
+				
+				setTimeout(function() {
+					map.flyTo(mismanagedCenter.location, mismanagedCenter.zoom);
+				}, 1000);
+			});
+			
+			let zoomIn = document.querySelector('.geo-vis .zooms .in');
+			if (zoomIn) zoomIn.addEventListener('click', function() {
+				map.setZoom(map.getZoom() + .75);
+			});
+			
+			let zoomOut = document.querySelector('.geo-vis .zooms .out');
+			if (zoomOut) zoomOut.addEventListener('click', function() {
+				map.setZoom(map.getZoom() - .75);
 			});
 		},
 		

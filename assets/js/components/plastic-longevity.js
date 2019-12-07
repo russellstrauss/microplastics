@@ -236,20 +236,6 @@ module.exports = function () {
 
 			var context = canvas.getContext('2d');
 			
-			var waypoint = new Waypoint({
-				element: element,
-				handler: function(direction) {
-					
-					if (direction === 'down') {
-						message.style.marginBottom = '4px';
-					}
-					else {
-						message.style.marginBottom = '-40px';
-					}
-				},
-				offset: -1000
-			});
-			
 			var height = 1200;
 			var vw = width, vh = height;
 			var dotRadius = 2;
@@ -303,6 +289,9 @@ module.exports = function () {
 				element.append(cloneCanvas(canvas));
 				canvas.remove();
 				totalCount += countPerCanvas;
+				if (canvasCopies === 0) {
+					totalCount = Math.floor(ratio);
+				}
 			}
 			
 			function cloneCanvas(oldCanvas) {

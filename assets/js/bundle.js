@@ -70,15 +70,15 @@ module.exports = function () {
         slider.interrupt();
       }).on("start drag", function () {
         currentValue = d3.event.x;
-        circleNumber.text(circleCount);
+        circleNumber.text('(x' + circleCount + ')');
         update(scale.invert(currentValue));
       }).on("end", function () {
         circleCount = 0;
       }));
       var circle1 = d3.select("#what").append("svg").attr("width", "300px").attr("height", "30px");
-      var circle2 = circle1.append("circle").attr("class", "explaincircle").attr("cx", 10).attr("cy", 20).attr("r", 6).style("fill", 'orange').style("fill-opactiy", "0.4");
-      var circle3 = circle1.append("text").attr("class", "explaincircle").text("=  11,837,900(t)").attr("text-anchor", "middle").attr("font-size", "12px").attr("transform", "translate(62,25)");
-      var circleNumber = circle1.append("text").attr("class", "circleNumber").attr("text-anchor", "middle").attr("font-size", "12px").attr("transform", "translate(120,25)"); // var circle3 = circle1.append("text")
+      var circle2 = circle1.append("circle").attr("class", "explaincircle").attr("cx", 10).attr("cy", 20).attr("r", 6).style("fill", 'orange').style("fill-opacty", "0.4");
+      var circle3 = circle1.append("text").attr("class", "explaincircle").text("= 11,837,900 metric tons").attr("text-anchor", "middle").attr("font-size", "12px").attr("transform", "translate(90,24)");
+      var circleNumber = circle1.append("text").attr("class", "circleNumber").attr("text-anchor", "middle").attr("font-size", "12px").attr("transform", "translate(180,25)"); // var circle3 = circle1.append("text")
       // .attr("class", "explaincircle")
       // .text(function(d) { return d.year; })
       // .attr("text-anchor", "middle")
@@ -150,7 +150,7 @@ module.exports = function () {
 
           if (parseInt(plasticProductionData[key].Year) === parseInt(year)) {
             var plasticAmount = parseInt(plasticProductionData[key].Cumulative.toLocaleString());
-            totalWeightText.textContent = parseInt(plasticProductionData[key].Cumulative).toLocaleString() + '(t)';
+            totalWeightText.textContent = parseInt(plasticProductionData[key].Cumulative).toLocaleString() + ' (mt)';
             var monumentImages = document.querySelectorAll('.monument-visualization .image-container img');
             monumentImages.forEach(function (image) {
               image.style.opacity = "0";
@@ -159,31 +159,31 @@ module.exports = function () {
             if (plasticAmount > 2000001 && plasticAmount < 30000000) {
               var sushiImage = document.querySelector('img.sushi');
               sushiImage.style.opacity = '1';
-              monumentText.innerHTML = 'Statue of Liberty <br> (x10000)';
+              monumentText.innerHTML = 'Ten-thousand Statues of Liberty';
             } else if (plasticAmount > 30000001 && plasticAmount < 60000000) {
               var eiffelImage = document.querySelector('img.eiffel');
               eiffelImage.style.opacity = '1';
-              monumentText.innerHTML = 'Eiffel Tower <br> (x4054)';
+              monumentText.innerHTML = '4054 Eiffel Towers';
             } else if (plasticAmount > 60000001 && plasticAmount < 300000000) {
               var gtImage = document.querySelector('img.gt');
               gtImage.style.opacity = '1';
-              monumentText.innerHTML = 'GT Buildings';
+              monumentText.innerHTML = 'Weight of Every Building on Georgia Tech\'s Campus';
             } else if (plasticAmount > 300000001 && plasticAmount < 600000000) {
               var pyramidImage = document.querySelector('img.pyramid');
               pyramidImage.style.opacity = '1';
-              monumentText.innerHTML = 'All the Pyramids in Egypt';
+              monumentText.innerHTML = 'All Pyramids in Egypt';
             } else if (plasticAmount > 600000001 && plasticAmount < 900000000) {
               var greatwallImage = document.querySelector('img.greatwall');
               greatwallImage.style.opacity = '1';
-              monumentText.innerHTML = 'Great Wall';
+              monumentText.innerHTML = 'Great Wall of China';
             } else if (plasticAmount > 900000001 && plasticAmount < 1300000000) {
               var populationImage = document.querySelector('img.population');
               populationImage.style.opacity = '1';
-              monumentText.innerHTML = 'Weight of Total Popluation in the world';
+              monumentText.innerHTML = 'Weight of World\'s Population';
             } else if (plasticAmount > 1300000001 && plasticAmount < 2100000000) {
               var skyscrapperImage = document.querySelector('img.skyscrapper');
               skyscrapperImage.style.opacity = '1';
-              monumentText.innerHTML = 'Weight of All <br> Skyscrappers in the world';
+              monumentText.innerHTML = 'Weight of All <br> Skyscrapers in the World';
             } else if (plasticAmount > 2100000001 && plasticAmount < 3000000000) {
               var roadImage = document.querySelector('img.road');
               roadImage.style.opacity = '1';
@@ -195,7 +195,7 @@ module.exports = function () {
             } else if (plasticAmount > 5100000001 && plasticAmount < 7500000000) {
               var carImage = document.querySelector('img.car');
               carImage.style.opacity = '1';
-              monumentText.innerHTML = 'Total Car weight <br> in the world';
+              monumentText.innerHTML = 'Total Weight of <br> Every Car on Planet Earth';
             } else if (plasticAmount > 7500000001 && plasticAmount < 10000000001) {
               var cometImage = document.querySelector('img.comet');
               cometImage.style.opacity = '1';
@@ -378,14 +378,15 @@ module.exports = function () {
   var selectColor = '#E66200';
   var defaultColor = '#E6965B';
   var exportsStatsLabel = 'total global plastic exports',
-      importsStatsLabel = 'total global plastic imports';
+      importsStatsLabel = 'total global plastic imports',
+      mismanagedStatsLabel = 'of all waste mismanaged';
   var containerWidth = parseInt(document.querySelector('.fullscreen-map').offsetWidth);
   var containerHeight = parseInt(document.querySelector('.fullscreen-map').offsetHeight);
   var mapWithLabels = 'https://stamen-tiles-{s}.a.ssl.fastly.net/toner/{z}/{x}/{y}{r}.png?access_token={accessToken}';
   var mapWithoutLabels = 'https://stamen-tiles-{s}.a.ssl.fastly.net/toner-background/{z}/{x}/{y}{r}.png?access_token={accessToken}';
   var graph, countriesLayer, barGraphTitle, worldTotal;
 
-  var mapData, exportsData, importsData, mismanagedData, geojson, _toolTip, barData, barWidth, barPadding, barGraphInnerHeight;
+  var mapData, exportsData, importsData, mismanagedData, geojson, _toolTip, barData, barWidth, barPadding, barGraphInnerHeight, mismanagedDataBoolean;
 
   var china = {
     location: new L.LatLng(23.638, 120.998),
@@ -396,7 +397,7 @@ module.exports = function () {
     zoom: 2.5
   };
   var mismanagedCenter = {
-    location: new L.LatLng(10, 100),
+    location: new L.LatLng(10, 70),
     zoom: 3.5
   };
   var setLocation = center;
@@ -518,10 +519,6 @@ module.exports = function () {
         noWrap: true
       }).addTo(_map);
 
-      _map.dragging.disable();
-
-      _map.touchZoom.disable();
-
       _map.doubleClickZoom.disable();
 
       _map.scrollWheelZoom.disable();
@@ -586,16 +583,53 @@ module.exports = function () {
       countriesLayer.addTo(_map);
     },
     eachGeoFeature: function eachGeoFeature(feature, layer) {
+      var popup;
       layer.on({
         mouseover: function mouseover(d) {
-          //d.target.feature.bindTooltip("my tooltip text").openTooltip();
-          var countryName = d.target.feature.properties.NAME_EN; //L.polygon(d.target.feature.geometry.coordinates).bindTooltip("my tooltip").addTo(map);
-          //console.log(d.target.feature.geometry.coordinates[0][0][0]);
+          var countryName = d.target.feature.properties.NAME_EN;
+          var countryExports = '';
+          var countryImports = '';
+          var countryMismanaged = '';
+          var hoveredCountryExports = exportsData.filter(function (row) {
+            console.log(row.country === countryName, row.country, countryName);
+            if (row.country === countryName) return row;
+          });
+          var hoveredCountryImports = importsData.filter(function (row) {
+            if (row.country === countryName) return row;
+          });
+          var hoveredCountryMismanaged = mismanagedData.filter(function (row) {
+            if (row.country === countryName) return row;
+          });
+
+          if (hoveredCountryExports[0]) {
+            countryExports = parseInt(hoveredCountryExports[0].amount).toLocaleString();
+          }
+
+          if (hoveredCountryImports[0]) {
+            countryImports = parseInt(hoveredCountryImports[0].amount).toLocaleString();
+          }
+
+          if (hoveredCountryMismanaged[0]) {
+            countryMismanaged = hoveredCountryMismanaged[0].amount;
+          }
+
+          var markup = '<div class="popup-custom">';
+          markup += '<h4 class="country">' + countryName + '</h4>';
+          markup += '<div class="exports"><strong>Total exports (USD):</strong> $' + countryExports + '</div>';
+          markup += '<div class="imports"><strong>Total imports (USD):</strong> $' + countryImports + '</div>';
+          markup += '<div class="mismanaged"><strong>Percentage mismanaged waste:</strong> ' + countryMismanaged + '%</div>';
+          markup += '</div>';
+          popup = L.popup({
+            minWidth: 500
+          }, countriesLayer).setLatLng(d.latlng).setContent(markup).openOn(_map);
         },
-        mouseout: function mouseout() {//console.log('out');
+        mouseout: function mouseout(d) {
+          if (popup && !d.originalEvent.toElement.classList.contains('leaflet-popup-content-wrapper')) {
+            // don't hide when moving mouse into the popup
+            popup.remove();
+          }
         },
-        click: function click() {//console.log('click');
-        }
+        click: function click() {}
       });
     },
     addBarGraph: function addBarGraph() {
@@ -623,7 +657,14 @@ module.exports = function () {
 
       mapData = mapData.sort(compare);
       var top = mapData.slice(0)[19];
-      var worldPercent = Math.round(10 * worldTotal / top.amount) / 10;
+      var worldPercent;
+
+      if (mismanagedDataBoolean) {
+        worldPercent = top.amount;
+      } else {
+        worldPercent = Math.round(10 * worldTotal / top.amount) / 10;
+      }
+
       self.updateStats(worldPercent, top.country, top.amount);
       var count = 21;
       var y = d3.scaleBand().domain(mapData.map(function (d) {
@@ -636,17 +677,16 @@ module.exports = function () {
       // }).style('fill', 'red').attr('y', function (d) {
       // 	return y(d.country) + (y.bandwidth());
       // })
-      .append('rect').on('mouseover', function (event) {
+      .append('rect').on('mouseover', function (d) {
         d3.event.target.style.fill = selectColor;
+        var percentage = (parseInt(d.amount) / parseInt(worldTotal) * 100).toFixed(1);
+        if (percentage.toString().slice(-2) === '.0') percentage = parseInt(percentage).toFixed(0);
+        if (mismanagedDataBoolean) self.updateStats(d.amount, d.country, '');else {
+          self.updateStats(percentage, d.country, d.amount); // why is percent wrong?
+        }
       }).on('mouseout', function () {
         d3.event.target.style.fill = defaultColor;
-      }).on('click', function (d) {
-        // console.log(d);
-        // console.log(worldTotal, d.amount);
-        var percentage = Math.round(10 * parseInt(d.amount) / worldTotal) / 10;
-        if (percentage < 1) Math.round(100 * parseInt(d.amount) / worldTotal) / 100;
-        self.updateStats(percentage, d.country, d.amount); // why is percent wrong?
-      }).attr('class', 'bar').attr('y', function (d) {
+      }).on('click', function (d) {}).attr('class', 'bar').attr('y', function (d) {
         return y(d.country) + (y.bandwidth() / 2 - barHeight / 2);
       }).attr('height', barHeight).attr('width', 0).transition().delay(function (d, i) {
         return i * 40;
@@ -667,7 +707,13 @@ module.exports = function () {
       var valuation = document.querySelector('.geo-vis .stats .valuation span');
       country.textContent = region;
       percentageOfTotal.textContent = percent + '%';
-      valuation.textContent = parseInt(value).toLocaleString();
+
+      if (value !== '') {
+        valuation.parentElement.style.display = 'block';
+        valuation.textContent = parseInt(value).toLocaleString();
+      } else {
+        valuation.parentElement.style.display = 'none';
+      }
     },
     setStatsLabel: function setStatsLabel(label) {
       var labelElement = document.querySelector('.geo-vis .stats .label');
@@ -678,38 +724,54 @@ module.exports = function () {
       var exportsButton = document.querySelector('#plasticExports');
       if (exportsButton) exportsButton.addEventListener('click', function () {
         mapData = exportsData;
+        mismanagedDataBoolean = false;
         self.reset();
         self.showCountries();
         self.addBarGraph();
         self.setStatsLabel(exportsStatsLabel);
         barGraphTitle.html('Top 20 Global Plastic Exporters (USD)');
-
-        _map.flyTo(center.location, center.zoom);
+        setTimeout(function () {
+          _map.flyTo(center.location, center.zoom);
+        }, 1000);
       });
       var importsButton = document.querySelector('#plasticImports');
       if (importsButton) importsButton.addEventListener('click', function () {
         mapData = importsData;
+        mismanagedDataBoolean = false;
         self.reset();
         self.showCountries();
         self.addBarGraph();
-        self.setStatsLabel(exportsStatsLabel);
+        self.setStatsLabel(importStatsLabel);
         barGraphTitle.html('Top 20 Global Plastic Importers (USD)');
-
-        _map.flyTo(center.location, center.zoom);
+        setTimeout(function () {
+          _map.flyTo(center.location, center.zoom);
+        }, 1000);
       });
       var mismanagedButton = document.querySelector('#plasticMismanaged');
       if (mismanagedButton) mismanagedButton.addEventListener('click', function () {
         mapData = mismanagedData;
+        mismanagedDataBoolean = true;
         self.reset();
         self.showCountries();
         self.addBarGraph();
-        self.setStatsLabel(exportsStatsLabel);
+        self.setStatsLabel(mismanagedStatsLabel);
         barGraphTitle.html('Percentage of Country\'s Plastic Waste that is Mismanaged, Global Top 20');
         var textWidth = barGraphTitle.node().getBBox().width;
         var textHeight = barGraphTitle.node().getBBox().height;
         barGraphTitle.attr('transform', 'translate(' + (barWidth / 2 - textWidth / 2 - barPadding.left / 2) + ', ' + (barGraphInnerHeight + textHeight + barPadding.bottom / 2) + ')');
-
-        _map.flyTo(mismanagedCenter.location, mismanagedCenter.zoom);
+        var valuation = document.querySelector('.geo-vis .stats .valuation');
+        valuation.style.display = 'none';
+        setTimeout(function () {
+          _map.flyTo(mismanagedCenter.location, mismanagedCenter.zoom);
+        }, 1000);
+      });
+      var zoomIn = document.querySelector('.geo-vis .zooms .in');
+      if (zoomIn) zoomIn.addEventListener('click', function () {
+        _map.setZoom(_map.getZoom() + .75);
+      });
+      var zoomOut = document.querySelector('.geo-vis .zooms .out');
+      if (zoomOut) zoomOut.addEventListener('click', function () {
+        _map.setZoom(_map.getZoom() - .75);
       });
     },
     reset: function reset() {
@@ -719,10 +781,11 @@ module.exports = function () {
   };
 };
 
-},{"leaflet-arc":13}],4:[function(require,module,exports){
+},{"leaflet-arc":9}],4:[function(require,module,exports){
 "use strict";
 
 module.exports = function () {
+  var clearButton;
   return {
     dimensions: null,
     settings: {},
@@ -760,6 +823,7 @@ module.exports = function () {
           sliders;
       var foreground_enter, foreground_group, background_enter, background_group, country_container_enter, country_container_group;
       var selected = [];
+      var country_container_element;
       var div_selector = 'div.paracoords';
       var svg = d3.select(div_selector).append("svg").attr('id', 'paracoords-svg').attr("width", svgWidth).attr("height", svgHeight).append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
       var foreground = svg.append('g').attr('class', 'foreground');
@@ -772,6 +836,7 @@ module.exports = function () {
       var selectors = d3.select(div_selector).append('div').attr('id', 'selectors');
       selectors.append('h2').text('Select Countries');
       var country_container = selectors.append('select').attr('class', 'country-container').attr('multiple', 'true').attr('size', 10);
+      var clearButton = selectors.append('div').attr('class', 'button-container').append('button').attr('class', 'clear-all-countries').text('Clear All');
       var function_keys = {
         fish_consumption: 0.5,
         coastal_population: 0.5,
@@ -798,8 +863,9 @@ module.exports = function () {
           gdp: d3.scaleLinear().domain([0, d3.max(data, function (d) {
             return d.gdp;
           })]).range([0, 1])
-        };
-        data.forEach(function (d) {
+        }; // var data = []
+
+        data.forEach(function (d, i) {
           d.code = d.code;
           d.country = d.country;
           d.total_population = scales.total_population(+d.total_population);
@@ -811,7 +877,21 @@ module.exports = function () {
         });
         data = calcImpactMetric(data);
         data = calcRankings(data);
+        data.sort(function (a, b) {
+          return d3.ascending(a.country, b.country);
+        });
         drawCountries('', data);
+        clearButton.on('click', function () {
+          document.querySelector('.country-container').querySelectorAll('option').forEach(function (option) {
+            option.selected = false;
+          });
+          var storedScrollLocation = country_container_element.scrollTop;
+          selected = [];
+          draw(data);
+          setTimeout(function () {
+            country_container_element.scrollTop = storedScrollLocation;
+          }, 0);
+        });
         dimensions = d3.keys(data[0]).filter(function (key) {
           if (key == 'pollute_rank') {
             y[key] = d3.scaleLinear().domain(d3.extent(data, function (d) {
@@ -841,7 +921,6 @@ module.exports = function () {
           var tr = table.append('tr');
           var span_td = tr.append('td');
           span_td.append('span').text(function () {
-            console.log(d);
             if (d == 'coastal_population') return 'Coastal Population: ';else if (d == 'gdp') return 'Gross Domestic Product: ';else if (d == 'fish_consumption') return 'Fish Consumption: ';else return 'null';
           });
           var slider_td = tr.append('td');
@@ -894,14 +973,16 @@ module.exports = function () {
           return d.code;
         });
         country_container_group.exit().remove();
-        country_container_enter = country_container_group.enter().append('option');
+        country_container_enter = country_container_group.enter().append('option').attr('style', function (d) {
+          return 'background-image: url(./assets/img/countries/' + d.country + '.svg)';
+        });
         country_container_group = country_container_group.merge(country_container_enter).attr('class', 'country').attr('id', function (d) {
           return d.code;
         }).html(function (d) {
-          return '<img src="./assets/img/countries/' + d.country + '.svg"></img><span>' + toTitleCase(d.country.replace(new RegExp('-', 'gi'), ' ')) + '</span>';
+          return '<span>' + toTitleCase(d.country.replace(new RegExp('-', 'gi'), ' ')) + '</span>';
         }).on('mousedown', function (d) {
           d3.event.preventDefault();
-          var country_container_element = document.querySelector('.country-container');
+          country_container_element = document.querySelector('.country-container');
           var storedScrollLocation = country_container_element.scrollTop;
 
           if (selected.indexOf(d.code) >= 0) {
@@ -945,7 +1026,7 @@ module.exports = function () {
         foreground_enter = foreground_group.enter().append('path').on('mouseover', tooltip).on('mouseout', function () {
           tooltip_div.style('opacity', 0);
         }).attr('stroke', function (d) {
-          return d3.interpolateRgb('red', 'blue')(color(d.inadequately_managed_plastic));
+          return d3.interpolateRgb('red', 'rgb(0, 176, 255)')(color(d.inadequately_managed_plastic));
         });
         foreground_group = foreground_group.merge(foreground_enter).attr('d', line).style('stroke-width', 5).style('opacity', function (d) {
           return selected.indexOf(d.code) >= 0 ? 1 : 0;
@@ -1056,190 +1137,6 @@ module.exports = function () {
 };
 
 },{}],5:[function(require,module,exports){
-"use strict";
-
-module.exports = function () {
-  var pie = document.querySelector('.eat-pie');
-  var data;
-  var width;
-  if (pie) width = parseInt(pie.offsetWidth);
-  var height = width;
-  var radius = Math.min(width, height) / 2;
-  var color;
-  var svg;
-  var slices, polyline;
-  var innerArc = d3.arc().innerRadius(radius * .8).outerRadius(radius * 1.25);
-  var outerArc = d3.arc().innerRadius(width / 3).outerRadius(radius);
-
-  var key = function key(d) {
-    return d.data.category;
-  };
-
-  var currentYearIndex = 0;
-  return {
-    settings: {},
-    init: function init() {
-      var self = this;
-      d3.csv('./assets/js/data/global-plastic-fate.csv', function (fate) {
-        data = d3.nest().key(function (d) {
-          return d.category;
-        }).entries(fate);
-        self.eatPie();
-        self.bindEvents();
-      });
-    },
-    eatPie: function eatPie() {
-      var self = this;
-      svg = d3.select(".eat-pie").append("svg").attr("width", width).attr("height", height).append("g").attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
-      svg.append('circle').attr('class', 'mask').attr('cx', 0).attr('cy', 0).attr('r', width / 3).attr('fill', 'white');
-      slices = svg.append("g").attr("class", "slices");
-      svg.append("g").attr("class", "labels");
-      svg.append("g").attr("class", "lines"); // Compute the position of each group on the pie:
-
-      pie = d3.pie().value(function (d) {
-        if (parseInt(d.values[currentYearIndex].percentage) === 0) return 1;
-        return d.values[currentYearIndex].percentage;
-      });
-      color = d3.scaleOrdinal().domain(data).range(["black", "#8a89a6", "#7b6888", "#6b486b", "#a05d56"]); // Build the pie chart: Basically, each part of the pie is a path that we build using the arc function.
-
-      slices.selectAll('path').data(pie(data)).enter().append('path').style("opacity", 0.7).attr('d', outerArc).attr('fill', function (d) {
-        return color(d.data.key);
-      });
-      self.eatMorePie();
-    },
-    eatMorePie: function eatMorePie() {
-      pie.value(function (d) {
-        if (parseInt(d.values[currentYearIndex].percentage) === 0) return 1;
-        return d.values[currentYearIndex].percentage;
-      });
-      slices = svg.selectAll('path').data(pie(data)).transition().duration(250).attr('d', outerArc).attr('fill', function (d) {
-        return color(d.data.key);
-      });
-      /* ------- TEXT LABELS -------*/
-
-      var text = svg.select(".labels").selectAll("text").data(pie(data), key); // text.enter()
-      // .append("text")
-      // .attr("dy", ".35em")
-      // .text(function(d, key) {
-      // 	console.log(d.data.key)
-      // 	return d.data.key;
-      // });
-
-      function midAngle(d) {
-        return d.startAngle + (d.endAngle - d.startAngle) / 2;
-      }
-
-      var arc = d3.arc().outerRadius(radius * 0.8).innerRadius(radius * 0.4);
-      text.transition().duration(1000).attrTween("transform", function (d) {
-        this._current = this._current || d;
-        var interpolate = d3.interpolate(this._current, d);
-        this._current = interpolate(0);
-        return function (t) {
-          var d2 = interpolate(t);
-          var pos = outerArc.centroid(d2);
-          pos[0] = radius * (midAngle(d2) < Math.PI ? 1 : -1);
-          return "translate(" + pos + ")";
-        };
-      }).styleTween("text-anchor", function (d) {
-        this._current = this._current || d;
-        var interpolate = d3.interpolate(this._current, d);
-        this._current = interpolate(0);
-        return function (t) {
-          var d2 = interpolate(t);
-          return midAngle(d2) < Math.PI ? "start" : "end";
-        };
-      });
-      text.exit().remove();
-      /* ------- SLICE TO TEXT POLYLINES -------*/
-
-      var polyline = svg.select(".lines").selectAll("polyline").data(pie(data), key);
-      polyline.enter().append("polyline");
-      var arcCentroid = svg.select('.labels').selectAll('circle').data(pie(data), key);
-      var arcEnter = arcCentroid.enter().append('circle'); //console.log(arcEnter);
-
-      arcCentroid //.transition().duration(1000)
-      .attr('cx', function (d) {
-        var centroid = outerArc.centroid(d);
-        this._current = this._current || d;
-        var interpolate = d3.interpolate(this._current, d);
-        this._current = interpolate(0);
-
-        var inner = function inner(t) {
-          var d2 = interpolate(t);
-          var pos = outerArc.centroid(d2);
-          pos[0] = radius * 0.95 * (midAngle(d2) < Math.PI ? 1 : -1);
-          return [innerArc.centroid(d2), outerArc.centroid(d2), pos];
-        }; //console.log(inner(0)[i][0]);
-        //return parseInt(inner(0)[0]);
-        //console.log(outerArc.centroid(d));
-
-
-        return outerArc.centroid(d)[0];
-      }).attr('cy', function (d) {
-        var centroid = outerArc.centroid(d);
-
-        var inner = function inner(t) {
-          var d2 = interpolate(t);
-          var pos = outerArc.centroid(d2);
-          pos[0] = radius * 0.95 * (midAngle(d2) < Math.PI ? 1 : -1);
-          return [innerArc.centroid(d2), outerArc.centroid(d2), pos];
-        }; //return parseInt(inner(0)[i][0]);
-
-
-        return outerArc.centroid(d)[1];
-      }).attr('class', 'centroid').attr('r', 10).attr('fill', 'black');
-      polyline.transition().duration(1000).attrTween("points", function (d) {
-        this._current = this._current || d;
-        var interpolate = d3.interpolate(this._current, d);
-        this._current = interpolate(0);
-        return function (t) {
-          var d2 = interpolate(t);
-          var pos = outerArc.centroid(d2);
-          pos[0] = radius * 0.95 * (midAngle(d2) < Math.PI ? 1 : -1);
-          return [innerArc.centroid(d2), outerArc.centroid(d2), pos];
-        };
-      }); //arcCentroid.exit().remove()
-
-      polyline.exit().remove();
-    },
-    decrementYear: function decrementYear() {
-      currentYearIndex--;
-      this.eatMorePie();
-    },
-    incrementYear: function incrementYear() {
-      currentYearIndex++;
-      this.eatMorePie();
-    },
-    bindEvents: function bindEvents() {
-      var self = this;
-      var inputSteppers = document.querySelectorAll('.input-stepper');
-      inputSteppers.forEach(function (inputStepper) {
-        inputStepper.style.width = width.toString() + 'px';
-        var input = inputStepper.querySelector('input');
-        var increase = inputStepper.querySelector('.increase');
-        if (increase) increase.addEventListener('click', function () {
-          var max = parseInt(input.getAttribute('max'));
-
-          if (input.value < max) {
-            input.value = parseInt(input.value) + 1;
-            self.incrementYear();
-          }
-        });
-        var decrease = inputStepper.querySelector('.decrease');
-        if (decrease) decrease.addEventListener('click', function () {
-          var min = parseInt(input.getAttribute('min'));
-
-          if (input.value > min) {
-            input.value = parseInt(input.value) - 1;
-            self.decrementYear();
-          }
-        });
-      });
-    }
-  };
-};
-
-},{}],6:[function(require,module,exports){
 "use strict";
 
 module.exports = function () {
@@ -1443,17 +1340,6 @@ module.exports = function () {
       }
 
       var context = canvas.getContext('2d');
-      var waypoint = new Waypoint({
-        element: element,
-        handler: function handler(direction) {
-          if (direction === 'down') {
-            message.style.marginBottom = '4px';
-          } else {
-            message.style.marginBottom = '-40px';
-          }
-        },
-        offset: -1000
-      });
       var height = 1200;
       var vw = width,
           vh = height;
@@ -1510,6 +1396,10 @@ module.exports = function () {
         element.append(cloneCanvas(canvas));
         canvas.remove();
         totalCount += countPerCanvas;
+
+        if (canvasCopies === 0) {
+          totalCount = Math.floor(ratio);
+        }
       }
 
       function cloneCanvas(oldCanvas) {
@@ -1588,197 +1478,179 @@ module.exports = function () {
   };
 };
 
-},{}],7:[function(require,module,exports){
+},{}],6:[function(require,module,exports){
 "use strict";
 
 module.exports = function () {
-  var svgElement = document.querySelector('.waste-vs-gdp svg');
-  var svg = d3.select('.scatterplot svg');
-  var padding = {
-    top: 100,
-    left: 120,
-    right: 100,
-    bottom: 100
-  };
-  var width = window.innerWidth - padding.right;
-  var height = 800;
-
-  var _toolTip;
-
-  return {
-    settings: {},
-    init: function init() {
-      if (svgElement) {
-        this.toolTip();
-        this.wasteVsGdp();
-      }
-    },
-    scatterplot: function scatterplot() {
-      //./assets/js/data/surface-ocean-particle-count.csv
-      d3.csv('./assets/js/data/exoplanets.csv').then(function (dataset) {
-        console.log(dataset); //./assets/js/data/surface-ocean-particle-count.csv
-        // let xExtent = 'habital_zone_distance';
-        // let yExtent = 'mass';
-        // let radiusExtent = 'radius';
-
-        var xExtent = 'habital_zone_distance';
-        var yExtent = 'mass';
-        var radiusExtent = 'radius';
-        var circle = svg.selectAll('circle').data(dataset).enter().append('circle');
-        circle.attr('class', 'planet');
-        circle.on('mouseover', _toolTip.show).on('mouseout', _toolTip.hide);
-        svg.attr('height', height);
-        var maxRadius = 20;
-        var colorDomain = d3.extent(dataset, function (d) {
-          return +d[xExtent];
-        });
-        var mass = d3.extent(dataset, function (d) {
-          return +d[yExtent];
-        });
-        var radiusDomain = d3.extent(dataset, function (d) {
-          return +d[radiusExtent];
-        });
-        var xScale = d3.scaleLinear().domain(colorDomain).range([padding.left + 10, width]);
-        var yScale = d3.scaleLog().domain(mass).range([padding.top, height - padding.bottom - 16]);
-        var radiusScale = d3.scaleSqrt().domain(radiusDomain).range([1, maxRadius]);
-        var colorScale = d3.scaleQuantize().domain(colorDomain).range(['#FF3300', '#29AD37', '#27EFFF']); // Set circle size
-
-        circle.attr('cx', function (d) {
-          return xScale(d[xExtent]);
-        });
-        circle.attr('cy', function (d) {
-          return yScale(d[yExtent]);
-        });
-        circle.attr('r', function (d) {
-          return radiusScale(d[radiusExtent]);
-        });
-        circle.attr('fill', function (d) {
-          return colorScale(d[xExtent]);
-        }); // Add habitable zone x-axis
-
-        svg.append('g').attr('class', 'x-axis').attr('transform', 'translate(0, ' + (height - padding.bottom) + ')').call(d3.axisBottom(xScale).tickFormat(function (d) {
-          return d;
-        }));
-        svg.append('g').attr('class', 'x-axis').attr('transform', 'translate(0, ' + (padding.top - maxRadius).toString() + ')').call(d3.axisBottom(xScale).tickFormat(function (d) {
-          return d;
-        })); // Add mass y-axis
-
-        svg.append('g').attr('class', 'y-axis').attr('transform', 'translate(' + parseInt(padding.left - 8) + ', 0)').call(d3.axisLeft(yScale));
-        svg.append('g').attr('class', 'y-axis').attr('transform', 'translate(' + (width + maxRadius).toString() + ', 0)').call(d3.axisLeft(yScale)); // Label x-axis
-
-        var xAxisLabel = svg.append('text').attr('class', 'label').text('Year?');
-        xAxisLabel.attr('transform', 'translate(' + (width / 2 - xAxisLabel.node().getBBox().width / 2).toString() + ',' + (height - padding.bottom + 60).toString() + ')'); // // Label y-axis
-
-        var yAxisLabel = svg.append('text').attr('class', 'label').text('Y-Axis');
-        yAxisLabel.attr('transform', 'translate(' + parseInt(padding.left - 50) + ',' + (height / 2 + yAxisLabel.node().getBBox().width / 2).toString() + ') rotate(-90)'); // // Add graph title
-
-        var title = svg.append('text').attr('class', 'title').text('Title');
-        title.attr('transform', 'translate(' + (width / 2 - title.node().getBBox().width / 2).toString() + ', 50)');
-      });
-    },
-    wasteVsGdp: function wasteVsGdp() {},
-    toolTip: function toolTip() {
-      _toolTip = d3.tip().attr("class", "d3-tip").offset([-12, 0]).html(function (d) {
-        return '<div class="tooltip"><h5>' + d['name'] + "</h5></div>";
-      });
-      svg.call(_toolTip);
-    }
-  };
-};
-
-},{}],8:[function(require,module,exports){
-"use strict";
-
-module.exports = function () {
-  return {
-    settings: {},
-    init: function init() {
-      var self = this;
-    }
-  };
-};
-
-},{}],9:[function(require,module,exports){
-"use strict";
-
-module.exports = function () {
+  var svg;
   return {
     settings: {},
     init: function init() {
       this.sunburst();
+      this.addIcon();
     },
-    sunburst: function sunburst() {//alert('sunburst running');
-    }
-  };
-};
+    sunburst: function sunburst() {
+      'use strict';
 
-},{}],10:[function(require,module,exports){
-"use strict";
+      var format = d3.format(",d");
+      var width = document.querySelector('.sunburst').offsetWidth;
+      var radius = width / 6;
+      var arc = d3.arc().startAngle(function (d) {
+        return d.x0;
+      }).endAngle(function (d) {
+        return d.x1;
+      }).padAngle(function (d) {
+        return Math.min((d.x1 - d.x0) / 2, 0.005);
+      }).padRadius(radius * 1.5).innerRadius(function (d) {
+        return d.y0 * radius;
+      }).outerRadius(function (d) {
+        return Math.max(d.y0 * radius, d.y1 * radius - 1);
+      });
 
-module.exports = function () {
-  return {
-    settings: {
-      options: ['option 1', 'option 2', 'option 3']
-    },
-    init: function init() {
-      var self = this;
-      self.pagination();
-      var cycle = document.querySelector('.cycle');
-    },
-    pagination: function pagination() {
-      var pagination = document.querySelector('.pagination');
-
-      if (pagination) {
-        var waypoint = new Waypoint({
-          element: pagination,
-          handler: function handler(direction) {
-            if (direction === 'down') {
-              pagination.classList.add('active');
-            } else {
-              pagination.classList.remove('active');
-            }
-          },
-          offset: 249
+      var partition = function partition(data) {
+        var root = d3.hierarchy(data).sum(function (d) {
+          return d.size;
+        }).sort(function (a, b) {
+          return b.value - a.value;
         });
-        var graphic = document.querySelector('.plastic-longevity');
-        var hidePagination = new Waypoint({
-          element: graphic,
-          handler: function handler(direction) {
-            if (direction === 'down') {
-              pagination.style.opacity = "0";
-            } else {
-              pagination.style.opacity = "1";
-            }
-          },
-          offset: 800
-        });
+        return d3.partition().size([2 * Math.PI, root.height + 1])(root);
+      };
+
+      function arcVisible(d) {
+        return d.y1 <= 3 && d.y0 >= 1 && d.x1 > d.x0;
       }
+
+      function labelVisible(d) {
+        return d.y1 <= 3 && d.y0 >= 1 && (d.y1 - d.y0) * (d.x1 - d.x0) > 0.03;
+      }
+
+      function labelTransform(d) {
+        var x = (d.x0 + d.x1) / 2 * 180 / Math.PI;
+        var y = (d.y0 + d.y1) / 2 * radius;
+        return "rotate(".concat(x - 90, ") translate(").concat(y, ",0) rotate(").concat(x < 180 ? 0 : 180, ")");
+      }
+      /**
+      * Four working methods to load data:
+      * (1) Inline data in json format (JS plain objects);
+      * (2) From an https URL, which works only afer allowing cross origin requests
+      *     on Firefox if the data URL is not the same as your app server;
+      * (3) From a local file;
+      * (4) Calling require()('@observablehq/flare') (observable-specific). In fact,
+      *     The same as (2).
+      */
+      //var data_url = "https://gist.githubusercontent.com/mbostock/1093025/raw/b40b9fc5b53b40836ead8aa4b4a17d948b491126/flare.json"; // network error!
+
+
+      var dataURL = "https://gist.githubusercontent.com/mbostock/4348373/raw/85f18ac90409caa5529b32156aa6e71cf985263f/flare.json"; //const {require} = new observablehq.Library;
+      //require()('@observablehq/flare').then((data, error) => { // works!
+      //d3.json(dataURL).then((data, error) => { // works behind proxy!
+
+      d3.json("./assets/js/data/sunburst-countries.json").then(function (data, error) {
+        // works!
+        //console.log(data);
+        var root = partition(data);
+        var color = d3.scaleOrdinal().range(d3.quantize(d3.interpolateRainbow, data.children.length + 1));
+        root.each(function (d) {
+          return d.current = d;
+        });
+        svg = d3.select('#partitionSVG').style("height", width.toString() + "px").style("font", "9px sans-serif");
+        var g = svg.append("g").attr("transform", "translate(".concat(width / 2, ",").concat(width / 2, ")"));
+        var path = g.append("g").selectAll("path").data(root.descendants().slice(1)).join("path").attr("fill", function (d) {
+          while (d.depth > 1) {
+            d = d.parent;
+          }
+
+          return color(d.data.name);
+        }).attr("fill-opacity", function (d) {
+          return arcVisible(d.current) ? d.children ? 0.6 : 0.4 : 0;
+        }).attr("d", function (d) {
+          return arc(d.current);
+        });
+        path.filter(function (d) {
+          return d.children;
+        }).style("cursor", "pointer").on("click", clicked);
+        path.append("title").text(function (d) {
+          return "".concat(d.ancestors().map(function (d) {
+            return d.data.name;
+          }).reverse().join("/"), "\n").concat(format(d.value));
+        });
+        var label = g.append("g").attr("pointer-events", "none").attr("text-anchor", "middle").style("user-select", "none").selectAll("text").data(root.descendants().slice(1)).join("text").attr("dy", "0.35em").attr("fill-opacity", function (d) {
+          return +labelVisible(d.current);
+        }).attr("transform", function (d) {
+          return labelTransform(d.current);
+        }).text(function (d) {
+          return d.data.name;
+        });
+        var parent = g.append("circle").datum(root).attr("r", radius).attr("fill", "none").attr("pointer-events", "all").on("click", clicked);
+
+        function clicked(p) {
+          parent.datum(p.parent || root);
+          root.each(function (d) {
+            return d.target = {
+              x0: Math.max(0, Math.min(1, (d.x0 - p.x0) / (p.x1 - p.x0))) * 2 * Math.PI,
+              x1: Math.max(0, Math.min(1, (d.x1 - p.x0) / (p.x1 - p.x0))) * 2 * Math.PI,
+              y0: Math.max(0, d.y0 - p.depth),
+              y1: Math.max(0, d.y1 - p.depth)
+            };
+          });
+          var t = g.transition().duration(750); // Transition the data on all arcs, even the ones that aren’t visible,
+          // so that if this transition is interrupted, entering arcs will start
+          // the next transition from the desired position.
+
+          path.transition(t).tween("data", function (d) {
+            var i = d3.interpolate(d.current, d.target);
+            return function (t) {
+              return d.current = i(t);
+            };
+          }).filter(function (d) {
+            return +this.getAttribute("fill-opacity") || arcVisible(d.target);
+          }).attr("fill-opacity", function (d) {
+            return arcVisible(d.target) ? d.children ? 0.6 : 0.4 : 0;
+          }).attrTween("d", function (d) {
+            return function () {
+              return arc(d.current);
+            };
+          });
+          label.filter(function (d) {
+            return this.getAttribute("fill-opacity") || labelVisible(d.target);
+          }).transition(t).attr("fill-opacity", function (d) {
+            return +labelVisible(d.target);
+          }).attrTween("transform", function (d) {
+            return function () {
+              return labelTransform(d.current);
+            };
+          });
+        }
+      });
+    },
+    addIcon: function addIcon() {
+      d3.xml('./assets/svg/up-one-level.svg').then(function (data) {
+        var icon = data.documentElement;
+        icon.classList.add('up-one-level');
+        svg.node().append(icon);
+        var sunburstWidth = svg.node().parentElement.offsetWidth;
+        var iconHeight = sunburstWidth * .1;
+        var iconWidth = icon.getBBox().width;
+        svg.select('.up-one-level').attr('height', iconHeight).attr('x', sunburstWidth / 2 - iconWidth / 2 - iconWidth * .02).attr('y', sunburstWidth / 2 - iconHeight / 2);
+      });
     }
   };
 };
 
-},{}],11:[function(require,module,exports){
+},{}],7:[function(require,module,exports){
 "use strict";
 
 var HorizontalBar = require('./components/horizontal-bar.js');
 
 var PlasticLongevity = require('./components/plastic-longevity.js');
 
-var UI = require('./components/ui.js');
-
 var Maps = require('./components/maps.js');
-
-var Scrolling = require('./components/scrolling.js');
 
 var Sunburst = require('./components/sunburst.js');
 
 var ParallelCoordinates = require('./components/parallel-coordinates.js');
 
-var Pie = require('./components/pie.js');
-
-var Scatter = require('./components/scatterplot.js');
-
-var cumulativePlastic = require('./components/cumulative-plastics.js');
+var CumulativePlastic = require('./components/cumulative-plastics.js');
 
 var Utilities = require('./utils.js');
 
@@ -1786,18 +1658,14 @@ var Utilities = require('./utils.js');
   document.addEventListener('DOMContentLoaded', function () {
     HorizontalBar().init();
     PlasticLongevity().init();
-    UI().init();
     Maps().init();
-    Scrolling().init();
     Sunburst().init();
     ParallelCoordinates().init();
-    Pie().init();
-    Scatter().init();
-    cumulativePlastic().init();
+    CumulativePlastic().init();
   });
 })();
 
-},{"./components/cumulative-plastics.js":1,"./components/horizontal-bar.js":2,"./components/maps.js":3,"./components/parallel-coordinates.js":4,"./components/pie.js":5,"./components/plastic-longevity.js":6,"./components/scatterplot.js":7,"./components/scrolling.js":8,"./components/sunburst.js":9,"./components/ui.js":10,"./utils.js":12}],12:[function(require,module,exports){
+},{"./components/cumulative-plastics.js":1,"./components/horizontal-bar.js":2,"./components/maps.js":3,"./components/parallel-coordinates.js":4,"./components/plastic-longevity.js":5,"./components/sunburst.js":6,"./utils.js":8}],8:[function(require,module,exports){
 "use strict";
 
 (function () {
@@ -1923,7 +1791,7 @@ var Utilities = require('./utils.js');
   module.exports = window.utils;
 })();
 
-},{}],13:[function(require,module,exports){
+},{}],9:[function(require,module,exports){
 !function(t,e){"object"==typeof exports&&"object"==typeof module?module.exports=e():"function"==typeof define&&define.amd?define("leaflet-arc",[],e):"object"==typeof exports?exports["leaflet-arc"]=e():t["leaflet-arc"]=e()}(this,function(){return function(t){function e(o){if(r[o])return r[o].exports;var s=r[o]={exports:{},id:o,loaded:!1};return t[o].call(s.exports,s,s.exports,e),s.loaded=!0,s.exports}var r={};return e.m=t,e.c=r,e.p="",e(0)}([function(t,e,r){"use strict";function o(t){return t&&t.__esModule?t:{"default":t}}function s(t,e){if(!t.geometries[0]||!t.geometries[0].coords[0])return[];var r=function(){var r=e.lng-t.geometries[0].coords[0][0]-360;return{v:t.geometries.map(function(t){return r+=360,t.coords.map(function(t){return L.latLng([t[1],t[0]+r])})}).reduce(function(t,e){return t.concat(e)})}}();return"object"===("undefined"==typeof r?"undefined":n(r))?r.v:void 0}var i=Object.assign||function(t){for(var e=1;e<arguments.length;e++){var r=arguments[e];for(var o in r)Object.prototype.hasOwnProperty.call(r,o)&&(t[o]=r[o])}return t},n="function"==typeof Symbol&&"symbol"==typeof Symbol.iterator?function(t){return typeof t}:function(t){return t&&"function"==typeof Symbol&&t.constructor===Symbol?"symbol":typeof t},a=r(2),h=o(a),p=function(t){return{x:t.lng,y:t.lat}};if(!L)throw new Error("Leaflet is not defined");L.Polyline.Arc=function(t,e,r){var o=L.latLng(t),n=L.latLng(e),a=i({vertices:10,offset:10},r),u=new h["default"].GreatCircle(p(o),p(n)),c=u.Arc(a.vertices,{offset:a.offset}),f=s(c,o);return L.polyline(f,a)}},function(t,e){"use strict";var r=Math.PI/180,o=180/Math.PI,s=function(t,e){this.lon=t,this.lat=e,this.x=r*t,this.y=r*e};s.prototype.view=function(){return String(this.lon).slice(0,4)+","+String(this.lat).slice(0,4)},s.prototype.antipode=function(){var t=-1*this.lat,e=this.lon<0?180+this.lon:(180-this.lon)*-1;return new s(e,t)};var i=function(){this.coords=[],this.length=0};i.prototype.move_to=function(t){this.length++,this.coords.push(t)};var n=function(t){this.properties=t||{},this.geometries=[]};n.prototype.json=function(){if(this.geometries.length<=0)return{geometry:{type:"LineString",coordinates:null},type:"Feature",properties:this.properties};if(1==this.geometries.length)return{geometry:{type:"LineString",coordinates:this.geometries[0].coords},type:"Feature",properties:this.properties};for(var t=[],e=0;e<this.geometries.length;e++)t.push(this.geometries[e].coords);return{geometry:{type:"MultiLineString",coordinates:t},type:"Feature",properties:this.properties}},n.prototype.wkt=function(){for(var t="",e="LINESTRING(",r=function(t){e+=t[0]+" "+t[1]+","},o=0;o<this.geometries.length;o++){if(0===this.geometries[o].coords.length)return"LINESTRING(empty)";var s=this.geometries[o].coords;s.forEach(r),t+=e.substring(0,e.length-1)+")"}return t};var a=function(t,e,r){if(!t||void 0===t.x||void 0===t.y)throw new Error("GreatCircle constructor expects two args: start and end objects with x and y properties");if(!e||void 0===e.x||void 0===e.y)throw new Error("GreatCircle constructor expects two args: start and end objects with x and y properties");this.start=new s(t.x,t.y),this.end=new s(e.x,e.y),this.properties=r||{};var o=this.start.x-this.end.x,i=this.start.y-this.end.y,n=Math.pow(Math.sin(i/2),2)+Math.cos(this.start.y)*Math.cos(this.end.y)*Math.pow(Math.sin(o/2),2);if(this.g=2*Math.asin(Math.sqrt(n)),this.g==Math.PI)throw new Error("it appears "+t.view()+" and "+e.view()+" are 'antipodal', e.g diametrically opposite, thus there is no single route but rather infinite");if(isNaN(this.g))throw new Error("could not calculate great circle between "+t+" and "+e)};if(a.prototype.interpolate=function(t){var e=Math.sin((1-t)*this.g)/Math.sin(this.g),r=Math.sin(t*this.g)/Math.sin(this.g),s=e*Math.cos(this.start.y)*Math.cos(this.start.x)+r*Math.cos(this.end.y)*Math.cos(this.end.x),i=e*Math.cos(this.start.y)*Math.sin(this.start.x)+r*Math.cos(this.end.y)*Math.sin(this.end.x),n=e*Math.sin(this.start.y)+r*Math.sin(this.end.y),a=o*Math.atan2(n,Math.sqrt(Math.pow(s,2)+Math.pow(i,2))),h=o*Math.atan2(i,s);return[h,a]},a.prototype.Arc=function(t,e){var r=[];if(!t||t<=2)r.push([this.start.lon,this.start.lat]),r.push([this.end.lon,this.end.lat]);else for(var o=1/(t-1),s=0;s<t;++s){var a=o*s,h=this.interpolate(a);r.push(h)}for(var p=!1,u=0,c=e&&e.offset?e.offset:10,f=180-c,l=-180+c,d=360-c,y=1;y<r.length;++y){var g=r[y-1][0],v=r[y][0],M=Math.abs(v-g);M>d&&(v>f&&g<l||g>f&&v<l)?p=!0:M>u&&(u=M)}var m=[];if(p&&u<c){var w=[];m.push(w);for(var x=0;x<r.length;++x){var b=parseFloat(r[x][0]);if(x>0&&Math.abs(b-r[x-1][0])>d){var L=parseFloat(r[x-1][0]),S=parseFloat(r[x-1][1]),j=parseFloat(r[x][0]),E=parseFloat(r[x][1]);if(L>-180&&L<l&&180==j&&x+1<r.length&&r[x-1][0]>-180&&r[x-1][0]<l){w.push([-180,r[x][1]]),x++,w.push([r[x][0],r[x][1]]);continue}if(L>f&&L<180&&j==-180&&x+1<r.length&&r[x-1][0]>f&&r[x-1][0]<180){w.push([180,r[x][1]]),x++,w.push([r[x][0],r[x][1]]);continue}if(L<l&&j>f){var F=L;L=j,j=F;var C=S;S=E,E=C}if(L>f&&j<l&&(j+=360),L<=180&&j>=180&&L<j){var G=(180-L)/(j-L),I=G*E+(1-G)*S;w.push([r[x-1][0]>f?180:-180,I]),w=[],w.push([r[x-1][0]>f?-180:180,I]),m.push(w)}else w=[],m.push(w);w.push([b,r[x][1]])}else w.push([r[x][0],r[x][1]])}}else{var N=[];m.push(N);for(var A=0;A<r.length;++A)N.push([r[A][0],r[A][1]])}for(var P=new n(this.properties),_=0;_<m.length;++_){var O=new i;P.geometries.push(O);for(var q=m[_],R=0;R<q.length;++R)O.move_to(q[R])}return P},"undefined"!=typeof t&&"undefined"!=typeof t.exports)t.exports.Coord=s,t.exports.Arc=n,t.exports.GreatCircle=a;else{var h={};h.Coord=s,h.Arc=n,h.GreatCircle=a}},function(t,e,r){"use strict";t.exports=r(1)}])});
 
-},{}]},{},[11]);
+},{}]},{},[7]);

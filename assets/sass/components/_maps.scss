@@ -1,9 +1,70 @@
 .geo-vis {
-	padding: 60px 0;
+	padding: 100px 0;
 	background-color: black;
 	color: white;
 	text-align: center;
 	margin-top: 200px;
+	
+	.leaflet-popup {
+		max-width: 500px;
+		width: 250px;
+		border-radius: 2px;
+		
+		$opacity: .9;
+		.leaflet-popup-content-wrapper {
+			border-radius: 3px;
+			background-color: rgba(255, 255, 255, $opacity);
+			box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+			
+			.leaflet-popup-content {
+				margin: 0;
+				padding: 8px;
+				
+				.popup-custom {
+					
+					h4 {
+						font-size: 1.25rem;
+						margin-bottom: 5px;
+					}
+					
+					.exports, .imports, .mismanaged {
+						font-size: .8rem;
+					}
+				}
+			}
+		}
+		
+		.leaflet-popup-tip-container {
+			
+			.leaflet-popup-tip {
+				display: none;
+				background-color: rgba(255, 255, 255, $opacity);
+			}
+		}
+		
+		a.leaflet-popup-close-button {
+			display: none;
+			margin: 15px 18px;
+			padding: 0;
+			width: 18px;
+			height: 18px !important;
+			font-size: 32px;
+		}
+	}
+	
+	button {
+		font-size: 14px;
+		padding: 6px 20px;
+		display: inline-block;
+		margin: 0 20px;
+		background: #feb121;
+		border-radius: 3px;
+		border: none;
+		color: black;
+		min-width: 60px;
+		cursor: pointer;
+		border-radius: 20px;
+	}
 	
 	h2 {
 		text-align: center;
@@ -22,6 +83,26 @@
 		background-color: black;
 		border: 0;
 		margin-top: 50px;
+		border-top: 1px solid rgba(255, 255, 255, .2);
+		border-bottom: 1px solid rgba(255, 255, 255, .2);
+		
+		.zooms {
+			position: relative;
+			z-index: 1000;
+			padding-top: 20px;
+			
+			button {
+				display: block;
+				border-radius: 3px;
+				padding: 0;
+				width: 30px;
+				height: 30px;
+				min-width: 0;
+				padding: 5px;
+				margin-bottom: 10px;
+				box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+			}
+		}
 		
 		.leaflet-control-attribution {
 			display: none !important;
@@ -31,23 +112,35 @@
 	.bar-section {
 		display: flex;
 		
-		* {
-			//border: 1px solid white;
+		@include mobile-only {
+			flex-direction: column;	
 		}
 		
 		.stats {
 			font-family: 'Abel', sans-serif;
-			padding-left: 100px;
-			width: 20%;
+			padding-left: 20px;
 			display: flex;
 			flex-direction: column;
 			justify-content: center;
 			
+			@include tablet {
+				margin-top: 40px;
+				width: 20%;
+			}
+			
+			@include desktop {
+				padding-left: 100px;
+			}
+			
 			.percentage-of-total {
-				font-size: 8rem;
+				font-size: 5rem;
 				margin-bottom: 0;
 				line-height: .9;
-				margin-top: 30px;
+				margin: 30px 0 10px 0;
+				
+				@include desktop-large {
+					font-size: 8rem;
+				}
 			}
 			
 			.label {
@@ -57,6 +150,10 @@
 			
 			.valuation {
 				font-size: 2rem;
+				
+				@include desktop {
+					
+				}
 			}
 			
 			.country {

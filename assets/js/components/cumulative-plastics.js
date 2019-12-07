@@ -294,7 +294,7 @@ module.exports = function () {
 								var greatwallImage = document.querySelector('img.greatwall');
 								greatwallImage.style.opacity = '1';
 
-								monumentText.innerHTML = 'Great Wall';
+								monumentText.innerHTML = 'Great Wall of China';
 							}
 							else if (plasticAmount > 900000001 && plasticAmount < 1300000000) {
 								var populationImage = document.querySelector('img.population');

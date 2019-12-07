@@ -1,7 +1,10 @@
 module.exports = function () {
 	
+	var svg;
+	
 	return {
-
+		
+		
 		settings: {
 
 		},
@@ -9,13 +12,14 @@ module.exports = function () {
 		init: function () {
 
 			this.sunburst();
+			this.addIcon();
 		},
 
 		sunburst: function () {
 			'use strict';
 
 			const format = d3.format(",d");
-			const width = 500;
+			const width = document.querySelector('.sunburst').offsetWidth;
 			const radius = width / 6;
 
 			const arc = d3.arc()
@@ -73,9 +77,8 @@ module.exports = function () {
 
 				root.each(d => d.current = d);
 
-				const svg = d3.select('#partitionSVG')
-						.style("width", "500px")
-						.style("height", "500px")
+				svg = d3.select('#partitionSVG')
+						.style("height", width.toString() + "px")
 						.style("font", "9px sans-serif");
 
 				const g = svg.append("g")
@@ -152,6 +155,25 @@ module.exports = function () {
 					.attr("fill-opacity", d => +labelVisible(d.target))
 					.attrTween("transform", d => () => labelTransform(d.current));
 				}
+			});
+		},
+		
+		addIcon: function() {
+			
+			d3.xml('./assets/svg/up-one-level.svg').then(function(data) {
+
+				let icon = data.documentElement;
+				icon.classList.add('up-one-level');
+				svg.node().append(icon);
+				
+				let sunburstWidth = svg.node().parentElement.offsetWidth;
+				let iconHeight = sunburstWidth * .1;
+				let iconWidth = icon.getBBox().width;
+				
+				svg.select('.up-one-level')
+				.attr('height', iconHeight)
+				.attr('x', (sunburstWidth/2 - iconWidth/2) - (iconWidth*.02))
+				.attr('y', sunburstWidth/2 - iconHeight/2);
 			});
 		}
 	}

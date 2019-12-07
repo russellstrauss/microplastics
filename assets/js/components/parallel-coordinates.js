@@ -288,10 +288,7 @@ module.exports = function () {
 				country_container_group = country_container_group.merge(country_container_enter)
 					.attr('class', 'country')
 					.attr('id', d => {return d.code })
-					.html(d => {return '<img src="./assets/img/countries/' 
-						+ d.country 
-						+ '.svg"></img><span>'
-						+ toTitleCase(d.country.replace(new RegExp('-', 'gi'), ' ')) + '</span>'})
+					.html(d => {return '<span>' + toTitleCase(d.country.replace(new RegExp('-', 'gi'), ' ')) + '</span>'})
 					.on('mousedown', d => {
 						d3.event.preventDefault();
 						country_container_element = document.querySelector('.country-container');

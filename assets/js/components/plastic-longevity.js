@@ -289,6 +289,9 @@ module.exports = function () {
 				element.append(cloneCanvas(canvas));
 				canvas.remove();
 				totalCount += countPerCanvas;
+				if (canvasCopies === 0) {
+					totalCount = Math.floor(ratio);
+				}
 			}
 			
 			function cloneCanvas(oldCanvas) {

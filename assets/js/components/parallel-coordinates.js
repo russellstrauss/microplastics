@@ -106,22 +106,24 @@ module.exports = function () {
 				// var data = []
 
 				data.forEach (function(d, i) {
-					d = {
-						code: d.code,
-						country: d.country,
-						total_population: scales.total_population(+d.total_population),
-						coastal_population : scales.coastal_population(+d.coastal_population),
-						plastic_waste_per_capita : scales.plastic_waste_per_capita(+d.plastic_waste_per_capita),
-						plastic_waste_total : scales.plastic_waste_total(+d.plastic_waste_total),
-						fish_consumption : scales.fish_consumption(+d.fish_consumption),
-						gdp : scales.gdp(+d.gdp)
-					};
+						d.code =  d.code;
+						d.country = d.country;
+						d.total_population = scales.total_population(+d.total_population);
+						d.coastal_population = scales.coastal_population(+d.coastal_population);
+						d.plastic_waste_per_capita = scales.plastic_waste_per_capita(+d.plastic_waste_per_capita);
+						d.plastic_waste_total = scales.plastic_waste_total(+d.plastic_waste_total);
+						d.fish_consumption = scales.fish_consumption(+d.fish_consumption);
+						d.gdp = scales.gdp(+d.gdp);
 				});
-
-				drawCountries('', data);
 
 				data = calcImpactMetric(data);
 				data = calcRankings(data);
+
+				data.sort(function(a, b) {
+					return d3.ascending(a.country, b.country)
+				});
+
+				drawCountries('', data);
 
 				clearButton.on('click', function() {
 					

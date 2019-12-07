@@ -8,12 +8,15 @@ div.sunburst {
 		height: 100%;
 		display: block;
 		margin: auto;
+		overflow: visible;
 		
 		circle {
 			cursor: pointer;
 		}
 		
 		.up-one-level {
+			transition: opacity 550ms ease-in;
+			opacity: 0;
 			
 			path {
 				pointer-events: none;

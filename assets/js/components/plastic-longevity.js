@@ -120,7 +120,7 @@ module.exports = function () {
 			});
 			
 			// Scale the range of the data in the domains
-			x.domain([0, (maxValue + maxValue * .2)])
+			x.domain([0, (maxValue + maxValue * .2)]);
 			
 			let xAxisHeight = 20;
 			let xAxisLabel = svg.append('text') 

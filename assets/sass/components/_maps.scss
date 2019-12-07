@@ -5,6 +5,12 @@
 	text-align: center;
 	margin-top: 200px;
 	
+	p {
+		max-width: 1000px;
+		margin-left: auto;
+		margin-right: auto;
+	}
+	
 	.leaflet-popup {
 		max-width: 500px;
 		width: 250px;
@@ -52,20 +58,6 @@
 		}
 	}
 	
-	button {
-		font-size: 14px;
-		padding: 6px 20px;
-		display: inline-block;
-		margin: 0 20px;
-		background: #feb121;
-		border-radius: 3px;
-		border: none;
-		color: black;
-		min-width: 60px;
-		cursor: pointer;
-		border-radius: 20px;
-	}
-	
 	h2 {
 		text-align: center;
 		padding: 0 15px;
@@ -74,6 +66,40 @@
 	
 	.ui {
 		margin-top: 50px;
+		
+		button {
+			font-size: 14px;
+			padding: 6px 20px;
+			display: inline-block;
+			margin: 0 20px;
+			background-color: #E6965B;
+			border-radius: 3px;
+			border: none;
+			color: black;
+			min-width: 60px;
+			cursor: pointer;
+			border-radius: 20px;
+			transition: all 150ms ease;
+			opacity: .75;
+			
+			&:hover {
+				opacity: 1;
+			}
+			
+			&.active {
+				background-color: darken(#E6965B, 10%);
+				outline: none;
+				opacity: 1;
+			}
+		}
+	}
+	
+	button {
+		
+		&:hover {
+			background-color: darken(#E6965B, 5%);
+			outline: none;
+		}
 	}
 	
 	.fullscreen-map {
@@ -93,6 +119,7 @@
 			
 			button {
 				display: block;
+				background-color: #E6965B;
 				border-radius: 3px;
 				padding: 0;
 				width: 30px;
@@ -101,6 +128,10 @@
 				padding: 5px;
 				margin-bottom: 10px;
 				box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+				
+				&:hover {
+					background-color: darken(#E6965B, 8%);
+				}
 			}
 		}
 		

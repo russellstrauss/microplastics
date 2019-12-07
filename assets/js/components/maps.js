@@ -338,8 +338,8 @@ module.exports = function() {
 				// console.log(d);
 				// console.log(worldTotal, d.amount);
 				
-				let percentage = Math.round(10*parseInt(d.amount)/worldTotal)/10;
-				if (percentage < 1) Math.round(100*parseInt(d.amount)/worldTotal)/100
+				let percentage = ((parseInt(d.amount)/parseInt(worldTotal)) * 100).toFixed(1);
+				if (percentage.toString().slice(-2) === '.0') percentage = parseInt(percentage).toFixed(0);
 				
 				self.updateStats(percentage, d.country, d.amount); // why is percent wrong?
 			})
@@ -399,7 +399,9 @@ module.exports = function() {
 				self.addBarGraph();
 				self.setStatsLabel(exportsStatsLabel);
 				barGraphTitle.html('Top 20 Global Plastic Exporters (USD)');
-				map.flyTo(center.location, center.zoom);
+				setTimeout(function() {
+					map.flyTo(center.location, center.zoom);
+				}, 1000);
 			});
 			
 			let importsButton = document.querySelector('#plasticImports');
@@ -411,7 +413,9 @@ module.exports = function() {
 				self.addBarGraph();
 				self.setStatsLabel(exportsStatsLabel);
 				barGraphTitle.html('Top 20 Global Plastic Importers (USD)');
-				map.flyTo(center.location, center.zoom);
+				setTimeout(function() {
+					map.flyTo(center.location, center.zoom);
+				}, 1000);
 			});
 			
 			let mismanagedButton = document.querySelector('#plasticMismanaged');
@@ -427,7 +431,9 @@ module.exports = function() {
 				let textHeight = barGraphTitle.node().getBBox().height;
 				barGraphTitle.attr('transform','translate(' + (barWidth/2 - (textWidth/2) - (barPadding.left/2)) + ', ' + (barGraphInnerHeight + textHeight + (barPadding.bottom/2)) + ')');
 				
-				map.flyTo(mismanagedCenter.location, mismanagedCenter.zoom);
+				setTimeout(function() {
+					map.flyTo(mismanagedCenter.location, mismanagedCenter.zoom);
+				}, 1000);
 			});
 		},
 		

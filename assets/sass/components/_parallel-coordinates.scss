@@ -113,13 +113,11 @@ div#selectors {
 	font-size: 1.2rem;
 	
 	option {
-		padding: 5px;
+		background-repeat: no-repeat;
+		padding: 5px 5px 5px 35px;
 		cursor: pointer;
-		
-		$color: #B7E2EB;
-		&:checked {
-			background: $color linear-gradient(0deg, $color 0%, $color 100%);
-		}
+		background-size: 20px;
+		background-position: left 5px  center;
 	}
   }
 

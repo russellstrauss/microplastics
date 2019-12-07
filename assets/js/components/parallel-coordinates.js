@@ -282,7 +282,9 @@ module.exports = function () {
 					.data(data, d => d.code);
 				country_container_group.exit().remove();
 				country_container_enter = country_container_group.enter()
-					.append('option');
+					.append('option')
+					.attr('style', d => {return 'background-image: url(./assets/img/countries/' 
+						+ d.country + '.svg)'});
 				country_container_group = country_container_group.merge(country_container_enter)
 					.attr('class', 'country')
 					.attr('id', d => {return d.code })
@@ -340,7 +342,7 @@ module.exports = function () {
 						tooltip_div.style('opacity', 0);
 					})
 					.attr('stroke', function(d) {
-						return d3.interpolateRgb('red', 'blue')(color(d.inadequately_managed_plastic));
+						return d3.interpolateRgb('red', 'rgb(0, 176, 255)')(color(d.inadequately_managed_plastic));
 					});
 
 				foreground_group = foreground_group.merge(foreground_enter)

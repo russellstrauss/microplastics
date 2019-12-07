@@ -25,7 +25,7 @@ module.exports = function() {
 	}
 	
 	var mismanagedCenter = {
-		location: new L.LatLng(10, 100),
+		location: new L.LatLng(10, 70),
 		zoom: 3.5
 	}
 	
@@ -251,23 +251,59 @@ module.exports = function() {
 		},
 		
 		eachGeoFeature: function(feature, layer) {
+
+			let popup;
 			
 			layer.on({
 				mouseover: function(d) {
-					
-					//d.target.feature.bindTooltip("my tooltip text").openTooltip();
+				
 					let countryName = d.target.feature.properties.NAME_EN;
+					let countryExports = '';
+					let countryImports = '';
+					let countryMismanaged = '';
+					
+					let hoveredCountryExports = exportsData.filter(function(row) {
+						if (row.country === countryName) return row;
+					});
+					let hoveredCountryImports = importsData.filter(function(row) {
+						if (row.country === countryName) return row;
+					});
+					let hoveredCountryMismanaged = mismanagedData.filter(function(row) {
+						if (row.country === countryName) return row;
+					});
+					
+					if (hoveredCountryExports[0]) {
+						countryExports = parseInt(hoveredCountryExports[0].amount).toLocaleString();
+					}
+					if (hoveredCountryImports[0]) {
+						countryImports = parseInt(hoveredCountryImports[0].amount).toLocaleString();
+					}
+					if (hoveredCountryMismanaged[0]) {
+						countryMismanaged = hoveredCountryMismanaged[0].amount;
+					}
+					
+					let markup = '<div class="popup-custom">';
+					markup += '<h4 class="country">' + countryName + '</h4>';
+					markup += '<div class="exports"><strong>Total exports (USD):</strong> $' + countryExports + '</div>';
+					markup += '<div class="imports"><strong>Total imports (USD):</strong> $' + countryImports + '</div>';
+					markup += '<div class="mismanaged"><strong>Percentage mismanaged waste:</strong> ' + countryMismanaged + '%</div>';
+					markup += '</div>';
 					
 					
-					//L.polygon(d.target.feature.geometry.coordinates).bindTooltip("my tooltip").addTo(map);
-					
-					//console.log(d.target.feature.geometry.coordinates[0][0][0]);
+					popup = L.popup({
+						minWidth: 500
+					}, countriesLayer)
+					.setLatLng(d.latlng)
+					.setContent(markup)
+					.openOn(map);
 				},
-				mouseout: function() {
-					//console.log('out');
+				mouseout: function(d) {
+					
+					if (popup && !d.originalEvent.toElement.classList.contains('leaflet-popup-content-wrapper')) { // don't hide when moving mouse into the popup
+						popup.remove();
+					}
 				},
 				click: function() {
-					//console.log('click');
 				}
 			});
 		},
@@ -303,9 +339,7 @@ module.exports = function() {
 			
 			let top = mapData.slice(0)[19];
 			let worldPercent;
-			console.log(mismanagedDataBoolean);
 			if (mismanagedDataBoolean) {
-				console.log(top.amount);
 				worldPercent = top.amount;
 			}
 			else {
@@ -439,7 +473,6 @@ module.exports = function() {
 				mismanagedDataBoolean = true;
 				self.reset();
 				
-				
 				self.showCountries();
 				self.addBarGraph();
 				self.setStatsLabel(mismanagedStatsLabel);
@@ -454,6 +487,16 @@ module.exports = function() {
 				setTimeout(function() {
 					map.flyTo(mismanagedCenter.location, mismanagedCenter.zoom);
 				}, 1000);
+			});
+			
+			let zoomIn = document.querySelector('.geo-vis .zooms .in');
+			if (zoomIn) zoomIn.addEventListener('click', function() {
+				map.setZoom(map.getZoom() + .75);
+			});
+			
+			let zoomOut = document.querySelector('.geo-vis .zooms .out');
+			if (zoomOut) zoomOut.addEventListener('click', function() {
+				map.setZoom(map.getZoom() - .75);
 			});
 		},
 		

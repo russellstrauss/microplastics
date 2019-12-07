@@ -313,7 +313,7 @@ module.exports = function () {
 								var roadImage = document.querySelector('img.road');
 								roadImage.style.opacity = '1';
 
-								monumentText.innerHTML = 'Weight of <br> the entire US Road System';
+								monumentText.innerHTML = 'Weight of <br> the Entire US Road System';
 							}
 							else if (plasticAmount > 3000000001 && plasticAmount < 5100000000) {
 								var icebergImage = document.querySelector('img.iceberg');

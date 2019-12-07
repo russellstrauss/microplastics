@@ -1,6 +1,7 @@
 module.exports = function () {
 	
 	var svg;
+	var upOneLevelIcon;
 	
 	return {
 		
@@ -123,37 +124,42 @@ module.exports = function () {
 								.on("click", clicked);
 
 				function clicked(p) {
-				parent.datum(p.parent || root);
+					parent.datum(p.parent || root);
 
-				root.each(d => d.target = {
-					x0: Math.max(0, Math.min(1, (d.x0 - p.x0) / (p.x1 - p.x0))) * 2 * Math.PI,
-					x1: Math.max(0, Math.min(1, (d.x1 - p.x0) / (p.x1 - p.x0))) * 2 * Math.PI,
-					y0: Math.max(0, d.y0 - p.depth),
-					y1: Math.max(0, d.y1 - p.depth)
-				});
+					root.each(d => d.target = {
+						x0: Math.max(0, Math.min(1, (d.x0 - p.x0) / (p.x1 - p.x0))) * 2 * Math.PI,
+						x1: Math.max(0, Math.min(1, (d.x1 - p.x0) / (p.x1 - p.x0))) * 2 * Math.PI,
+						y0: Math.max(0, d.y0 - p.depth),
+						y1: Math.max(0, d.y1 - p.depth)
+					});
 
-				const t = g.transition().duration(750);
+					const t = g.transition().duration(750);
 
-				// Transition the data on all arcs, even the ones that aren’t visible,
-				// so that if this transition is interrupted, entering arcs will start
-				// the next transition from the desired position.
-				path.transition(t)
-					.tween("data", d => {
-						const i = d3.interpolate(d.current, d.target);
-						return t => d.current = i(t);
-					})
-					.filter(function (d) {
-						return +this.getAttribute("fill-opacity") || arcVisible(d.target);
-					})
-					.attr("fill-opacity", d =>
-						arcVisible(d.target) ? (d.children ? 0.6 : 0.4) : 0)
-					.attrTween("d", d => () => arc(d.current));
+					// Transition the data on all arcs, even the ones that aren’t visible,
+					// so that if this transition is interrupted, entering arcs will start
+					// the next transition from the desired position.
+					path.transition(t)
+						.tween("data", d => {
+							const i = d3.interpolate(d.current, d.target);
+							return t => d.current = i(t);
+						})
+						.filter(function (d) {
+							return +this.getAttribute("fill-opacity") || arcVisible(d.target);
+						})
+						.attr("fill-opacity", d =>
+							arcVisible(d.target) ? (d.children ? 0.6 : 0.4) : 0)
+						.attrTween("d", d => () => arc(d.current));
 
-				label.filter(function (d) {
-					return this.getAttribute("fill-opacity") || labelVisible(d.target);
-					}).transition(t)
-					.attr("fill-opacity", d => +labelVisible(d.target))
-					.attrTween("transform", d => () => labelTransform(d.current));
+					label.filter(function (d) {
+						return this.getAttribute("fill-opacity") || labelVisible(d.target);
+						}).transition(t)
+						.attr("fill-opacity", d => +labelVisible(d.target))
+						.attrTween("transform", d => () => labelTransform(d.current));
+						
+					if (p.parent === null) upOneLevelIcon.style.opacity = '0';
+					else {
+						upOneLevelIcon.style.opacity = '1';
+					}
 				}
 			});
 		},
@@ -163,6 +169,7 @@ module.exports = function () {
 			d3.xml('./assets/svg/up-one-level.svg').then(function(data) {
 
 				let icon = data.documentElement;
+				upOneLevelIcon = icon;
 				icon.classList.add('up-one-level');
 				svg.node().append(icon);
 				

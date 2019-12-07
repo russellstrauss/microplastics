@@ -120,7 +120,7 @@ module.exports = function () {
 			});
 			
 			// Scale the range of the data in the domains
-			x.domain([0, (maxValue + maxValue * .2)])
+			x.domain([0, (maxValue + maxValue * .2)]);
 			
 			let xAxisHeight = 20;
 			let xAxisLabel = svg.append('text') 
@@ -183,7 +183,7 @@ module.exports = function () {
 				}
 				else {
 					document.querySelector('.longevity').innerHTML = '';
-					document.querySelector('.generation-glyphs').innerHTML = '<div class="frame"><img src="./assets/svg/generation.svg" alt="generation icon"></div>';
+					document.querySelector('.generation-glyphs').innerHTML = '<div class="frame"><img src="./assets/svg/generation-white.svg" alt="generation icon"></div>';
 					self.longevityTimescale();
 				}
 			});
@@ -258,7 +258,7 @@ module.exports = function () {
 					for (var y = dotRadius * 2; y < vh; y += cellSize) {
 						context.beginPath();
 						context.arc(x-dotRadius/2, y-dotRadius/2, dotRadius, 0, 2 * Math.PI, false);
-						context.fillStyle = 'rgba(204, 204, 204, .7)';
+						context.fillStyle = 'rgba(255, 255, 255, .4)';
 						context.fill();
 						count++;
 					}

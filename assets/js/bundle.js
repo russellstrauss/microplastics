@@ -187,7 +187,7 @@ module.exports = function () {
             } else if (plasticAmount > 2100000001 && plasticAmount < 3000000000) {
               var roadImage = document.querySelector('img.road');
               roadImage.style.opacity = '1';
-              monumentText.innerHTML = 'Weight of <br> the entire US Road System';
+              monumentText.innerHTML = 'Weight of <br> the Entire US Road System';
             } else if (plasticAmount > 3000000001 && plasticAmount < 5100000000) {
               var icebergImage = document.querySelector('img.iceberg');
               icebergImage.style.opacity = '1';
@@ -640,7 +640,7 @@ module.exports = function () {
         top: 60,
         right: 100,
         bottom: 80,
-        left: 150
+        left: 200
       };
       var barGraphHeight = 425;
       var barHeight = 7;
@@ -721,6 +721,7 @@ module.exports = function () {
     },
     bindUI: function bindUI() {
       var self = this;
+      var mapDataButtons = document.querySelectorAll('#plasticExports,#plasticImports,#plasticMismanaged');
       var exportsButton = document.querySelector('#plasticExports');
       if (exportsButton) exportsButton.addEventListener('click', function () {
         mapData = exportsData;
@@ -730,6 +731,10 @@ module.exports = function () {
         self.addBarGraph();
         self.setStatsLabel(exportsStatsLabel);
         barGraphTitle.html('Top 20 Global Plastic Exporters (USD)');
+        mapDataButtons.forEach(function (button) {
+          button.classList.remove('active');
+        });
+        exportsButton.classList.add('active');
         setTimeout(function () {
           _map.flyTo(center.location, center.zoom);
         }, 1000);
@@ -741,8 +746,12 @@ module.exports = function () {
         self.reset();
         self.showCountries();
         self.addBarGraph();
-        self.setStatsLabel(importStatsLabel);
+        self.setStatsLabel(importsStatsLabel);
         barGraphTitle.html('Top 20 Global Plastic Importers (USD)');
+        mapDataButtons.forEach(function (button) {
+          button.classList.remove('active');
+        });
+        importsButton.classList.add('active');
         setTimeout(function () {
           _map.flyTo(center.location, center.zoom);
         }, 1000);
@@ -759,6 +768,10 @@ module.exports = function () {
         var textWidth = barGraphTitle.node().getBBox().width;
         var textHeight = barGraphTitle.node().getBBox().height;
         barGraphTitle.attr('transform', 'translate(' + (barWidth / 2 - textWidth / 2 - barPadding.left / 2) + ', ' + (barGraphInnerHeight + textHeight + barPadding.bottom / 2) + ')');
+        mapDataButtons.forEach(function (button) {
+          button.classList.remove('active');
+        });
+        mismanagedButton.classList.add('active');
         var valuation = document.querySelector('.geo-vis .stats .valuation');
         valuation.style.display = 'none';
         setTimeout(function () {
@@ -1295,7 +1308,7 @@ module.exports = function () {
           self.longevityTimescale();
         } else {
           document.querySelector('.longevity').innerHTML = '';
-          document.querySelector('.generation-glyphs').innerHTML = '<div class="frame"><img src="./assets/svg/generation.svg" alt="generation icon"></div>';
+          document.querySelector('.generation-glyphs').innerHTML = '<div class="frame"><img src="./assets/svg/generation-white.svg" alt="generation icon"></div>';
           self.longevityTimescale();
         }
       });
@@ -1363,7 +1376,7 @@ module.exports = function () {
           for (var y = dotRadius * 2; y < vh; y += cellSize) {
             context.beginPath();
             context.arc(x - dotRadius / 2, y - dotRadius / 2, dotRadius, 0, 2 * Math.PI, false);
-            context.fillStyle = 'rgba(204, 204, 204, .7)';
+            context.fillStyle = 'rgba(255, 255, 255, .4)';
             context.fill();
             count++;
           }
@@ -1483,6 +1496,7 @@ module.exports = function () {
 
 module.exports = function () {
   var svg;
+  var upOneLevelIcon;
   return {
     settings: {},
     init: function init() {
@@ -1620,12 +1634,16 @@ module.exports = function () {
               return labelTransform(d.current);
             };
           });
+          if (p.parent === null) upOneLevelIcon.style.opacity = '0';else {
+            upOneLevelIcon.style.opacity = '1';
+          }
         }
       });
     },
     addIcon: function addIcon() {
       d3.xml('./assets/svg/up-one-level.svg').then(function (data) {
         var icon = data.documentElement;
+        upOneLevelIcon = icon;
         icon.classList.add('up-one-level');
         svg.node().append(icon);
         var sunburstWidth = svg.node().parentElement.offsetWidth;

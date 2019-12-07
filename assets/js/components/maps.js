@@ -322,7 +322,7 @@ module.exports = function() {
 				top: 60,
 				right: 100,
 				bottom: 80,
-				left: 150
+				left: 200
 			};
 			
 			var barGraphHeight = 425;
@@ -441,6 +441,8 @@ module.exports = function() {
 			
 			let self = this;
 			
+			let mapDataButtons = document.querySelectorAll('#plasticExports,#plasticImports,#plasticMismanaged');
+			
 			let exportsButton = document.querySelector('#plasticExports');
 			if (exportsButton) exportsButton.addEventListener('click', function() {
 				mapData = exportsData;
@@ -450,6 +452,12 @@ module.exports = function() {
 				self.addBarGraph();
 				self.setStatsLabel(exportsStatsLabel);
 				barGraphTitle.html('Top 20 Global Plastic Exporters (USD)');
+				
+				mapDataButtons.forEach(function(button) {
+					button.classList.remove('active');
+				});
+				exportsButton.classList.add('active');
+				
 				setTimeout(function() {
 					map.flyTo(center.location, center.zoom);
 				}, 1000);
@@ -463,8 +471,15 @@ module.exports = function() {
 				
 				self.showCountries();
 				self.addBarGraph();
-				self.setStatsLabel(importStatsLabel);
+				self.setStatsLabel(importsStatsLabel);
 				barGraphTitle.html('Top 20 Global Plastic Importers (USD)');
+				
+				
+				mapDataButtons.forEach(function(button) {
+					button.classList.remove('active');
+				});
+				importsButton.classList.add('active');
+				
 				setTimeout(function() {
 					map.flyTo(center.location, center.zoom);
 				}, 1000);
@@ -483,6 +498,11 @@ module.exports = function() {
 				let textWidth = barGraphTitle.node().getBBox().width;
 				let textHeight = barGraphTitle.node().getBBox().height;
 				barGraphTitle.attr('transform','translate(' + (barWidth/2 - (textWidth/2) - (barPadding.left/2)) + ', ' + (barGraphInnerHeight + textHeight + (barPadding.bottom/2)) + ')');
+				
+				mapDataButtons.forEach(function(button) {
+					button.classList.remove('active');
+				});
+				mismanagedButton.classList.add('active');
 				
 				let valuation = document.querySelector('.geo-vis .stats .valuation');
 				valuation.style.display = 'none';

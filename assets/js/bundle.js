@@ -95,7 +95,7 @@ module.exports = function () {
 
       slider.insert("g", ".track-overlay").attr("class", "ticks").attr("transform", "translate(0," + 18 + ")").selectAll("text").data(scale.ticks(10)).enter().append("text").attr("x", scale).attr("y", 10).attr("text-anchor", "middle").text(function (d) {
         return formatYear(d);
-      });
+      }).attr("font-size", '13px');
       var handle = slider.insert("circle", ".track-overlay").attr("class", "handle").attr("r", 12).style("fill", "orange");
       var label = slider.append("text").attr("id", "label").attr("text-anchor", "middle").style("fill", "orange").text(formatDate(startDate)).attr("transform", "translate(0," + -25 + ")"); ////////// plot //////////
 
@@ -150,7 +150,7 @@ module.exports = function () {
 
           if (parseInt(plasticProductionData[key].Year) === parseInt(year)) {
             var plasticAmount = parseInt(plasticProductionData[key].Cumulative.toLocaleString());
-            totalWeightText.textContent = parseInt(plasticProductionData[key].Cumulative).toLocaleString() + ' (mt)';
+            totalWeightText.textContent = parseInt(plasticProductionData[key].Cumulative).toLocaleString() + ' Metric Tons';
             var monumentImages = document.querySelectorAll('.monument-visualization .image-container img');
             monumentImages.forEach(function (image) {
               image.style.opacity = "0";

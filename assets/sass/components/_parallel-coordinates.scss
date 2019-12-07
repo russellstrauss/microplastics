@@ -24,7 +24,7 @@ div#selectors {
       
       &:hover {
         background-color: #78909c;
-        color: #546e7a;
+        color: white;
       }
     }
   }
@@ -109,7 +109,18 @@ div#selectors {
 
   select.country-container {
     width:350px;
-    margin-bottom: 10px;
+	margin-bottom: 10px;
+	font-size: 1.2rem;
+	
+	option {
+		padding: 5px;
+		cursor: pointer;
+		
+		$color: #B7E2EB;
+		&:checked {
+			background: $color linear-gradient(0deg, $color 0%, $color 100%);
+		}
+	}
   }
 
   select.country-container option.country img {

@@ -95,7 +95,7 @@ module.exports = function () {
 					.on("start.interrupt", function() { slider.interrupt(); })
 					.on("start drag", function() {
 						currentValue = d3.event.x;
-						circleNumber.text(circleCount);
+						circleNumber.text('(x' + circleCount + ')');
 						update(scale.invert(currentValue)); 
 					})
 					.on("end", function() {
@@ -115,20 +115,20 @@ module.exports = function () {
 			.attr("cy", 20)
 			.attr("r", 6)
 			.style("fill", 'orange')
-			.style("fill-opactiy", "0.4");
+			.style("fill-opacty", "0.4");
 
 			var circle3 = circle1.append("text")
 			.attr("class", "explaincircle")
-			.text("=  11,837,900(t)")
+			.text("= 11,837,900 metric tons")
 			.attr("text-anchor", "middle")
 			.attr("font-size","12px")
-			.attr("transform", "translate(62,25)");
+			.attr("transform", "translate(90,24)");
 
 			var circleNumber = circle1.append("text")
 			.attr("class", "circleNumber")
 			.attr("text-anchor", "middle")
 			.attr("font-size","12px")
-			.attr("transform", "translate(120,25)");
+			.attr("transform", "translate(180,25)");
 
 			// var circle3 = circle1.append("text")
 			// .attr("class", "explaincircle")
@@ -258,7 +258,7 @@ module.exports = function () {
 							
 							let plasticAmount = parseInt(plasticProductionData[key].Cumulative.toLocaleString());
 							
-							totalWeightText.textContent = parseInt(plasticProductionData[key].Cumulative).toLocaleString() +'(t)';
+							totalWeightText.textContent = parseInt(plasticProductionData[key].Cumulative).toLocaleString() +' (mt)';
 
 							let monumentImages = document.querySelectorAll('.monument-visualization .image-container img');
 							monumentImages.forEach(function(image) {
@@ -269,26 +269,26 @@ module.exports = function () {
 							if (plasticAmount > 2000001 && plasticAmount < 30000000) {
 								var sushiImage = document.querySelector('img.sushi');
 								sushiImage.style.opacity = '1';
-								monumentText.innerHTML = 'Statue of Liberty <br> (x10000)';
+								monumentText.innerHTML = 'Ten-thousand Statues of Liberty';
 
 							}
 							else if (plasticAmount > 30000001 && plasticAmount < 60000000) {
 								var eiffelImage = document.querySelector('img.eiffel');
 								eiffelImage.style.opacity = '1';
 
-								monumentText.innerHTML = 'Eiffel Tower <br> (x4054)';
+								monumentText.innerHTML = '4054 Eiffel Towers';
 							}
 							else if (plasticAmount > 60000001 && plasticAmount < 300000000) {
 								var gtImage = document.querySelector('img.gt');
 								gtImage.style.opacity = '1';
 
-								monumentText.innerHTML = 'GT Buildings';
+								monumentText.innerHTML = 'Weight of Every Building on Georgia Tech\'s Campus';
 							}
 							else if (plasticAmount > 300000001 && plasticAmount < 600000000) {
 								var pyramidImage = document.querySelector('img.pyramid');
 								pyramidImage.style.opacity = '1';
 
-								monumentText.innerHTML = 'All the Pyramids in Egypt';
+								monumentText.innerHTML = 'All Pyramids in Egypt';
 							}
 							else if (plasticAmount > 600000001 && plasticAmount < 900000000) {
 								var greatwallImage = document.querySelector('img.greatwall');
@@ -300,13 +300,13 @@ module.exports = function () {
 								var populationImage = document.querySelector('img.population');
 								populationImage.style.opacity = '1';
 
-								monumentText.innerHTML = 'Weight of Total Popluation in the world';
+								monumentText.innerHTML = 'Weight of World\'s Population';
 							}
 							else if (plasticAmount > 1300000001 && plasticAmount < 2100000000) {
 								var skyscrapperImage = document.querySelector('img.skyscrapper');
 								skyscrapperImage.style.opacity = '1';
 
-								monumentText.innerHTML = 'Weight of All <br> Skyscrappers in the world';
+								monumentText.innerHTML = 'Weight of All <br> Skyscrapers in the World';
 							}
 							else if (plasticAmount > 2100000001 && plasticAmount < 3000000000) {
 								var roadImage = document.querySelector('img.road');
@@ -324,7 +324,7 @@ module.exports = function () {
 								var carImage = document.querySelector('img.car');
 								carImage.style.opacity = '1';
 
-								monumentText.innerHTML = 'Total Car weight <br> in the world';
+								monumentText.innerHTML = 'Total Weight of <br> Every Car on Planet Earth';
 							}
 							else if (plasticAmount > 7500000001 && plasticAmount < 10000000001) {
 								var cometImage = document.querySelector('img.comet');

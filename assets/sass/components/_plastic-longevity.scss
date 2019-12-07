@@ -1,5 +1,5 @@
-$background: white;
-$foreground: black;
+$background: black;
+$foreground: white;
 
 .plastic-longevity {
 	@include disable-highlight;
@@ -15,6 +15,7 @@ $foreground: black;
 		
 		h2 {
 			margin-bottom: 40px;
+			margin-top: 100px;
 		}
 		
 		p {

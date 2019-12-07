@@ -375,13 +375,17 @@ module.exports = function () {
 require('leaflet-arc');
 
 module.exports = function () {
+  var selectColor = '#E66200';
+  var defaultColor = '#E6965B';
+  var exportsStatsLabel = 'total global plastic exports',
+      importsStatsLabel = 'total global plastic imports';
   var containerWidth = parseInt(document.querySelector('.fullscreen-map').offsetWidth);
   var containerHeight = parseInt(document.querySelector('.fullscreen-map').offsetHeight);
   var mapWithLabels = 'https://stamen-tiles-{s}.a.ssl.fastly.net/toner/{z}/{x}/{y}{r}.png?access_token={accessToken}';
   var mapWithoutLabels = 'https://stamen-tiles-{s}.a.ssl.fastly.net/toner-background/{z}/{x}/{y}{r}.png?access_token={accessToken}';
   var graph, countriesLayer, barGraphTitle, worldTotal;
 
-  var mapData, exportsData, importsData, geojson, _toolTip, barData;
+  var mapData, exportsData, importsData, mismanagedData, geojson, _toolTip, barData, barWidth, barPadding, barGraphInnerHeight;
 
   var china = {
     location: new L.LatLng(23.638, 120.998),
@@ -391,20 +395,28 @@ module.exports = function () {
     location: new L.LatLng(30, 20),
     zoom: 2.5
   };
+  var mismanagedCenter = {
+    location: new L.LatLng(10, 100),
+    zoom: 3.5
+  };
   var setLocation = center;
 
   var _map = L.map('map', {
-    zoomControl: false
+    zoomControl: false,
+    zoomSnap: 0.01
   }).setView(setLocation.location, setLocation.zoom);
 
   var svg = d3.select('#map').select('svg');
   var pointsGroup = svg.select('g').attr('class', 'points').append('g');
+  var northwestCorner = L.latLng(120, -171);
+  var southeastCorner = L.latLng(-40, 175);
+  var bounds = L.latLngBounds(northwestCorner, southeastCorner);
+
+  _map.setZoom(_map.getBoundsZoom(bounds));
+
   var svgLayer = L.svg();
   svgLayer.addTo(_map);
   return {
-    settings: {
-      barHeight: 400
-    },
     init: function init() {
       var self = this;
       self.map();
@@ -440,7 +452,6 @@ module.exports = function () {
 
         if (d['Partner Name'] === 'World') {
           worldTotal = row.amount;
-          console.log(worldTotal);
         }
 
         if (d['Partner Name'] === 'Europe & Central Asia' || d['Partner Name'] === 'East Asia & Pacific' || d['Partner Name'] === 'North America' || d['Partner Name'] === 'Latin America & Caribbean' || d['Partner Name'] === 'Middle East & North Africa' || d['Partner Name'] === 'South Asia' || d['Partner Name'] === 'Sub-Saharan Africa' || d['Partner Name'] === 'Australia' || d['Partner Name'] === 'World') {
@@ -449,6 +460,17 @@ module.exports = function () {
           row.country = d['Partner Name'];
         }
 
+        if (row.amount !== '' && row.country) return row;
+      }
+
+      d3.csv('./assets/js/data/mismanaged.csv', prepareMismanaged).then(function (data) {
+        mismanagedData = data;
+      });
+
+      function prepareMismanaged(d) {
+        var row = [];
+        row.amount = d['Share of plastic inadequately managed (%)'];
+        row.country = d['Entity'];
         if (row.amount !== '' && row.country) return row;
       }
 
@@ -519,6 +541,8 @@ module.exports = function () {
       }).addTo(_map);
     },
     showCountries: function showCountries() {
+      var self = this;
+
       var sortAmountDesc = function sortAmountDesc(a, b) {
         return b.amount - a.amount;
       };
@@ -528,17 +552,19 @@ module.exports = function () {
       var min = mapData[19].amount;
       var max = mapData[0].amount;
 
-      function style(feature) {
+      function styleFeature(feature) {
         var result;
         mapData.forEach(function (row) {
           if (feature.properties.NAME === row.country) {
+            //console.log(row.amount / 100)
             result = {
               fillColor: '#E66200',
               weight: .25,
               opacity: 1,
               // stroke opacity
               color: 'black',
-              fillOpacity: row.amount / max * .4 + .3
+              fillOpacity: row.amount / max * .4 + .3 //fillOpacity: row.amount / 100
+
             };
           }
         });
@@ -554,23 +580,38 @@ module.exports = function () {
       }
 
       countriesLayer = L.geoJson(geojson, {
-        style: style
+        style: styleFeature,
+        onEachFeature: self.eachGeoFeature
       });
       countriesLayer.addTo(_map);
+    },
+    eachGeoFeature: function eachGeoFeature(feature, layer) {
+      layer.on({
+        mouseover: function mouseover(d) {
+          //d.target.feature.bindTooltip("my tooltip text").openTooltip();
+          var countryName = d.target.feature.properties.NAME_EN; //L.polygon(d.target.feature.geometry.coordinates).bindTooltip("my tooltip").addTo(map);
+          //console.log(d.target.feature.geometry.coordinates[0][0][0]);
+        },
+        mouseout: function mouseout() {//console.log('out');
+        },
+        click: function click() {//console.log('click');
+        }
+      });
     },
     addBarGraph: function addBarGraph() {
       var self = this;
       graph = document.querySelector('.geo-vis .bar-graph');
       var graphicContainer = graph.parentElement;
-      var padding = {
+      barPadding = {
         top: 60,
         right: 100,
         bottom: 80,
         left: 150
       };
-      var width = graphicContainer.offsetWidth - padding.left - padding.right;
-      var height = self.settings.barHeight - padding.top - padding.bottom;
-      var barHeight = 5;
+      var barGraphHeight = 425;
+      var barHeight = 7;
+      barWidth = graphicContainer.offsetWidth - barPadding.left - barPadding.right;
+      barGraphInnerHeight = barGraphHeight - barPadding.top - barPadding.bottom;
       var maxValue = d3.max(mapData, function (d) {
         return d.amount;
       });
@@ -587,31 +628,50 @@ module.exports = function () {
       var count = 21;
       var y = d3.scaleBand().domain(mapData.map(function (d) {
         return d.country;
-      })).range([height, 0]);
-      var x = d3.scaleLinear().domain([0, maxValue]).range([0, width - 100]);
-      var svg = d3.select(graph).append('svg').attr('width', width + padding.left + padding.right).attr('height', height + padding.top + padding.bottom).append('g').attr('transform', 'translate(' + padding.left + ',' + padding.top + ')');
-      svg.selectAll('.bar').data(mapData).enter().append('rect').attr('class', 'bar').attr('y', function (d) {
+      })).range([barGraphInnerHeight, 0]);
+      var x = d3.scaleLinear().domain([0, maxValue]).range([0, barWidth - 100]);
+      var svg = d3.select(graph).append('svg').attr('width', barWidth + barPadding.left + barPadding.right).attr('height', barGraphInnerHeight + barPadding.top + barPadding.bottom).append('g').attr('transform', 'translate(' + barPadding.left + ',' + barPadding.top + ')');
+      svg.selectAll('.bar').data(mapData).enter() // .append('rect').attr('height', barHeight).attr('barWidth', function(d) { // make clear hover interaction
+      // 	return x(d.amount);
+      // }).style('fill', 'red').attr('y', function (d) {
+      // 	return y(d.country) + (y.bandwidth());
+      // })
+      .append('rect').on('mouseover', function (event) {
+        d3.event.target.style.fill = selectColor;
+      }).on('mouseout', function () {
+        d3.event.target.style.fill = defaultColor;
+      }).on('click', function (d) {
+        // console.log(d);
+        // console.log(worldTotal, d.amount);
+        var percentage = Math.round(10 * parseInt(d.amount) / worldTotal) / 10;
+        if (percentage < 1) Math.round(100 * parseInt(d.amount) / worldTotal) / 100;
+        self.updateStats(percentage, d.country, d.amount); // why is percent wrong?
+      }).attr('class', 'bar').attr('y', function (d) {
         return y(d.country) + (y.bandwidth() / 2 - barHeight / 2);
       }).attr('height', barHeight).attr('width', 0).transition().delay(function (d, i) {
         return i * 40;
       }).ease(d3.easeCubicOut).duration(300).attr('width', function (d) {
         return x(d.amount);
       });
-      svg.append('g').attr('transform', 'translate(0,' + (height + 6) + ')').call(d3.axisBottom(x));
+      svg.append('g').attr('transform', 'translate(0,' + (barGraphInnerHeight + 6) + ')').call(d3.axisBottom(x));
       svg.append('g').call(d3.axisLeft(y).tickSize(0));
-      var xAxisHeight = 20;
+      var titleHeight = 20;
       barGraphTitle = svg.append('text').attr('class', 'x-axis-label').html('Top 20 Global Plastic Exporters (USD)');
       var textWidth = barGraphTitle.node().getBBox().width;
       var textHeight = barGraphTitle.node().getBBox().height;
-      barGraphTitle.attr('transform', 'translate(' + (width / 2 - textWidth / 2 - padding.left / 2) + ', ' + (height + xAxisHeight + padding.bottom / 2) + ')');
+      barGraphTitle.attr('transform', 'translate(' + (barWidth / 2 - textWidth / 2 - barPadding.left / 2) + ', ' + (barGraphInnerHeight + titleHeight + barPadding.bottom / 2) + ')');
     },
     updateStats: function updateStats(percent, region, value) {
-      var percentageOfTotal = document.querySelector('.percentage-of-total');
-      var country = document.querySelector('.country');
-      var valuation = document.querySelector('.valuation span');
-      percentageOfTotal.textContent = percent + '%';
+      var country = document.querySelector('.geo-vis .stats .country');
+      var percentageOfTotal = document.querySelector('.geo-vis .stats .percentage-of-total');
+      var valuation = document.querySelector('.geo-vis .stats .valuation span');
       country.textContent = region;
+      percentageOfTotal.textContent = percent + '%';
       valuation.textContent = parseInt(value).toLocaleString();
+    },
+    setStatsLabel: function setStatsLabel(label) {
+      var labelElement = document.querySelector('.geo-vis .stats .label');
+      labelElement.textContent = label;
     },
     bindUI: function bindUI() {
       var self = this;
@@ -621,14 +681,35 @@ module.exports = function () {
         self.reset();
         self.showCountries();
         self.addBarGraph();
+        self.setStatsLabel(exportsStatsLabel);
+        barGraphTitle.html('Top 20 Global Plastic Exporters (USD)');
+
+        _map.flyTo(center.location, center.zoom);
       });
       var importsButton = document.querySelector('#plasticImports');
       if (importsButton) importsButton.addEventListener('click', function () {
         mapData = importsData;
         self.reset();
-        barGraphTitle = svg.append('text').html('Top 20 Global Plastic Importers (USD)');
         self.showCountries();
         self.addBarGraph();
+        self.setStatsLabel(exportsStatsLabel);
+        barGraphTitle.html('Top 20 Global Plastic Importers (USD)');
+
+        _map.flyTo(center.location, center.zoom);
+      });
+      var mismanagedButton = document.querySelector('#plasticMismanaged');
+      if (mismanagedButton) mismanagedButton.addEventListener('click', function () {
+        mapData = mismanagedData;
+        self.reset();
+        self.showCountries();
+        self.addBarGraph();
+        self.setStatsLabel(exportsStatsLabel);
+        barGraphTitle.html('Percentage of Country\'s Plastic Waste that is Mismanaged, Global Top 20');
+        var textWidth = barGraphTitle.node().getBBox().width;
+        var textHeight = barGraphTitle.node().getBBox().height;
+        barGraphTitle.attr('transform', 'translate(' + (barWidth / 2 - textWidth / 2 - barPadding.left / 2) + ', ' + (barGraphInnerHeight + textHeight + barPadding.bottom / 2) + ')');
+
+        _map.flyTo(mismanagedCenter.location, mismanagedCenter.zoom);
       });
     },
     reset: function reset() {
@@ -660,8 +741,10 @@ module.exports = function () {
         });
       }
 
-      var svgWidth = 960,
-          svgHeight = 560,
+      var parentElement = document.querySelector('.paracoords');
+      var svgWidth = parentElement.offsetWidth * .60,
+          // setting width to 60% of parent container for responsiveness. Adjust if necessary.
+      svgHeight = window.innerHeight * .60,
           margin = {
         top: 30,
         right: 100,
@@ -763,13 +846,14 @@ module.exports = function () {
           });
           var slider_td = tr.append('td');
           var slider = slider_td.append('input').attr('type', 'range').attr('min', '0').attr('max', '100').property('value', '50');
-          slider.on('change', function () {
+          slider.on('input', function () {
             function_keys[d] = slider.property('value') / 100;
             data = calcImpactMetric(data);
             data = calcRankings(data);
             draw(data);
           });
         });
+        selectors.append('div').attr('class', 'legend').append('div').attr('class', 'colorscale-gradient');
         var g = svg.selectAll(".dimension").data(dimensions).enter().append("g").attr("class", "dimension").attr("transform", function (d) {
           return "translate(" + x(d) + ")";
         }).call(d3.drag().on("start", function (d) {
@@ -817,6 +901,8 @@ module.exports = function () {
           return '<img src="./assets/img/countries/' + d.country + '.svg"></img><span>' + toTitleCase(d.country.replace(new RegExp('-', 'gi'), ' ')) + '</span>';
         }).on('mousedown', function (d) {
           d3.event.preventDefault();
+          var country_container_element = document.querySelector('.country-container');
+          var storedScrollLocation = country_container_element.scrollTop;
 
           if (selected.indexOf(d.code) >= 0) {
             for (var i = 0; i < selected.length; i++) {
@@ -829,6 +915,9 @@ module.exports = function () {
             document.getElementById(d.code).selected = true;
           }
 
+          setTimeout(function () {
+            country_container_element.scrollTop = storedScrollLocation;
+          }, 0);
           draw(data);
         });
       }
@@ -844,7 +933,7 @@ module.exports = function () {
         // draw the forerground, do the same thing. Note that tooltips
         // are also included here. 
         var color = d3.scaleLinear().domain(d3.extent(data, function (d) {
-          return d.pollute_rank - d.impact_rank;
+          return d.inadequately_managed_plastic;
         })).range([0, 1]);
         var filtered_data = data.filter(function (d) {
           return selected.indexOf(d.code) >= 0;
@@ -856,7 +945,7 @@ module.exports = function () {
         foreground_enter = foreground_group.enter().append('path').on('mouseover', tooltip).on('mouseout', function () {
           tooltip_div.style('opacity', 0);
         }).attr('stroke', function (d) {
-          return d3.interpolateCool(color(d.pollute_rank - d.impact_rank));
+          return d3.interpolateRgb('red', 'blue')(color(d.inadequately_managed_plastic));
         });
         foreground_group = foreground_group.merge(foreground_enter).attr('d', line).style('stroke-width', 5).style('opacity', function (d) {
           return selected.indexOf(d.code) >= 0 ? 1 : 0;
@@ -1172,6 +1261,7 @@ module.exports = function () {
   var unitVisContainer = document.querySelector('.plastic-longevity .unit-vis-viewport');
   var message = document.querySelector('.plastic-longevity .message');
   var countElement = document.querySelector('.use-ratio .count');
+  var generationLength = 76;
   var center = {
     x: width / 2,
     y: height / 2
@@ -1194,13 +1284,13 @@ module.exports = function () {
         useTimeDisplay: '2 hours',
         mass: '4.48g',
         breakdownTime: 425,
-        breakdownTimeDisplay: '450 years'
+        breakdownTimeDisplay: '425 years'
       },
       vegetable: {
         title: 'Vegetable',
         path: './assets/svg/vegetable.svg',
         useTimeHours: 2,
-        useTimeDisplay: '2 hour',
+        useTimeDisplay: '2 hours',
         mass: '',
         breakdownTime: .246575,
         breakdownTimeDisplay: '3 months'
@@ -1218,14 +1308,14 @@ module.exports = function () {
   };
   return {
     init: function init() {
-      this.useRatio(3, 450);
+      this.useRatio(settings.materials['bottle'].useTimeHours, settings.materials['bottle'].breakdownTime);
       this.longevityTimescale();
       this.bindUI();
       this.miniMap();
+      this.setMaterial('bottle');
     },
     longevityTimescale: function longevityTimescale() {
       var self = this;
-      var generationLength = 76;
       var ratio, remainder;
       var glyph = document.querySelector('.generation-glyphs .frame');
       var graph = document.querySelector('.longevity');
@@ -1300,11 +1390,7 @@ module.exports = function () {
         var newYear = settings.materials[selector.value].breakdownTime;
         data = [{
           'years': newYear
-        }]; // if (newYear < 1) {
-        // 	document.querySelector('.generation-glyphs').innerHTML = '';
-        // 	document.querySelector('.longevity').innerHTML = '';
-        // 	self.longevityTimescale();
-        // }
+        }];
 
         if (newYear < 1) {
           document.querySelector('.longevity').innerHTML = '';
@@ -1342,6 +1428,8 @@ module.exports = function () {
         lifetimesValue = lifetimesValue.toFixed(1);
       }
       lifetimes.textContent = lifetimesValue.toString() + ' lifetimes';
+      var averageUseTimeElement = document.querySelector('.baseline span');
+      averageUseTimeElement.textContent = '(' + material.useTimeDisplay + ')';
     },
     useRatio: function useRatio(useTimeHours, decomposeYears) {
       var hoursInAYear = 8760;
@@ -1399,8 +1487,9 @@ module.exports = function () {
       }
 
       var yearsPerCanvas = useTimeHours * countPerCanvas / hoursInAYear;
-      var searchingFor = 100;
+      var searchingFor = generationLength;
       var canvasCopies = Math.floor(ratio / countPerCanvas);
+      var generationCount = 1;
 
       for (var i = 0; i < canvasCopies + 1; i++) {
         // duplicate multiple copies of the canvas to avoid millions of loops
@@ -1409,10 +1498,13 @@ module.exports = function () {
         if (totalYears > searchingFor) {
           var node = document.createElement('div');
           node.classList.add('year-indicator');
-          var textnode = document.createTextNode(searchingFor.toString() + ' years');
+          var stringResult = generationCount + ' human generations';
+          if (generationCount === 1) stringResult = stringResult.slice(0, -1);
+          var textnode = document.createTextNode(stringResult);
           node.appendChild(textnode);
           element.appendChild(node);
-          searchingFor += 100;
+          searchingFor += generationLength;
+          generationCount++;
         }
 
         element.append(cloneCanvas(canvas));

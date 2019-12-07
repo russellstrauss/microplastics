@@ -35,6 +35,7 @@ div#selectors {
     stroke: #ddd;
     shape-rendering: crispEdges;
     opacity: 0.3;
+	pointer-events: none;
   }
   
   .foreground path {
@@ -105,6 +106,10 @@ div#selectors {
 
   table.slider-table {
     width: 350px;
+	
+	input {
+		cursor: pointer;
+	}
   }
 
   select.country-container {

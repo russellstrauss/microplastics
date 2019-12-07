@@ -1,16 +1,16 @@
 .cumulative-plastics {
 	padding: 50px 15px;
-	
+
 	h2 {
 		text-align: center;
 	}
-	  
-	
-    #play-button {
+
+
+	#play-button {
 		font-size: 14px;
 		padding: 6px 20px;
 		display: block;
-		margin: 140px auto 40px auto;
+		margin: 20px auto 0 auto;
 		background: #feb121;
 		border-radius: 3px;
 		border: none;
@@ -18,13 +18,9 @@
 		min-width: 60px;
 		cursor: pointer;
 		border-radius: 20px;
-		
+
 		&:hover {
 			background-color: #a2a2a2;
-		  }
-	  }
-  
-	//   #play-button:hover {
-	// 	background-color: #696969;
-	//   }    
+		}
+	}
 }

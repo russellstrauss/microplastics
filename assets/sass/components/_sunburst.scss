@@ -1,6 +1,7 @@
 div.sunburst {
-    margin-left:auto;
-    margin-top:-500px;
-    margin-bottom:-300px;
-    width:67%;
+	
+	svg {
+		display: block;
+		margin: auto;
+	}
 }

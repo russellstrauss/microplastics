@@ -65,7 +65,7 @@ module.exports = function () {
 			//require()('@observablehq/flare').then((data, error) => { // works!
 			//d3.json(dataURL).then((data, error) => { // works behind proxy!
 			d3.json("./assets/js/data/sunburst-countries.json").then((data, error) => { // works!
-				console.log(data);
+				//console.log(data);
 				const root = partition(data);
 				const color = d3.scaleOrdinal()
 								.range(d3.quantize(d3.interpolateRainbow,

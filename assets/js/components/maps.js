@@ -263,6 +263,9 @@ module.exports = function() {
 					let countryMismanaged = '';
 					
 					let hoveredCountryExports = exportsData.filter(function(row) {
+						
+						console.log(row.country === countryName, row.country, countryName)
+						
 						if (row.country === countryName) return row;
 					});
 					let hoveredCountryImports = importsData.filter(function(row) {

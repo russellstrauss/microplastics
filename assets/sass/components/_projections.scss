@@ -35,4 +35,27 @@
 			}
 		}
 	}
+	
+	.legend-axis {
+		position: relative;
+		
+		* {
+			background-color: black;
+		}
+		
+		.tick-left {
+			height: 5px;
+			width: 1px;
+		}
+		
+		.axis-line {
+			height: 1px;
+			width: 100%;
+		}
+		
+		.tick-right {
+			height: 5px;
+			width: 1px;
+		}
+	}
 }

@@ -972,7 +972,7 @@ module.exports = function () {
         }));
         g.append("g").attr("class", "axis").each(function (d) {
           if (d == 'pollute_rank') d3.select(this).call(d3.axisLeft().scale(y[d]));else if (d == 'impact_rank') d3.select(this).call(d3.axisRight().scale(y[d]));
-        }).append("text").style("text-anchor", "middle").attr("fill", "black").attr("font-size", "12").attr("y", -9).text(function (d) {
+        }).append("text").style("text-anchor", "middle").attr("fill", "white").attr("font-size", "12").attr("y", -9).text(function (d) {
           if (d == 'pollute_rank') return "Contribution (rank)";else if (d == 'inadequately_managed_plastic_rank') return "Inadequately Managed Plastic (Rank)";else return "Impact (rank)";
         });
         g.append("g").attr("class", "brush").each(function (d) {
@@ -1044,7 +1044,7 @@ module.exports = function () {
         }).attr('stroke', function (d) {
           return d3.interpolateRgb('red', 'rgb(0, 176, 255)')(color(d.inadequately_managed_plastic));
         });
-        foreground_group = foreground_group.merge(foreground_enter).attr('d', line).style('stroke-width', 5).style('opacity', function (d) {
+        foreground_group = foreground_group.merge(foreground_enter).attr('d', line).style('stroke-width', 3).style('opacity', function (d) {
           return selected.indexOf(d.code) >= 0 ? 1 : 0;
         });
         background_group = background.selectAll('path').data(filtered_data, function (d) {

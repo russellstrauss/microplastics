@@ -5,8 +5,8 @@ $foreground: white;
 	@include disable-highlight;
 	background-color: $background;
 	color: $foreground;
-	padding: 100px 15px;
-	margin-top: 300px;
+	padding: 250px 15px;
+	// margin-top: 300px;
 	
 	.selector {
 		padding: 0 15px;

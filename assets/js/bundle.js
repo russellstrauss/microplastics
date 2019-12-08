@@ -973,7 +973,7 @@ module.exports = function () {
         g.append("g").attr("class", "axis").each(function (d) {
           if (d == 'pollute_rank') d3.select(this).call(d3.axisLeft().scale(y[d]));else if (d == 'impact_rank') d3.select(this).call(d3.axisRight().scale(y[d]));
         }).append("text").style("text-anchor", "middle").attr("fill", "white").attr("font-size", "12").attr("y", -9).text(function (d) {
-          if (d == 'pollute_rank') return "Contribution (rank)";else if (d == 'inadequately_managed_plastic_rank') return "Inadequately Managed Plastic (Rank)";else return "Impact (rank)";
+          if (d == 'pollute_rank') return "Who wastes the most? (rank)";else if (d == 'inadequately_managed_plastic_rank') return "Inadequately Managed Plastic (Rank)";else return "Who is impacted the most? (rank)";
         });
         g.append("g").attr("class", "brush").each(function (d) {
           var _this = this;

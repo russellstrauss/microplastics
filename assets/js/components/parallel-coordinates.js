@@ -255,11 +255,11 @@ module.exports = function () {
 					.attr("y", -9)
 					.text(function (d) { 
 						if (d == 'pollute_rank')
-							return "Contribution (rank)";
+							return "Who wastes the most? (rank)";
 						else if (d == 'inadequately_managed_plastic_rank')
 							return "Inadequately Managed Plastic (Rank)"
 						else
-							return "Impact (rank)";
+							return "Who is impacted the most? (rank)";
 					});
 
 				g.append("g")

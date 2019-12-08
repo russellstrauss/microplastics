@@ -1,9 +1,9 @@
 .geo-vis {
-	padding: 100px 0;
+	padding: 300px 0;
 	background-color: black;
 	color: white;
 	text-align: center;
-	margin-top: 0;
+	top: 100%;
 	
 	p {
 		max-width: 1000px;
@@ -61,12 +61,13 @@
 	h2 {
 		text-align: center;
 		padding: 0 15px;
-		margin-bottom: 50px;
+		margin-bottom: 200px;
 	}
 	
 	.ui {
-		margin-top: 50px;
-		
+		margin-top: 70px;
+		margin-bottom: 10px;
+
 		button {
 			font-size: 14px;
 			padding: 6px 20px;
@@ -80,7 +81,7 @@
 			cursor: pointer;
 			border-radius: 20px;
 			transition: all 150ms ease;
-			opacity: .75;
+			opacity: .55;
 			
 			&:hover {
 				opacity: 1;
@@ -95,7 +96,6 @@
 	}
 	
 	button {
-		
 		&:hover {
 			background-color: darken(#E6965B, 5%);
 			outline: none;
@@ -109,8 +109,8 @@
 		background-color: black;
 		border: 0;
 		margin-top: 50px;
-		border-top: 1px solid rgba(255, 255, 255, .2);
-		border-bottom: 1px solid rgba(255, 255, 255, .2);
+		border-top: 1px solid rgba(165, 165, 165, 0.2);
+		border-bottom: 1px solid rgba(165, 165, 165, 0.2);
 		
 		.zooms {
 			position: relative;
@@ -153,7 +153,8 @@
 			display: flex;
 			flex-direction: column;
 			justify-content: center;
-			
+			margin-bottom: 70px;
+			margin-left:20px;
 			@include tablet {
 				margin-top: 40px;
 				width: 20%;
@@ -213,9 +214,10 @@
 				}
 				
 				.x-axis-label, .y-axis-label {
+					
 					font-family: 'Abel', sans-serif;
 					font-size: 22px;
-					font-weight: 600;
+					font-weight: 300;
 				}
 				
 				.bar {
@@ -238,5 +240,12 @@
 	
 	.insights {
 		margin-top: 100px;
+		p{
+			color: rgb(177, 177, 177);
+			margin-bottom: 20px;
+			margin-left: 8%;
+			width:30%;
+			font-size:14px;
+		}
 	}
 }

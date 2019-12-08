@@ -259,7 +259,7 @@ module.exports = function () {
 							
 							let plasticAmount = parseInt(plasticProductionData[key].Cumulative.toLocaleString());
 							
-							totalWeightText.textContent = parseInt(plasticProductionData[key].Cumulative).toLocaleString() +' Metric Tons';
+							totalWeightText.textContent = parseInt(plasticProductionData[key].Cumulative).toLocaleString() +' (MT)';
 
 							let monumentImages = document.querySelectorAll('.monument-visualization .image-container img');
 							monumentImages.forEach(function(image) {

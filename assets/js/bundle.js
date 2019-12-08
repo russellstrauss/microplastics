@@ -150,7 +150,7 @@ module.exports = function () {
 
           if (parseInt(plasticProductionData[key].Year) === parseInt(year)) {
             var plasticAmount = parseInt(plasticProductionData[key].Cumulative.toLocaleString());
-            totalWeightText.textContent = parseInt(plasticProductionData[key].Cumulative).toLocaleString() + ' Metric Tons';
+            totalWeightText.textContent = parseInt(plasticProductionData[key].Cumulative).toLocaleString() + ' (MT)';
             var monumentImages = document.querySelectorAll('.monument-visualization .image-container img');
             monumentImages.forEach(function (image) {
               image.style.opacity = "0";
@@ -1690,11 +1690,11 @@ module.exports = function () {
             return d.data.name;
           }).reverse().join("/"), "\n").concat(format(d.value));
         });
-        var label = g.append("g").attr("pointer-events", "none").attr("text-anchor", "middle").style("user-select", "none").selectAll("text").data(root.descendants().slice(1)).join("text").attr("dy", "0.35em").attr("fill-opacity", function (d) {
+        var label = g.append("g").attr("pointer-events", "none").attr("class", "text").attr("text-anchor", "middle").style("user-select", "none").selectAll("text").data(root.descendants().slice(1)).join("text").attr("dy", "0.35em").attr("fill-opacity", function (d) {
           return +labelVisible(d.current);
         }).attr("transform", function (d) {
           return labelTransform(d.current);
-        }).text(function (d) {
+        }).attr('font-size', '11px').style("fill", "rgb(200, 200, 200)").text(function (d) {
           return d.data.name;
         });
         var parent = g.append("circle").datum(root).attr("r", radius).attr("fill", "none").attr("pointer-events", "all").on("click", clicked);

@@ -1,12 +1,23 @@
 .intro {
 	background-color: white;
-	
+
+	.introtext{
+			position: absolute;
+			top: 130%;
+			left:51%;
+			transform: translate(-50%);
+			color: rgb(142, 101, 24);
+			z-index: 2;
+	}
 	.hero {
+		
 		background-color: white;
 		//height: 2500px;
 		background-size: cover;
 		background-repeat: no-repeat;
 		background-position: center right;
+
+		
 	}
 	
 	h2 {
@@ -127,24 +138,24 @@
 			}
 			
 			.bag {
-				animation: spin 200s linear infinite;
-				
+				animation: spin 100s linear infinite;
+				opacity: 0.5;
 				position: absolute;
 				top: 75%;
 				left: 50%;
 				transform: translate(-50%, -50%);
 			}
 			
-			// @keyframes spin { 
+			@keyframes spin { 
 				
-			// 	50% { 
-			// 		transform: rotate(-180deg) translateX(600px);
-			// 	}
+				50% { 
+					transform: rotate(-180deg) translateX(1px);
+				}
 				
-			// 	100% { 
-			// 		transform: rotate(360deg) translateX(-400px);
-			// 	}
-			// }
+				100% { 
+					transform: rotate(360deg) translateX(-1px);
+				}
+			}
 			
 			.black {
 				background-color: black;

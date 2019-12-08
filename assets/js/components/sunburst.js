@@ -5,7 +5,7 @@ module.exports = function () {
 	
 	return {
 		
-		
+	
 		settings: {
 
 		},
@@ -106,6 +106,7 @@ module.exports = function () {
 
 				const label = g.append("g")
 							.attr("pointer-events", "none")
+							.attr("class", "text")
 							.attr("text-anchor", "middle")
 							.style("user-select", "none")
 							.selectAll("text")
@@ -114,6 +115,8 @@ module.exports = function () {
 							.attr("dy", "0.35em")
 							.attr("fill-opacity", d => +labelVisible(d.current))
 							.attr("transform", d => labelTransform(d.current))
+							.attr('font-size', '11px')
+							.style("fill", "rgb(200, 200, 200)")
 							.text(d => d.data.name);
 
 				const parent = g.append("circle")

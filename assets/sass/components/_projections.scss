@@ -1,19 +1,26 @@
 .projections {
 	background-color: black;
 	color: white;
-	//border: 1px solid red;
 	padding: 300px 15px;
 	
 	h2 {
-		margin-bottom: 100px;
+		margin-bottom: 50px;
+	}
+	
+	p {
+		text-align: center;
 	}
 	
 	.plot-container {
 		max-width: 1200px;
-		margin: 0 auto;
+		margin: 100px auto 0 auto;
 		display: block;
 		
 		.line-graph {
+			
+			text {
+				fill: white;
+			}
 			
 			path {
 				stroke: white;
@@ -21,6 +28,10 @@
 			
 			.line {
 				stroke: none;
+			}
+			
+			.x-axis-label {
+				font-size: 10px;
 			}
 		}
 	}

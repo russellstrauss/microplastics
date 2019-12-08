@@ -248,15 +248,15 @@ module.exports = function () {
 					.append("text")
 					.style("text-anchor", "middle")
 					.attr("fill", "black")
-					.attr("font-size", "12")
+					.attr("font-size", "18")
 					.attr("y", -9)
 					.text(function (d) { 
 						if (d == 'pollute_rank')
-							return "Contribution (rank)";
+							return "How much does the country contribute to plastic pollution (rank)";
 						else if (d == 'inadequately_managed_plastic_rank')
 							return "Inadequately Managed Plastic (Rank)"
 						else
-							return "Impact (rank)";
+							return "How much does the country get impacted by plastic pollution (rank)";
 					});
 
 				g.append("g")

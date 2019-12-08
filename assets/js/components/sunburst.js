@@ -197,7 +197,7 @@ module.exports = function () {
 		
 		addIcon: function() {
 			
-			d3.xml('./assets/svg/up-one-level.svg').then(function(data) {
+			d3.xml('./assets/svg/goback.svg').then(function(data) {
 
 				let icon = data.documentElement;
 				upOneLevelIcon = icon;

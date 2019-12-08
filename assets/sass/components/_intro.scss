@@ -44,7 +44,7 @@
 		&.black {
 			background-color: black;
 			color: white;
-			padding-top: 600px;
+			padding-top: 100px;
 		}
 
 		&.intro-text {
@@ -53,11 +53,15 @@
 				margin-left: auto;
 				margin-right: auto;
 				margin-top: 0 auto;
+
 			}
 		}
 
 		&.in-our-world {
-			padding-bottom: 800px;
+			// padding-bottom: 800px;
+			h2{
+				margin-bottom:100px;
+			}
 		}
 
 		&.ocean-rays {

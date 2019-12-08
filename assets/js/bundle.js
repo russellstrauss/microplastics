@@ -969,8 +969,8 @@ module.exports = function () {
         }));
         g.append("g").attr("class", "axis").each(function (d) {
           if (d == 'pollute_rank') d3.select(this).call(d3.axisLeft().scale(y[d]));else if (d == 'impact_rank') d3.select(this).call(d3.axisRight().scale(y[d]));
-        }).append("text").style("text-anchor", "middle").attr("fill", "black").attr("font-size", "12").attr("y", -9).text(function (d) {
-          if (d == 'pollute_rank') return "Contribution (rank)";else if (d == 'inadequately_managed_plastic_rank') return "Inadequately Managed Plastic (Rank)";else return "Impact (rank)";
+        }).append("text").style("text-anchor", "middle").attr("fill", "black").attr("font-size", "18").attr("y", -9).text(function (d) {
+          if (d == 'pollute_rank') return "How much does the country contribute to plastic pollution (rank)";else if (d == 'inadequately_managed_plastic_rank') return "Inadequately Managed Plastic (Rank)";else return "How much does the country get impacted by plastic pollution (rank)";
         });
         g.append("g").attr("class", "brush").each(function (d) {
           var _this = this;
@@ -1376,7 +1376,7 @@ module.exports = function () {
           for (var y = dotRadius * 2; y < vh; y += cellSize) {
             context.beginPath();
             context.arc(x - dotRadius / 2, y - dotRadius / 2, dotRadius, 0, 2 * Math.PI, false);
-            context.fillStyle = 'rgba(255, 255, 255, .4)';
+            context.fillStyle = 'rgba(213, 140, 17, .4)';
             context.fill();
             count++;
           }

@@ -258,7 +258,7 @@ module.exports = function () {
 					for (var y = dotRadius * 2; y < vh; y += cellSize) {
 						context.beginPath();
 						context.arc(x-dotRadius/2, y-dotRadius/2, dotRadius, 0, 2 * Math.PI, false);
-						context.fillStyle = 'rgba(255, 255, 255, .4)';
+						context.fillStyle = 'rgba(213, 140, 17, .4)';
 						context.fill();
 						count++;
 					}

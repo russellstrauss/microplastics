@@ -250,7 +250,7 @@ module.exports = function () {
 					})
 					.append("text")
 					.style("text-anchor", "middle")
-					.attr("fill", "black")
+					.attr("fill", "white")
 					.attr("font-size", "12")
 					.attr("y", -9)
 					.text(function (d) { 
@@ -350,7 +350,7 @@ module.exports = function () {
 
 				foreground_group = foreground_group.merge(foreground_enter)
 					.attr('d', line)
-					.style('stroke-width', 5)
+					.style('stroke-width', 3)
 					.style('opacity', d => {
 						return selected.indexOf(d.code) >= 0 ? 1 : 0;
 					});

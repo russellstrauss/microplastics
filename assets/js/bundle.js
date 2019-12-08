@@ -945,7 +945,10 @@ module.exports = function () {
             draw(data);
           });
         });
-        selectors.append('div').attr('class', 'legend').append('div').attr('class', 'colorscale-gradient');
+        var legend = selectors.append('div').attr('class', 'legend');
+        legend.append('div').attr('class', 'colorscale-gradient');
+        var legendScale = document.querySelector('.legend-scale');
+        if (legendScale) legend.node().append(legendScale);
         var g = svg.selectAll(".dimension").data(dimensions).enter().append("g").attr("class", "dimension").attr("transform", function (d) {
           return "translate(" + x(d) + ")";
         }).call(d3.drag().on("start", function (d) {
@@ -992,7 +995,7 @@ module.exports = function () {
         country_container_group = country_container_group.merge(country_container_enter).attr('class', 'country').attr('id', function (d) {
           return d.code;
         }).html(function (d) {
-          return '<span>' + toTitleCase(d.country.replace(new RegExp('-', 'gi'), ' ')) + '</span>';
+          return '<img src="./assets/img/countries/' + d.country + '.svg"></img><span>' + toTitleCase(d.country.replace(new RegExp('-', 'gi'), ' ')) + '</span>';
         }).on('mousedown', function (d) {
           d3.event.preventDefault();
           country_container_element = document.querySelector('.country-container');

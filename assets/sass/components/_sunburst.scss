@@ -1,24 +1,21 @@
 
-.sun
-{ background-color: rgb(50, 50, 50);
-	width:100%;
-	height: 1800px;
-
-	h2{
-		display:table; margin-left: auto; margin-right: auto;
+.sunburst-container {
+	background-color: rgb(50, 50, 50);
+	padding: 100px 15px;
+	
+	h2 {
+		color: white;
 		text-align: center;
-		margin-top:200px;
-		margin-bottom:300px;
-
+		margin-top: 200px;
+		margin-bottom: 300px;
 	}
+	
 	.sunburst {
 		max-width: 1000px;
 		display: block;
-<<<<<<< HEAD
 		margin: 0 auto;
 		margin-bottom: 100px;
 	
-
 		svg {
 			width: 100%;
 			height: 100%;
@@ -29,24 +26,15 @@
 				cursor: pointer;
 			}
 			
-=======
-		margin: auto;
-		overflow: visible;
-		
-		circle {
-			cursor: pointer;
-		}
-		
->>>>>>> 5f65dea74e024db124f020eee31cccd1c29c650f
-		.up-one-level {
-			transition: opacity 550ms ease-in;
-			opacity: 0;
-			
-			path {
-				pointer-events: none;
-				fill: #ccc;
+			.up-one-level {
+				transition: opacity 550ms ease-in;
+				opacity: 0;
+				
+				path {
+					pointer-events: none;
+					fill: #ccc;
+				}
 			}
 		}
 	}
-}
 }

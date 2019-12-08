@@ -1,6 +1,6 @@
 module.exports = function () {
 	
-	var svg;
+	var svg, clicked;
 	var upOneLevelIcon;
 	var stats = document.querySelector('.sunburst-component .stats');
 	
@@ -159,7 +159,7 @@ module.exports = function () {
 						upOneLevelIcon.style.opacity = '1';
 					}
 					
-					if (p.depth < 2) self.updateStats(p.children, p);
+					if (p.children.length < 10) self.updateStats(p.children, p);
 					else {
 						self.hideStats();
 					}
@@ -183,12 +183,10 @@ module.exports = function () {
 				percentageElement.classList.add('percentage');
 				regionNameElement.classList.add('region-name');
 				
-				let percentageValue = (parent.value / child.value);
+				let percentageValue = (child.value / parent.value) * 100;
 				
-				console.log(parent, child);
-				
-				percentageElement.innerText = percentageValue.toFixed(1) + '%';
-				console.log(percentageValue)
+				percentageElement.innerText = percentageValue.toFixed(0) + '%';
+				if (percentageValue < 1) percentageElement.innerText = '‹1%';
 				regionNameElement.innerText = regionName;
 				regionElement.appendChild(percentageElement);
 				regionElement.appendChild(regionNameElement);
@@ -218,6 +216,18 @@ module.exports = function () {
 				.attr('x', (sunburstWidth/2 - iconWidth/2) - (iconWidth*.02))
 				.attr('y', sunburstWidth/2 - iconHeight/2);
 			});
+		},
+		
+		initButtons: function() {
+			
+			let buttons = document.querySelectorAll('.sunburst .region-selector buttons');
+			if (buttons) buttons.foreach(function(button) {
+				
+				button.addEventListener('click', function() {
+					//clicked(root);
+				});
+			});
+			
 		}
 	}
 }

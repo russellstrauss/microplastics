@@ -50,14 +50,14 @@ div#selectors {
     shape-rendering: crispEdges;
   }
   
-  .axis line,
+  .paracoords .axis line,
   .axis path {
     fill: none;
     stroke: #000;
     shape-rendering: crispEdges;
   }
   
-  .axis text {
+  .paracoords .axis text {
     text-shadow: 0 1px 0 #fff, 1px 0 0 #fff, 0 -1px 0 #fff, -1px 0 0 #fff;
     cursor: move;
   }

@@ -1,0 +1,27 @@
+.projections {
+	background-color: black;
+	color: white;
+	//border: 1px solid red;
+	padding: 300px 15px;
+	
+	h2 {
+		margin-bottom: 100px;
+	}
+	
+	.plot-container {
+		max-width: 1200px;
+		margin: 0 auto;
+		display: block;
+		
+		.line-graph {
+			
+			path {
+				stroke: white;
+			}
+			
+			.line {
+				stroke: none;
+			}
+		}
+	}
+}

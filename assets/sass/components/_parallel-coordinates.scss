@@ -1,13 +1,13 @@
 .parallel-coordinates-intro {
-	padding: 300px 15px;
-	
+	padding: 50px 15px;
+	background-color: orange;
 	h2 {
-		margin: 300px 0;
+		margin: 200px 0;
 	}
 }
 
 .parallel-coordinates-container {
-	padding: 400px 15px;
+	padding-top: 200px ;
 	
 	.title {
 		text-align: center;
@@ -15,6 +15,7 @@
 
 	svg#paracoords-svg {
 		font: 10px sans-serif;
+		transition: 500ms ease-in;
 	}
 
 	div.paracoords {
@@ -32,13 +33,18 @@
 			display: flex;
 			justify-content: flex-end;
 			margin-bottom: 30px;
-
+			
+			.clear-all-countries{
+				background-color: orange;
+				color: white;
+				border-radius: 20px;
+			} 
 			button {
 				margin: 0;
 				transition: all 250ms ease;
 
 				&:hover {
-					background-color: #78909c;
+					background-color: orange;
 					color: white;
 				}
 			}

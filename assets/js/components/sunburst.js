@@ -100,7 +100,7 @@ module.exports = function () {
 					.on("click", clicked);
 
 				path.append("title")
-					.text(d => `${d.ancestors().map(d => d.data.name).reverse().join("/")}\n${format(d.value) + ' metric tons'}`);
+					.text(d => `${d.ancestors().map(d => d.data.name).reverse().join("/")}\n${format(d.value/1000) + ' metric tons'}`);
 
 				const label = g.append("g")
 							.attr("pointer-events", "none")

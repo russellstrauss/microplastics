@@ -150,7 +150,7 @@ module.exports = function () {
 
           if (parseInt(plasticProductionData[key].Year) === parseInt(year)) {
             var plasticAmount = parseInt(plasticProductionData[key].Cumulative.toLocaleString());
-            totalWeightText.textContent = parseInt(plasticProductionData[key].Cumulative).toLocaleString() + ' (MT)';
+            totalWeightText.textContent = parseInt(plasticProductionData[key].Cumulative).toLocaleString() + ' (metric tons)';
             var monumentImages = document.querySelectorAll('.monument-visualization .image-container img');
             monumentImages.forEach(function (image) {
               image.style.opacity = "0";
@@ -453,7 +453,7 @@ module.exports = function () {
         if (row.amount !== '' && row.country) return row;
       }
 
-      d3.csv('./assets/js/data/mismanaged.csv', prepareMismanaged).then(function (data) {
+      d3.csv('./assets/js/data/mismanagedglobal.csv', prepareMismanaged).then(function (data) {
         mismanagedData = data;
       });
 
@@ -636,8 +636,10 @@ module.exports = function () {
       barWidth = graphicContainer.offsetWidth - barPadding.left - barPadding.right;
       barGraphInnerHeight = barGraphHeight - barPadding.top - barPadding.bottom;
       var maxValue = d3.max(mapData, function (d) {
-        return d.amount;
+        console.log(d.amount);
+        return +d.amount;
       });
+      console.log(maxValue);
 
       var compare = function compare(a, b) {
         // sort vertical direction of bars
@@ -649,7 +651,7 @@ module.exports = function () {
       var worldPercent;
 
       if (mismanagedDataBoolean) {
-        worldPercent = top.amount;
+        worldPercent = Math.round(10 * top.amount) / 10;
       } else {
         worldPercent = Math.round(10 * worldTotal / top.amount) / 10;
       }
@@ -671,7 +673,7 @@ module.exports = function () {
         var percentage = (parseInt(d.amount) / parseInt(worldTotal) * 100).toFixed(1);
         if (percentage.toString().slice(-2) === '.0') percentage = parseInt(percentage).toFixed(0);
         if (mismanagedDataBoolean) self.updateStats(d.amount, d.country, '');else {
-          self.updateStats(percentage, d.country, d.amount); // why is percent wrong?
+          self.updateStats(percentage, d.country, d.amount);
         }
       }).on('mouseout', function () {
         d3.event.target.style.fill = defaultColor;
@@ -753,7 +755,7 @@ module.exports = function () {
         self.showCountries();
         self.addBarGraph();
         self.setStatsLabel(mismanagedStatsLabel);
-        barGraphTitle.html('Percentage of Country\'s Plastic Waste that is Mismanaged, Global Top 20');
+        barGraphTitle.html('Percentage of Global Mismanaged Plastic Waste, Global Top 20');
         var textWidth = barGraphTitle.node().getBBox().width;
         var textHeight = barGraphTitle.node().getBBox().height;
         barGraphTitle.attr('transform', 'translate(' + (barWidth / 2 - textWidth / 2 - barPadding.left / 2) + ', ' + (barGraphInnerHeight + textHeight + barPadding.bottom / 2) + ')');
@@ -1702,7 +1704,7 @@ module.exports = function () {
         path.append("title").text(function (d) {
           return "".concat(d.ancestors().map(function (d) {
             return d.data.name;
-          }).reverse().join("/"), "\n").concat(format(d.value) + ' metric tons');
+          }).reverse().join("/"), "\n").concat(format(d.value / 1000) + ' metric tons');
         });
         var label = g.append("g").attr("pointer-events", "none").attr("text-anchor", "middle").style("user-select", "none").selectAll("text").data(root.descendants().slice(1)).join("text").attr("dy", "0.35em").attr("fill-opacity", function (d) {
           return +labelVisible(d.current);

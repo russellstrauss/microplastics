@@ -96,7 +96,7 @@ module.exports = function() {
 				if (row.amount !== '' && row.country) return row;
 			}
 			
-			d3.csv('./assets/js/data/mismanaged.csv', prepareMismanaged).then(function(data) {
+			d3.csv('./assets/js/data/mismanagedglobal.csv', prepareMismanaged).then(function(data) {
 				mismanagedData = data;
 			});
 			
@@ -311,8 +311,11 @@ module.exports = function() {
 			barGraphInnerHeight = barGraphHeight - barPadding.top - barPadding.bottom;
 
 			let maxValue = d3.max(mapData, function (d) {
-				return d.amount;
+				console.log(d.amount);
+				return +d.amount;
 			});
+
+			console.log(maxValue);
 			
 			let compare = function(a, b) { // sort vertical direction of bars
 				return a.amount - b.amount;
@@ -323,7 +326,7 @@ module.exports = function() {
 			let top = mapData.slice(0)[19];
 			let worldPercent;
 			if (mismanagedDataBoolean) {
-				worldPercent = top.amount;
+				worldPercent = Math.round(10*top.amount)/10;
 			}
 			else {
 				worldPercent = Math.round(10*worldTotal/top.amount)/10;
@@ -359,7 +362,7 @@ module.exports = function() {
 				if (percentage.toString().slice(-2) === '.0') percentage = parseInt(percentage).toFixed(0);
 				if (mismanagedDataBoolean) self.updateStats(d.amount, d.country, '')
 				else {
-					self.updateStats(percentage, d.country, d.amount); // why is percent wrong?
+					self.updateStats(percentage, d.country, d.amount);
 				}
 			})
             .on('mouseout', function() {
@@ -474,7 +477,7 @@ module.exports = function() {
 				self.showCountries();
 				self.addBarGraph();
 				self.setStatsLabel(mismanagedStatsLabel);
-				barGraphTitle.html('Percentage of Country\'s Plastic Waste that is Mismanaged, Global Top 20');
+				barGraphTitle.html('Percentage of Global Mismanaged Plastic Waste, Global Top 20');
 				let textWidth = barGraphTitle.node().getBBox().width;
 				let textHeight = barGraphTitle.node().getBBox().height;
 				barGraphTitle.attr('transform','translate(' + (barWidth/2 - (textWidth/2) - (barPadding.left/2)) + ', ' + (barGraphInnerHeight + textHeight + (barPadding.bottom/2)) + ')');

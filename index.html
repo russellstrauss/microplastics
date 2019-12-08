@@ -66,29 +66,37 @@
 
 			</div>
 
-			<img class="bag" src="./assets/img/bag.png" alt="" >
+			<img class="bag" src="./assets/img/bag.png" alt="">
 
 		</section>
 
 		<section class="black in-our-world">
 			<h2>Plastics in our world.</h2>
 		</section>
-		
+
 		<div class="projections">
-			
+
 			<h2>Where Have We Come So Far?</h2>
-			
+
 			<div class="plot-container">
 				<svg>
 					<defs>
 						<linearGradient id="Gradient1">
-							<stop class="stop1" offset="0%"/>
-							<stop class="stop2" offset="100%"/>
+							<stop class="stop1" offset="0%" />
+							<stop class="stop2" offset="100%" />
 						</linearGradient>
 						<style type="text/css">
-							.line { fill: url(#Gradient1); }
-							.stop1 { stop-color: rgba(172, 36, 255, .4); }
-							.stop2 { stop-color: #b46100; }
+							.line {
+								fill: url(#Gradient1);
+							}
+
+							.stop1 {
+								stop-color: rgba(172, 36, 255, .4);
+							}
+
+							.stop2 {
+								stop-color: #b46100;
+							}
 						</style>
 					</defs>
 				</svg>
@@ -97,12 +105,8 @@
 
 		<section class="cumulative-plastics">
 			<div>
-<<<<<<< HEAD
-				<h2 class="monumentvis"> Plastics vs Real world</h2>
+				<h2 class="monumentvis"> Plastics vs Real World</h2>
 				<h5 class="monumentvis"> A timeline of cumulative plastics production </h5>
-=======
-				<h2 class="monumentvis">Plastics vs Real World</h2>
->>>>>>> 5f65dea74e024db124f020eee31cccd1c29c650f
 
 				<div class="monument-visualization">
 
@@ -149,15 +153,15 @@
 	</div>
 	<div class="gradient-grey"></div>
 
-	<div class="sun">
-			<h2>Plastics Waste production by country</h2>
+	<div class="sunburst-container">
 
-	<div class="sunburst">
+		<h2>Plastics Waste Production by Country</h2>
 
-
-		<svg id="partitionSVG"></svg>
+		<div class="sunburst">
+			<svg id="partitionSVG"></svg>
+		</div>
 	</div>
-</div>
+
 	<div class="geo-vis">
 
 		<h2>Plastic Production Around The World</h2>
@@ -167,24 +171,30 @@
 		<div class="map fullscreen-map" id="map">
 			<div class="zooms">
 				<button class="in">
-					<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="420 0 1080 1080.001" xml:space="preserve">
+					<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+						viewBox="420 0 1080 1080.001" xml:space="preserve">
 						<g>
-							<path d="M443.068,1056.006c14.446,14.958,38.281,15.373,53.239,0.927l375.35-375.351c138.883,113.558,338.541,113.558,477.425,0 c161.239-131.837,185.076-369.425,53.238-530.664C1270.482-10.321,1032.896-34.158,871.657,97.68 c-161.239,131.837-185.076,369.423-53.239,530.663l-375.35,375.35C428.977,1018.282,428.977,1041.414,443.068,1056.006z M808.555,390.233c0-166.355,134.857-301.213,301.213-301.213c166.354,0,301.211,134.858,301.211,301.213 c-0.185,166.278-134.934,301.024-301.211,301.212C943.412,691.445,808.555,556.588,808.555,390.233z"/>
+							<path
+								d="M443.068,1056.006c14.446,14.958,38.281,15.373,53.239,0.927l375.35-375.351c138.883,113.558,338.541,113.558,477.425,0 c161.239-131.837,185.076-369.425,53.238-530.664C1270.482-10.321,1032.896-34.158,871.657,97.68 c-161.239,131.837-185.076,369.423-53.239,530.663l-375.35,375.35C428.977,1018.282,428.977,1041.414,443.068,1056.006z M808.555,390.233c0-166.355,134.857-301.213,301.213-301.213c166.354,0,301.211,134.858,301.211,301.213 c-0.185,166.278-134.934,301.024-301.211,301.212C943.412,691.445,808.555,556.588,808.555,390.233z" />
 						</g>
 						<g>
-							<path d="M937.815,390.235c0,15.829,12.83,28.659,28.659,28.659h114.63v114.632c0,15.828,12.833,28.66,28.66,28.66 c15.829,0,28.66-12.832,28.66-28.66V418.894h114.631c15.828,0,28.658-12.83,28.658-28.659s-12.83-28.659-28.658-28.659h-114.629 V246.944c0-15.828-12.831-28.658-28.658-28.658s-28.66,12.831-28.66,28.658v114.631H966.478 C950.649,361.576,937.815,374.407,937.815,390.235z"/>
+							<path
+								d="M937.815,390.235c0,15.829,12.83,28.659,28.659,28.659h114.63v114.632c0,15.828,12.833,28.66,28.66,28.66 c15.829,0,28.66-12.832,28.66-28.66V418.894h114.631c15.828,0,28.658-12.83,28.658-28.659s-12.83-28.659-28.658-28.659h-114.629 V246.944c0-15.828-12.831-28.658-28.658-28.658s-28.66,12.831-28.66,28.658v114.631H966.478 C950.649,361.576,937.815,374.407,937.815,390.235z" />
 						</g>
 					</svg>
 				</button>
 				<button class="out">
-					<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="420 0 1080 1080.001" xml:space="preserve">
+					<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+						viewBox="420 0 1080 1080.001" xml:space="preserve">
 						<g>
-							<path d="M443.068,1056.006c14.446,14.958,38.281,15.373,53.239,0.927l375.35-375.351c138.883,113.558,338.541,113.558,477.425,0 c161.239-131.837,185.076-369.425,53.238-530.664C1270.482-10.321,1032.896-34.158,871.657,97.68 c-161.239,131.837-185.076,369.423-53.239,530.663l-375.35,375.35C428.977,1018.282,428.977,1041.414,443.068,1056.006z M808.555,390.233c0-166.355,134.857-301.213,301.213-301.213c166.354,0,301.211,134.858,301.211,301.213 c-0.185,166.278-134.934,301.024-301.211,301.212C943.412,691.445,808.555,556.588,808.555,390.233z"/>
+							<path
+								d="M443.068,1056.006c14.446,14.958,38.281,15.373,53.239,0.927l375.35-375.351c138.883,113.558,338.541,113.558,477.425,0 c161.239-131.837,185.076-369.425,53.238-530.664C1270.482-10.321,1032.896-34.158,871.657,97.68 c-161.239,131.837-185.076,369.423-53.239,530.663l-375.35,375.35C428.977,1018.282,428.977,1041.414,443.068,1056.006z M808.555,390.233c0-166.355,134.857-301.213,301.213-301.213c166.354,0,301.211,134.858,301.211,301.213 c-0.185,166.278-134.934,301.024-301.211,301.212C943.412,691.445,808.555,556.588,808.555,390.233z" />
 						</g>
 						<g>
-							<path d="M1138.427,361.577l-171.949-0.001c-15.828,0-28.662,12.831-28.662,28.66s12.83,28.659,28.659,28.659h171.95h114.631 c15.828,0,28.658-12.83,28.658-28.659s-12.83-28.659-28.658-28.659H1138.427z"/>
+							<path
+								d="M1138.427,361.577l-171.949-0.001c-15.828,0-28.662,12.831-28.662,28.66s12.83,28.659,28.659,28.659h171.95h114.631 c15.828,0,28.658-12.83,28.658-28.659s-12.83-28.659-28.658-28.659H1138.427z" />
 						</g>
-					</svg>						
+					</svg>
 				</button>
 			</div>
 			<div class="background active"></div>
@@ -215,18 +225,17 @@
 
 			<p>The percentage of mismanaged waste is defined as material that is at high risk of entering the ocean
 				through the wind, tides, or carried to the coastline from inner waterways. </p>
-				
-			<p>All of the top 20 countries with mismanaged waste have a very large majority of their waste mismanaged.</p>
+
+			<p>All of the top 20 countries with mismanaged waste have a very large majority of their waste mismanaged.
+			</p>
 		</div>
 	</div>
 
-
-	<div class="para">
-			<h2>Plastics production by country</h2>
-			<div class="paracoords">
-	
-		</div>
+	<div class="parallel-coordinates-container">
+		<h2 class="title">Plastics Production by Country</h2>
+		<div class="paracoords"></div>
 	</div>
+
 	<div class="plastic-longevity">
 
 		<div class="selector">
@@ -276,12 +285,15 @@
 			<div class="column-left">
 				<div class="mini-map">
 					<div class="dragger" id="dragger">
-						<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 553.157 553.156" xml:space="preserve">
+						<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+							viewBox="0 0 553.157 553.156" xml:space="preserve">
 							<g>
-								<path d="M351.082,395.509h-149.01c-12.02,0-16.934,8.464-10.979,18.904l74.695,130.913c5.955,10.44,15.619,10.44,21.573,0 l74.701-130.919C368.022,403.973,363.101,395.509,351.082,395.509z"/>
-								<path d="M287.366,7.831c-5.954-10.441-15.618-10.441-21.572,0L191.092,138.75c-5.955,10.44-1.04,18.904,10.979,18.904h149.01 c12.02,0,16.934-8.464,10.979-18.904L287.366,7.831z"/>
+								<path
+									d="M351.082,395.509h-149.01c-12.02,0-16.934,8.464-10.979,18.904l74.695,130.913c5.955,10.44,15.619,10.44,21.573,0 l74.701-130.919C368.022,403.973,363.101,395.509,351.082,395.509z" />
+								<path
+									d="M287.366,7.831c-5.954-10.441-15.618-10.441-21.572,0L191.092,138.75c-5.955,10.44-1.04,18.904,10.979,18.904h149.01 c12.02,0,16.934-8.464,10.979-18.904L287.366,7.831z" />
 							</g>
-						</svg>						
+						</svg>
 					</div>
 				</div>
 			</div>
@@ -307,25 +319,24 @@
 			</div>
 		</div>
 	</div>
-		
 
-	<div class= "outro">
+	<div class="outro">
 
-			<div class="hero2" style="background-image: url(./assets/img/Endbackground.png);">
+		<div class="hero2" style="background-image: url(./assets/img/Endbackground.png);">
 
-				<div class="gradient-black2">
-						<h2 class="text1" >Eventually plastics will be</h2>
-
-				</div>
-
-				<div class="bag-bg"></div>
-				<h2 class="text2">Broken down </h2>
-				<h2 class="text3">Into...</h2>
+			<div class="gradient-black2">
+				<h2 class="text1">Eventually plastics will be</h2>
 
 			</div>
-			<div class="lastimg">
-					<img src="./assets/img/emptyplate.png" alt="">
-			</div>
+
+			<div class="bag-bg"></div>
+			<h2 class="text2">Broken down </h2>
+			<h2 class="text3">Into...</h2>
+
+		</div>
+		<div class="lastimg">
+			<img src="./assets/img/emptyplate.png" alt="">
+		</div>
 
 	</div>
 
@@ -343,7 +354,10 @@
 				<li>Cox, Kieran D.; Covernton, Garth A.; Davies, Hailey L.; Dower, John F.; Juanes, Francis; Dudas,
 					Sarah E. (2019): Human Consumption of Microplastics. ACS Publications. Journal contribution. <a
 						href="https://doi.org/10.1021/acs.est.9b01517">https://doi.org/10.1021/acs.est.9b01517</a></li>
-						<li>Lebreton, L., Andrady, A. Future scenarios of global plastic waste generation and disposal. Palgrave Commun 5, 6 (2019) doi:10.1057/s41599-018-0212-7. <a href="https://www.nature.com/articles/s41599-018-0212-7">https://www.nature.com/articles/s41599-018-0212-7#Abs1</a></li>
+				<li>Lebreton, L., Andrady, A. Future scenarios of global plastic waste generation and disposal. Palgrave
+					Commun 5, 6 (2019) doi:10.1057/s41599-018-0212-7. <a
+						href="https://www.nature.com/articles/s41599-018-0212-7">https://www.nature.com/articles/s41599-018-0212-7#Abs1</a>
+				</li>
 			</ol>
 		</div>
 

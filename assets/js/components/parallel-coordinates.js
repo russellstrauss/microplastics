@@ -326,13 +326,11 @@ module.exports = function () {
 
 				// draw the forerground, do the same thing. Note that tooltips
 				// are also included here. 
-
+				
 				var color = d3.scaleLinear()
-					.domain(d3.extent(data, function(d) {
-						return d.inadequately_managed_plastic;
-					}))
+					.domain([0, 100])
 					.range([0, 1]);
-
+					
 				var filtered_data = data.filter(d => {
 					return selected.indexOf(d.code) >= 0
 				});
@@ -345,7 +343,7 @@ module.exports = function () {
 						tooltip_div.style('opacity', 0);
 					})
 					.attr('stroke', function(d) {
-						return d3.interpolateRgb('red', 'rgb(0, 176, 255)')(color(d.inadequately_managed_plastic));
+						return d3.interpolateRgb('rgb(0, 176, 255)', 'red')(color(d.inadequately_managed_plastic));
 					});
 
 				foreground_group = foreground_group.merge(foreground_enter)

@@ -61,7 +61,7 @@ module.exports = function() {
 			let dataset = pastData;
 			
 			width = document.querySelector('.projections .plot-container').offsetWidth;
-			height = 700;
+			height = window.innerHeight;
 			padding = {top: 50, right: 200, bottom: 100, left: 25};
 			chartWidth = width - padding.left - padding.right;
 			chartHeight = height - padding.top - padding.bottom;
@@ -87,9 +87,9 @@ module.exports = function() {
 			svg.append("g")
 			.attr("class", "x axis")
 			.attr("transform", "translate(0," + chartHeight + ")")
-			.call(d3.axisBottom(xScale));
+			.call(d3.axisBottom(xScale).tickFormat(d3.format('d')));
 			
-			//.call(d3.axisBottom(xScale).tickFormat(d3.timeFormat("%Y"))); // y no worky
+		//	.call(d3.axisBottom(xScale).tickFormat(d3.timeFormat("%Y"))); // y no worky
 
 			svg.append("g")
 			.attr("class", "y axis")

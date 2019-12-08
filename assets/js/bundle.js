@@ -379,7 +379,7 @@ module.exports = function () {
   var defaultColor = '#E6965B';
   var exportsStatsLabel = 'total global plastic exports',
       importsStatsLabel = 'total global plastic imports',
-      mismanagedStatsLabel = 'of all waste mismanaged';
+      mismanagedStatsLabel = 'global share of mismanaged waste';
   var containerWidth = parseInt(document.querySelector('.fullscreen-map').offsetWidth);
   var containerHeight = parseInt(document.querySelector('.fullscreen-map').offsetHeight);
   var mapWithLabels = 'https://stamen-tiles-{s}.a.ssl.fastly.net/toner/{z}/{x}/{y}{r}.png?access_token={accessToken}';
@@ -468,8 +468,7 @@ module.exports = function () {
         geojson = json;
         d3.csv('./assets/js/data/exports.csv', prepareExports).then(function (data) {
           exportsData = data;
-          mapData = exportsData; //console.log(exportsData);
-
+          mapData = exportsData;
           self.showCountries();
           self.addBarGraph();
         });
@@ -542,15 +541,13 @@ module.exports = function () {
         var result;
         mapData.forEach(function (row) {
           if (feature.properties.NAME === row.country) {
-            //console.log(row.amount / 100)
             result = {
               fillColor: '#E66200',
               weight: .25,
               opacity: 1,
               // stroke opacity
               color: 'black',
-              fillOpacity: row.amount / max * .4 + .3 //fillOpacity: row.amount / 100
-
+              fillOpacity: row.amount / max * .4 + .3
             };
           }
         });
@@ -580,7 +577,6 @@ module.exports = function () {
           var countryImports = '';
           var countryMismanaged = '';
           var hoveredCountryExports = exportsData.filter(function (row) {
-            console.log(row.country === countryName, row.country, countryName);
             if (row.country === countryName) return row;
           });
           var hoveredCountryImports = importsData.filter(function (row) {
@@ -636,10 +632,8 @@ module.exports = function () {
       barWidth = graphicContainer.offsetWidth - barPadding.left - barPadding.right;
       barGraphInnerHeight = barGraphHeight - barPadding.top - barPadding.bottom;
       var maxValue = d3.max(mapData, function (d) {
-        console.log(d.amount);
         return +d.amount;
       });
-      console.log(maxValue);
 
       var compare = function compare(a, b) {
         // sort vertical direction of bars
@@ -651,9 +645,9 @@ module.exports = function () {
       var worldPercent;
 
       if (mismanagedDataBoolean) {
-        worldPercent = Math.round(10 * top.amount) / 10;
+        worldPercent = top.amount;
       } else {
-        worldPercent = Math.round(10 * worldTotal / top.amount) / 10;
+        worldPercent = worldTotal / top.amount;
       }
 
       self.updateStats(worldPercent, top.country, top.amount);
@@ -663,15 +657,9 @@ module.exports = function () {
       })).range([barGraphInnerHeight, 0]);
       var x = d3.scaleLinear().domain([0, maxValue]).range([0, barWidth - 100]);
       var svg = d3.select(graph).append('svg').attr('width', barWidth + barPadding.left + barPadding.right).attr('height', barGraphInnerHeight + barPadding.top + barPadding.bottom).append('g').attr('transform', 'translate(' + barPadding.left + ',' + barPadding.top + ')');
-      svg.selectAll('.bar').data(mapData).enter() // .append('rect').attr('height', barHeight).attr('barWidth', function(d) { // make clear hover interaction
-      // 	return x(d.amount);
-      // }).style('fill', 'red').attr('y', function (d) {
-      // 	return y(d.country) + (y.bandwidth());
-      // })
-      .append('rect').on('mouseover', function (d) {
+      svg.selectAll('.bar').data(mapData).enter().append('rect').on('mouseover', function (d) {
         d3.event.target.style.fill = selectColor;
-        var percentage = (parseInt(d.amount) / parseInt(worldTotal) * 100).toFixed(1);
-        if (percentage.toString().slice(-2) === '.0') percentage = parseInt(percentage).toFixed(0);
+        var percentage = parseInt(d.amount) / parseInt(worldTotal) * 100;
         if (mismanagedDataBoolean) self.updateStats(d.amount, d.country, '');else {
           self.updateStats(percentage, d.country, d.amount);
         }
@@ -695,7 +683,10 @@ module.exports = function () {
     updateStats: function updateStats(percent, region, value) {
       var country = document.querySelector('.geo-vis .stats .country');
       var percentageOfTotal = document.querySelector('.geo-vis .stats .percentage-of-total');
-      var valuation = document.querySelector('.geo-vis .stats .valuation span');
+      var valuation = document.querySelector('.geo-vis .stats .valuation span'); //percent = parseInt(percent).toFixed(1); // round tenths
+      //if (percent.toString().slice(-2) === '.0') percent = parseInt(percent).toFixed(0);
+
+      percent = utils.roundTenths(percent);
       country.textContent = region;
       percentageOfTotal.textContent = percent + '%';
 
@@ -1020,9 +1011,7 @@ module.exports = function () {
         //     .range([height, 0]);
         // draw the forerground, do the same thing. Note that tooltips
         // are also included here. 
-        var color = d3.scaleLinear().domain(d3.extent(data, function (d) {
-          return d.inadequately_managed_plastic;
-        })).range([0, 1]);
+        var color = d3.scaleLinear().domain([0, 100]).range([0, 1]);
         var filtered_data = data.filter(function (d) {
           return selected.indexOf(d.code) >= 0;
         });
@@ -1033,7 +1022,7 @@ module.exports = function () {
         foreground_enter = foreground_group.enter().append('path').on('mouseover', tooltip).on('mouseout', function () {
           tooltip_div.style('opacity', 0);
         }).attr('stroke', function (d) {
-          return d3.interpolateRgb('red', 'rgb(0, 176, 255)')(color(d.inadequately_managed_plastic));
+          return d3.interpolateRgb('rgb(0, 176, 255)', 'red')(color(d.inadequately_managed_plastic));
         });
         foreground_group = foreground_group.merge(foreground_enter).attr('d', line).style('stroke-width', 3).style('opacity', function (d) {
           return selected.indexOf(d.code) >= 0 ? 1 : 0;
@@ -1541,7 +1530,7 @@ module.exports = function () {
       var self = this;
       var dataset = pastData;
       width = document.querySelector('.projections .plot-container').offsetWidth;
-      height = 700;
+      height = window.innerHeight;
       padding = {
         top: 50,
         right: 200,
@@ -1557,7 +1546,7 @@ module.exports = function () {
         return d.amount;
       });
       var yScale = d3.scaleLinear().domain([0, maxValue]).range([chartHeight, 0]);
-      svg.append("g").attr("class", "x axis").attr("transform", "translate(0," + chartHeight + ")").call(d3.axisBottom(xScale)); //.call(d3.axisBottom(xScale).tickFormat(d3.timeFormat("%Y"))); // y no worky
+      svg.append("g").attr("class", "x axis").attr("transform", "translate(0," + chartHeight + ")").call(d3.axisBottom(xScale).tickFormat(d3.format('d'))); //	.call(d3.axisBottom(xScale).tickFormat(d3.timeFormat("%Y"))); // y no worky
 
       svg.append("g").attr("class", "y axis").attr("transform", "translate(" + chartWidth + ", 0)").call(d3.axisRight(yScale));
       var line = d3.line().x(function (d, i) {
@@ -1950,6 +1939,12 @@ var Utilities = require('./utils.js');
         min = Math.ceil(min);
         max = Math.floor(max);
         return Math.floor(Math.random() * (max - min + 1)) + min;
+      },
+      roundTenths: function roundTenths(num) {
+        return Math.round(num * 10) / 10;
+      },
+      roundHundreths: function roundHundreths(num) {
+        return Math.round(num * 100) / 100;
       },
       isInteger: function isInteger(number) {
         return number % 1 === 0;

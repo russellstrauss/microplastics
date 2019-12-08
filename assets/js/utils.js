@@ -128,6 +128,14 @@
 				return Math.floor(Math.random() * (max - min + 1)) + min;
 			},
 			
+			roundTenths: function(num) {
+				return Math.round(num * 10) / 10;
+			},
+			
+			roundHundreths: function(num) {
+				return Math.round(num * 100) / 100;
+			},
+			
 			isInteger: function(number) {
 				return number % 1 === 0;
 			},

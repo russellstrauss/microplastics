@@ -158,7 +158,8 @@ module.exports = function () {
 				.attr("x", scale)
 				.attr("y", 10)
 				.attr("text-anchor", "middle")
-				.text(function(d) { return formatYear(d); });
+				.text(function(d) { return formatYear(d); })
+				.attr("font-size", '13px')
 
 			var handle = slider.insert("circle", ".track-overlay")
 				.attr("class", "handle")
@@ -258,7 +259,7 @@ module.exports = function () {
 							
 							let plasticAmount = parseInt(plasticProductionData[key].Cumulative.toLocaleString());
 							
-							totalWeightText.textContent = parseInt(plasticProductionData[key].Cumulative).toLocaleString() +' (mt)';
+							totalWeightText.textContent = parseInt(plasticProductionData[key].Cumulative).toLocaleString() +' Metric Tons';
 
 							let monumentImages = document.querySelectorAll('.monument-visualization .image-container img');
 							monumentImages.forEach(function(image) {

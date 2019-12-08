@@ -1611,7 +1611,7 @@ module.exports = function () {
 module.exports = function () {
   var svg, clicked;
   var upOneLevelIcon;
-  var stats = document.querySelector('.sunburst-component .stats');
+  var statsElement = document.querySelector('.sunburst-component .stats');
   return {
     init: function init() {
       this.sunburst();
@@ -1761,10 +1761,10 @@ module.exports = function () {
       });
     },
     hideStats: function hideStats() {
-      stats.style.opacity = '0';
+      statsElement.style.opacity = '0';
     },
     updateStats: function updateStats(newRoot, parent) {
-      stats.innerHTML = '';
+      statsElement.innerHTML = '';
       newRoot.forEach(function (child) {
         var regionName = child.data.name;
         var regionElement = document.createElement('div'),
@@ -1779,9 +1779,9 @@ module.exports = function () {
         regionNameElement.innerText = regionName;
         regionElement.appendChild(percentageElement);
         regionElement.appendChild(regionNameElement);
-        stats.appendChild(regionElement);
+        statsElement.appendChild(regionElement);
       });
-      stats.style.opacity = '1';
+      statsElement.style.opacity = '1';
     },
     addIcon: function addIcon() {
       d3.xml('./assets/svg/up-one-level.svg').then(function (data) {

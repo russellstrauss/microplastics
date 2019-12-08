@@ -2,7 +2,7 @@ module.exports = function () {
 	
 	var svg, clicked;
 	var upOneLevelIcon;
-	var stats = document.querySelector('.sunburst-component .stats');
+	var statsElement = document.querySelector('.sunburst-component .stats');
 	
 	return {
 
@@ -168,12 +168,12 @@ module.exports = function () {
 		},
 		
 		hideStats: function() {
-			stats.style.opacity = '0';
+			statsElement.style.opacity = '0';
 		},
 		
 		updateStats: function(newRoot, parent) {
 			
-			stats.innerHTML = '';
+			statsElement.innerHTML = '';
 			
 			newRoot.forEach(function(child) {
 						
@@ -190,12 +190,9 @@ module.exports = function () {
 				regionNameElement.innerText = regionName;
 				regionElement.appendChild(percentageElement);
 				regionElement.appendChild(regionNameElement);
-				stats.appendChild(regionElement);
-				
-				
-				
+				statsElement.appendChild(regionElement);
 			});
-			stats.style.opacity = '1';
+			statsElement.style.opacity = '1';
 		},
 		
 		addIcon: function() {

@@ -81,6 +81,8 @@
 		<div class="projections">
 
 			<h2>Where Have We Come So Far?</h2>
+			
+			<p>Some text about the history of plastic. Plastic technology-related info.</p>
 
 			<div class="plot-container">
 				<svg>
@@ -104,6 +106,7 @@
 						</style>
 					</defs>
 				</svg>
+				
 			</div>
 		</div>
 
@@ -175,6 +178,7 @@
 
 		<div class="gradient-grey"></div>
 	</div>
+	
 
 	<div class="geo-vis">
 
@@ -235,7 +239,7 @@
 		<div class="insights" style="text-align: left; ">
 			<p>The United States, China, and Germany are the top three importers and exporters of plastics worldwide.
 				The United States is the top producer by a large margin, even over China who comes in at 2nd. The top 3
-				export nearly twice as much as the rest of the world's top 10 countries.</p>
+				export nearly twice as much as the rest of the world's top 20 countries.</p>
 
 			<p>The percentage of mismanaged waste is defined as material that is at high risk of entering the ocean
 				through the wind, tides, or carried to the coastline from inner waterways. </p>
@@ -244,10 +248,29 @@
 			</p>
 		</div>
 	</div>
+	
+	<section class="white parallel-coordinates-intro">
+		<h2>Countries that manufacture the most, don't necessarily use the most.</h2>
+		<h2>Those that use the most, don't necessarily get impacted the most.</h2>
+		<h2>Who is paying <span class="orange">the price</span>?</h2>
+	</section>
 
 	<div class="parallel-coordinates-container">
 		<h2 class="title">Inequity of Impact</h2>
 		<div class="paracoords"></div>
+		
+		<div class="legend-scale">
+			<div class="axis-container">
+				<div class="tick-left"></div>
+				<div class="axis-line"></div>
+				<div class="tick-right"></div>
+			</div>
+			<div class="labels">
+				<span>0%</span>
+				<span>Mismanaged Waste</span>
+				<span>100%</span>
+			</div>
+		</div>
 	</div>
 
 	<div class="plastic-longevity">
@@ -321,10 +344,10 @@
 					average use time <span></span>
 				</div>
 				<div class="unit-vis-viewport">
-					<div class="message">
-						<span>how long the material remains in the environment</span>
-					</div>
 					<div class="canvas-holder">
+						<div class="message">
+							<span>how long the material remains in the environment</span>
+						</div>
 						<canvas id="dotCanvas"></canvas>
 					</div>
 				</div>

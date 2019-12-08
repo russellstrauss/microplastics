@@ -191,26 +191,26 @@ $foreground: white;
 				background-color: #08CDFA; 
 			}
 			
-			.message {
-				position: sticky;
-				text-align: right;
-				top: 0;
-				left: 0;
-				color: #08CDFA;
-				
-				span {
-					height: 40px;
-					background-color: black;
-					padding: 10px;
-					display: inline-block;
-					margin-right: 4px;
-					margin-top: 6px;
-					position: absolute;
-					right: 0;
-				}
-			}
-			
 			.canvas-holder {
+				
+				.message {
+					position: sticky;
+					text-align: right;
+					top: 0;
+					left: 0;
+					color: #08CDFA;
+					
+					span {
+						height: 40px;
+						background-color: black;
+						padding: 10px;
+						display: block;
+						margin-right: 7px;
+						margin-top: 6px;
+						position: absolute;
+						right: 0;
+					}
+				}
 				
 				canvas {
 					display: block;

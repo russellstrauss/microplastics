@@ -11,8 +11,8 @@
 		margin-bottom: 300px;
 	}
 	.gradientplace{
-	 	width:100%;
-	 	height: 400px;
+	 	width: 100%;
+	 	height: 800px;
 	}
 
 	.gradient-grey {
@@ -35,6 +35,11 @@
 			height: 100%;
 			display: block;
 			margin: auto;
+			overflow: visible;
+			
+			text {
+				fill: white;
+			}
 			
 			circle {
 				cursor: pointer;

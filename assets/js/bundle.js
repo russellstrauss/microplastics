@@ -945,7 +945,10 @@ module.exports = function () {
             draw(data);
           });
         });
-        selectors.append('div').attr('class', 'legend').append('div').attr('class', 'colorscale-gradient');
+        var legend = selectors.append('div').attr('class', 'legend');
+        legend.append('div').attr('class', 'colorscale-gradient');
+        var legendScale = document.querySelector('.legend-scale');
+        if (legendScale) legend.node().append(legendScale);
         var g = svg.selectAll(".dimension").data(dimensions).enter().append("g").attr("class", "dimension").attr("transform", function (d) {
           return "translate(" + x(d) + ")";
         }).call(d3.drag().on("start", function (d) {
@@ -969,8 +972,8 @@ module.exports = function () {
         }));
         g.append("g").attr("class", "axis").each(function (d) {
           if (d == 'pollute_rank') d3.select(this).call(d3.axisLeft().scale(y[d]));else if (d == 'impact_rank') d3.select(this).call(d3.axisRight().scale(y[d]));
-        }).append("text").style("text-anchor", "middle").attr("fill", "black").attr("font-size", "18").attr("y", -9).text(function (d) {
-          if (d == 'pollute_rank') return "How much does the country contribute to plastic pollution (rank)";else if (d == 'inadequately_managed_plastic_rank') return "Inadequately Managed Plastic (Rank)";else return "How much does the country get impacted by plastic pollution (rank)";
+        }).append("text").style("text-anchor", "middle").attr("fill", "black").attr("font-size", "12").attr("y", -9).text(function (d) {
+          if (d == 'pollute_rank') return "Contribution (rank)";else if (d == 'inadequately_managed_plastic_rank') return "Inadequately Managed Plastic (Rank)";else return "Impact (rank)";
         });
         g.append("g").attr("class", "brush").each(function (d) {
           var _this = this;
@@ -992,7 +995,7 @@ module.exports = function () {
         country_container_group = country_container_group.merge(country_container_enter).attr('class', 'country').attr('id', function (d) {
           return d.code;
         }).html(function (d) {
-          return '<span>' + toTitleCase(d.country.replace(new RegExp('-', 'gi'), ' ')) + '</span>';
+          return '<img src="./assets/img/countries/' + d.country + '.svg"></img><span>' + toTitleCase(d.country.replace(new RegExp('-', 'gi'), ' ')) + '</span>';
         }).on('mousedown', function (d) {
           d3.event.preventDefault();
           country_container_element = document.querySelector('.country-container');
@@ -1376,7 +1379,7 @@ module.exports = function () {
           for (var y = dotRadius * 2; y < vh; y += cellSize) {
             context.beginPath();
             context.arc(x - dotRadius / 2, y - dotRadius / 2, dotRadius, 0, 2 * Math.PI, false);
-            context.fillStyle = 'rgba(213, 140, 17, .4)';
+            context.fillStyle = 'rgba(255, 255, 255, .4)';
             context.fill();
             count++;
           }
@@ -1495,25 +1498,14 @@ module.exports = function () {
 "use strict";
 
 module.exports = function () {
-  var settings;
-  var lowerData, midpointData, higherData, statisticsData, pastData;
+  var projectionData, midpointData, higherData, statisticsData, pastData;
+  var svg, width, height, chartWidth, chartHeight, padding;
   return {
-    settings: {},
     init: function init() {
       this.loadData();
     },
     loadData: function loadData() {
       var self = this;
-
-      var prepareMidpoint = function prepareMidpoint(d) {
-        var row = [];
-        row.amount2015 = d['Total municipal plastic waste 2015'];
-        row.amount2020 = d['Total municipal plastic waste 2020'];
-        row.amount2040 = d['Total municipal plastic waste 2040'];
-        row.amount2060 = d['Total municipal plastic waste 2060'];
-        row.country = d['Country'];
-        if (row.country === 'World') return row;
-      };
 
       var preparePast = function preparePast(d, i) {
         var row = {};
@@ -1522,73 +1514,104 @@ module.exports = function () {
         return row;
       };
 
-      d3.csv('./assets/js/data/global-plastics-production.csv', preparePast).then(function (data1) {
-        pastData = data1;
-        pastData.unshift({
-          'year': '1950',
-          'amount': 0
+      var prepareMidpoint = function prepareMidpoint(d) {
+        var row = {};
+        row.amount2020A = d['MPW Scenario A 2020'];
+        row.amount2020B = d['MPW Scenario B 2020'];
+        row.amount2020C = d['MPW Scenario C 2020'];
+        row.amount2040A = d['MPW Scenario A 2040'];
+        row.amount2040B = d['MPW Scenario B 2040'];
+        row.amount2040C = d['MPW Scenario C 2040'];
+        row.amount2060A = d['MPW Scenario A 2060'];
+        row.amount2060B = d['MPW Scenario B 2060'];
+        row.amount2060C = d['MPW Scenario C 2060'];
+        row.country = d['Country'];
+        return row;
+      };
+
+      d3.csv('./assets/js/data/projections-midpoint-world.csv', prepareMidpoint).then(function (data1) {
+        projectionData = data1;
+        d3.csv('./assets/js/data/global-plastics-production.csv', preparePast).then(function (data1) {
+          pastData = data1;
+          pastData.unshift({
+            'year': '1950',
+            'amount': 0
+          });
+          pastData.push({
+            'year': '2015',
+            'amount': 0
+          });
+          self.lineChart();
+          self.addAxes();
         });
-        pastData.push({
-          'year': '2015',
-          'amount': 0
-        });
-        console.log('Entire pastData: ', pastData);
-        self.lineChart();
-      }); // d3.csv('./assets/js/data/projections-midpoint.csv', prepareMidpoint).then(function(data1) {
-      // 	lowerData = data1;
-      // 	//console.log(lowerData);
-      // 	d3.csv('./assets/js/data/projections-midpoint.csv').then(function(data2) {
-      // 		midpointData = data2;
-      // 		d3.csv('./assets/js/data/projections-higher.csv').then(function(data3) {
-      // 			higherData = data3;
-      // 			self.lineChart();
-      // 		});
-      // 	});
-      // });
+      });
     },
     lineChart: function lineChart() {
       var self = this;
       var dataset = pastData;
-      var width = document.querySelector('.projections .plot-container').offsetWidth;
-      var height = 300;
-      var svg = d3.select('.projections svg').attr('class', 'line-graph').attr('width', width).attr('height', height); // 2. Use the margin convention practice 
-
-      var margin = {
+      width = document.querySelector('.projections .plot-container').offsetWidth;
+      height = 700;
+      padding = {
         top: 50,
-        right: 50,
-        bottom: 50,
-        left: 200
-      }; // The number of datapoints
+        right: 200,
+        bottom: 100,
+        left: 25
+      };
+      chartWidth = width - padding.left - padding.right;
+      chartHeight = height - padding.top - padding.bottom;
+      svg = d3.select('.projections svg').attr('class', 'line-graph').attr('width', width).attr('height', height).append("g").attr("transform", "translate(" + padding.left + "," + padding.top + ")");
+      ;
+      var xScale = d3.scaleLinear().domain([1950, 2015]).range([0, chartWidth]);
+      var maxValue = d3.max(dataset, function (d) {
+        return d.amount;
+      });
+      var yScale = d3.scaleLinear().domain([0, maxValue]).range([chartHeight, 0]);
+      svg.append("g").attr("class", "x axis").attr("transform", "translate(0," + chartHeight + ")").call(d3.axisBottom(xScale)); //.call(d3.axisBottom(xScale).tickFormat(d3.timeFormat("%Y"))); // y no worky
 
-      var n = 66; // 5. X scale will use the index of our data
-
-      var xScale = d3.scaleLinear().domain([1950, 2060]) // input
-      .range([0, width - 300]); // output
-      // 6. Y scale will use the randomly generate number 
-
-      var yScale = d3.scaleLinear().domain([0, 381000000 * 1000000]) // input 
-      .range([height, 0]); // output 
-      // 7. d3's line generator
-
+      svg.append("g").attr("class", "y axis").attr("transform", "translate(" + chartWidth + ", 0)").call(d3.axisRight(yScale));
       var line = d3.line().x(function (d, i) {
         return xScale(d.year);
-      }) // set the x values for the line generator
-      .y(function (d) {
+      }).y(function (d) {
         return yScale(d.amount);
-      }) // set the y values for the line generator 
-      .curve(d3.curveMonotoneX); // apply smoothing to the line
+      }).curve(d3.curveMonotoneX); // apply smoothing to the line
 
-      svg = d3.select(".projections svg").attr("width", width + margin.left + margin.right).attr("height", height + margin.top + margin.bottom).append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")"); // 3. Call the x axis in a group tag
+      svg.append("path").datum(dataset) // binds data to the line 
+      .attr("class", "line").attr("d", line);
+      var scenarios = ['A', 'B', 'C'];
 
-      svg.append("g").attr("class", "x axis").attr("transform", "translate(0," + height + ")").call(d3.axisBottom(xScale)); // Create an axis component with d3.axisBottom
-      // 4. Call the y axis in a group tag
+      var _loop = function _loop(i) {
+        return "break"; // remove me
 
-      svg.append("g").attr("class", "y axis").call(d3.axisLeft(yScale)); // Create an axis component with d3.axisLeft
-      // 9. Append the path, bind the data, and call the line generator 
+        var year = 2020 + i * 20;
+        var scenario = 'A';
+        svg.append('circle').attr('class', 'projection-estimate').attr('cx', function () {
+          return xScale(year);
+        }).attr('cy', function () {
+          var amount = parseInt(projectionData[0]['amount' + year + scenario]);
+          yScale(parseInt(projectionData[0]['amount' + year + scenario]));
+        }).attr('r', '3').attr('fill', 'white');
+      };
 
-      svg.append("path").datum(dataset) // 10. Binds data to the line 
-      .attr("class", "line") // Assign a class for styling 
-      .attr("d", line); // 11. Calls the line generator 
+      for (var i = 0; i < 3; i++) {
+        var _ret = _loop(i);
+
+        if (_ret === "break") break;
+      }
+    },
+    addAxes: function addAxes() {
+      var title = svg.append('text').attr('class', 'title').text('Plastic Created Since 1950');
+      var textWidth = title.node().getBBox().width;
+      var textHeight = title.node().getBBox().height;
+      title.attr('transform', 'translate(0, ' + (chartHeight - 40) + ')');
+      var xAxisLabel = svg.append('text').attr('class', 'x-axis-label').html('metric tons');
+      textWidth = xAxisLabel.node().getBBox().width;
+      textHeight = xAxisLabel.node().getBBox().height;
+      xAxisLabel.attr('transform', 'translate(' + (chartWidth + 45) + ', ' + (chartHeight + 3) + ')'); // let yAxisLabel = svg.append('text') 
+      // .attr('class', 'y-axis-label')
+      // .html('Weight (metric tons)');
+      // textWidth = yAxisLabel.node().getBBox().width;
+      // textHeight = yAxisLabel.node().getBBox().height;
+      // yAxisLabel.attr('transform','translate(' + (chartWidth/2 - textWidth/2) + ', ' + (chartHeight + textHeight + (padding.bottom/2)) + ')');
     }
   };
 };

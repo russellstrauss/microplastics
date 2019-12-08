@@ -389,9 +389,6 @@ module.exports = function() {
 			let percentageOfTotal = document.querySelector('.geo-vis .stats .percentage-of-total');
 			let valuation = document.querySelector('.geo-vis .stats .valuation span');
 			
-			//percent = parseInt(percent).toFixed(1); // round tenths
-			//if (percent.toString().slice(-2) === '.0') percent = parseInt(percent).toFixed(0);
-			
 			percent = utils.roundTenths(percent);
 			
 			country.textContent = region;

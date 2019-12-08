@@ -18,7 +18,7 @@ module.exports = function() {
 			let preparePast = function(d, i) {
 				let row = {};
 				row.year = d['Year'];
-				row.amount = d['Global plastics production (million tons)'] * 1000000;
+				row.amount = d['Global plastics production (million tons)'];
 				return row;
 			};
 			
@@ -39,19 +39,15 @@ module.exports = function() {
 				row.country = d['Country'];
 				return row;
 			};
-			
-			d3.csv('./assets/js/data/projections-midpoint-world.csv', prepareMidpoint).then(function(data1) {
-				projectionData = data1;
 				
-				d3.csv('./assets/js/data/global-plastics-production.csv', preparePast).then(function(data1) {
-					pastData = data1;
+			d3.csv('./assets/js/data/global-plastics-production.csv', preparePast).then(function(data1) {
+				pastData = data1;
 
-					pastData.unshift({'year': '1950', 'amount': 0});
-					pastData.push({'year': '2015', 'amount': 0});
+				pastData.unshift({'year': '1950', 'amount': 0});
+				pastData.push({'year': '2015', 'amount': 0});
 
-					self.lineChart();
-					self.addAxes();
-				});
+				self.lineChart();
+				self.addAxes();
 			});
 		},
 		
@@ -77,28 +73,31 @@ module.exports = function() {
 			.range([0, chartWidth]); 
 			
 			let maxValue = d3.max(dataset, function (d) {
-				return d.amount;
+				return +d.amount;
 			});
-
+			
 			var yScale = d3.scaleLinear()
 			.domain([0, maxValue])  
-			.range([chartHeight, 0]); 
-
+			.range([chartHeight, 0]);
+			
 			svg.append("g")
 			.attr("class", "x axis")
 			.attr("transform", "translate(0," + chartHeight + ")")
 			.call(d3.axisBottom(xScale).tickFormat(d3.format('d')));
 			
-		//	.call(d3.axisBottom(xScale).tickFormat(d3.timeFormat("%Y"))); // y no worky
-
+			let formatValue = d3.format(".2s");
+			
 			svg.append("g")
 			.attr("class", "y axis")
 			.attr("transform", "translate(" + chartWidth + ", 0)")
-			.call(d3.axisRight(yScale));
+			.call(d3.axisRight(yScale).tickFormat(function(d) { return formatValue(d).replace('M', ' million tons'); }));
 			
 			var line = d3.line()
 			.x(function(d, i) { return xScale(d.year); })
-			.y(function(d) { return yScale(d.amount); })
+			.y(function(d) { 
+				//console.log(parseInt(d.amount).toLocaleString(), parseInt(yScale(d.amount)).toLocaleString(), 'max: ', parseInt(maxValue).toLocaleString());
+				return yScale(d.amount);
+			})
 			.curve(d3.curveMonotoneX) // apply smoothing to the line
 
 			svg.append("path")
@@ -145,15 +144,7 @@ module.exports = function() {
 			.html('metric tons');
 			textWidth = xAxisLabel.node().getBBox().width;
 			textHeight = xAxisLabel.node().getBBox().height;
-			xAxisLabel.attr('transform','translate(' + (chartWidth + 45) + ', ' + (chartHeight + 3) + ')');
-			
-			// let yAxisLabel = svg.append('text') 
-			// .attr('class', 'y-axis-label')
-			// .html('Weight (metric tons)');
-			// textWidth = yAxisLabel.node().getBBox().width;
-			// textHeight = yAxisLabel.node().getBBox().height;
-			// yAxisLabel.attr('transform','translate(' + (chartWidth/2 - textWidth/2) + ', ' + (chartHeight + textHeight + (padding.bottom/2)) + ')');
-			
+			xAxisLabel.attr('transform','translate(' + (chartWidth + 30) + ', ' + (chartHeight + 3) + ')');
 		}
 	}
 }

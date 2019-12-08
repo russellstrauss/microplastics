@@ -87,9 +87,9 @@ module.exports = function() {
 			svg.append("g")
 			.attr("class", "x axis")
 			.attr("transform", "translate(0," + chartHeight + ")")
-			.call(d3.axisBottom(xScale));
+			.call(d3.axisBottom(xScale).tickFormat(d3.format('d')));
 			
-			//.call(d3.axisBottom(xScale).tickFormat(d3.timeFormat("%Y"))); // y no worky
+		//	.call(d3.axisBottom(xScale).tickFormat(d3.timeFormat("%Y"))); // y no worky
 
 			svg.append("g")
 			.attr("class", "y axis")

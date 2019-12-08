@@ -468,8 +468,7 @@ module.exports = function () {
         geojson = json;
         d3.csv('./assets/js/data/exports.csv', prepareExports).then(function (data) {
           exportsData = data;
-          mapData = exportsData; //console.log(exportsData);
-
+          mapData = exportsData;
           self.showCountries();
           self.addBarGraph();
         });
@@ -542,15 +541,13 @@ module.exports = function () {
         var result;
         mapData.forEach(function (row) {
           if (feature.properties.NAME === row.country) {
-            //console.log(row.amount / 100)
             result = {
               fillColor: '#E66200',
               weight: .25,
               opacity: 1,
               // stroke opacity
               color: 'black',
-              fillOpacity: row.amount / max * .4 + .3 //fillOpacity: row.amount / 100
-
+              fillOpacity: row.amount / max * .4 + .3
             };
           }
         });
@@ -580,7 +577,6 @@ module.exports = function () {
           var countryImports = '';
           var countryMismanaged = '';
           var hoveredCountryExports = exportsData.filter(function (row) {
-            console.log(row.country === countryName, row.country, countryName);
             if (row.country === countryName) return row;
           });
           var hoveredCountryImports = importsData.filter(function (row) {
@@ -636,10 +632,8 @@ module.exports = function () {
       barWidth = graphicContainer.offsetWidth - barPadding.left - barPadding.right;
       barGraphInnerHeight = barGraphHeight - barPadding.top - barPadding.bottom;
       var maxValue = d3.max(mapData, function (d) {
-        console.log(d.amount);
         return +d.amount;
       });
-      console.log(maxValue);
 
       var compare = function compare(a, b) {
         // sort vertical direction of bars
@@ -1020,9 +1014,7 @@ module.exports = function () {
         //     .range([height, 0]);
         // draw the forerground, do the same thing. Note that tooltips
         // are also included here. 
-        var color = d3.scaleLinear().domain(d3.extent(data, function (d) {
-          return d.inadequately_managed_plastic;
-        })).range([0, 1]);
+        var color = d3.scaleLinear().domain([0, 100]).range([0, 1]);
         var filtered_data = data.filter(function (d) {
           return selected.indexOf(d.code) >= 0;
         });
@@ -1033,7 +1025,7 @@ module.exports = function () {
         foreground_enter = foreground_group.enter().append('path').on('mouseover', tooltip).on('mouseout', function () {
           tooltip_div.style('opacity', 0);
         }).attr('stroke', function (d) {
-          return d3.interpolateRgb('red', 'rgb(0, 176, 255)')(color(d.inadequately_managed_plastic));
+          return d3.interpolateRgb('rgb(0, 176, 255)', 'red')(color(d.inadequately_managed_plastic));
         });
         foreground_group = foreground_group.merge(foreground_enter).attr('d', line).style('stroke-width', 3).style('opacity', function (d) {
           return selected.indexOf(d.code) >= 0 ? 1 : 0;
@@ -1557,7 +1549,7 @@ module.exports = function () {
         return d.amount;
       });
       var yScale = d3.scaleLinear().domain([0, maxValue]).range([chartHeight, 0]);
-      svg.append("g").attr("class", "x axis").attr("transform", "translate(0," + chartHeight + ")").call(d3.axisBottom(xScale)); //.call(d3.axisBottom(xScale).tickFormat(d3.timeFormat("%Y"))); // y no worky
+      svg.append("g").attr("class", "x axis").attr("transform", "translate(0," + chartHeight + ")").call(d3.axisBottom(xScale).tickFormat(d3.format('d'))); //	.call(d3.axisBottom(xScale).tickFormat(d3.timeFormat("%Y"))); // y no worky
 
       svg.append("g").attr("class", "y axis").attr("transform", "translate(" + chartWidth + ", 0)").call(d3.axisRight(yScale));
       var line = d3.line().x(function (d, i) {

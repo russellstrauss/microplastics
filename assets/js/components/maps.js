@@ -115,7 +115,6 @@ module.exports = function() {
 				d3.csv('./assets/js/data/exports.csv', prepareExports).then(function(data) {
 					exportsData = data;
 					mapData = exportsData;
-					//console.log(exportsData);
 					
 					self.showCountries();
 					self.addBarGraph();
@@ -200,14 +199,13 @@ module.exports = function() {
 				mapData.forEach(function(row) {
 					
 					if (feature.properties.NAME === row.country) {
-						//console.log(row.amount / 100)
+
 						result = {
 							fillColor: '#E66200',
 							weight: .25,
 							opacity: 1, // stroke opacity
 							color: 'black',
 							fillOpacity: (row.amount / max) * .4 + .3
-							//fillOpacity: row.amount / 100
 						};
 					}
 				});
@@ -243,9 +241,7 @@ module.exports = function() {
 					let countryMismanaged = '';
 					
 					let hoveredCountryExports = exportsData.filter(function(row) {
-						
-						console.log(row.country === countryName, row.country, countryName)
-						
+												
 						if (row.country === countryName) return row;
 					});
 					let hoveredCountryImports = importsData.filter(function(row) {
@@ -311,11 +307,8 @@ module.exports = function() {
 			barGraphInnerHeight = barGraphHeight - barPadding.top - barPadding.bottom;
 
 			let maxValue = d3.max(mapData, function (d) {
-				console.log(d.amount);
 				return +d.amount;
 			});
-
-			console.log(maxValue);
 			
 			let compare = function(a, b) { // sort vertical direction of bars
 				return a.amount - b.amount;

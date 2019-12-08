@@ -204,8 +204,11 @@ module.exports = function () {
 					});
 				});
 				
-				selectors.append('div').attr('class', 'legend').append('div').attr('class', 'colorscale-gradient');
-
+				var legend = selectors.append('div').attr('class', 'legend')
+				legend.append('div').attr('class', 'colorscale-gradient');
+				var legendScale = document.querySelector('.legend-scale');
+				if (legendScale) legend.node().append(legendScale);
+				
 				var g = svg.selectAll(".dimension")
 					.data(dimensions)
 					.enter().append("g")
@@ -248,15 +251,15 @@ module.exports = function () {
 					.append("text")
 					.style("text-anchor", "middle")
 					.attr("fill", "black")
-					.attr("font-size", "18")
+					.attr("font-size", "12")
 					.attr("y", -9)
 					.text(function (d) { 
 						if (d == 'pollute_rank')
-							return "How much does the country contribute to plastic pollution (rank)";
+							return "Contribution (rank)";
 						else if (d == 'inadequately_managed_plastic_rank')
 							return "Inadequately Managed Plastic (Rank)"
 						else
-							return "How much does the country get impacted by plastic pollution (rank)";
+							return "Impact (rank)";
 					});
 
 				g.append("g")
@@ -288,7 +291,10 @@ module.exports = function () {
 				country_container_group = country_container_group.merge(country_container_enter)
 					.attr('class', 'country')
 					.attr('id', d => {return d.code })
-					.html(d => {return '<span>' + toTitleCase(d.country.replace(new RegExp('-', 'gi'), ' ')) + '</span>'})
+					.html(d => {return '<img src="./assets/img/countries/' 
+						+ d.country 
+						+ '.svg"></img><span>'
+						+ toTitleCase(d.country.replace(new RegExp('-', 'gi'), ' ')) + '</span>'})
 					.on('mousedown', d => {
 						d3.event.preventDefault();
 						country_container_element = document.querySelector('.country-container');

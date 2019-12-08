@@ -1,75 +1,75 @@
 .parallel-coordinates-container {
 	padding: 100px 15px;
-	
+
 	.title {
 		text-align: center;
 	}
-	
+
 	svg#paracoords-svg {
 		font: 10px sans-serif;
-	  }
-	
+	}
+
 	div.paracoords {
-	  display: flex;
-	  justify-content: center;
-	  padding: 10px;
-	  margin: 300px 0;
-	  margin-top: 100px;
-	}
-	
-	div#selectors {
-	  height: 560px;
-	  
-	  .button-container {
 		display: flex;
-		justify-content: flex-end;
-		margin-bottom: 30px;
-		
-		button {
-		  margin: 0;
-		  transition: all 250ms ease;
-		  
-		  &:hover {
-			background-color: #78909c;
-			color: white;
-		  }
-		}
-	  }
+		justify-content: center;
+		padding: 10px;
+		margin: 300px 0;
+		margin-top: 100px;
 	}
-	  
-	  .background path {
+
+	div#selectors {
+		height: 560px;
+
+		.button-container {
+			display: flex;
+			justify-content: flex-end;
+			margin-bottom: 30px;
+
+			button {
+				margin: 0;
+				transition: all 250ms ease;
+
+				&:hover {
+					background-color: #78909c;
+					color: white;
+				}
+			}
+		}
+	}
+
+	.background path {
 		fill: none;
 		stroke: #ddd;
 		shape-rendering: crispEdges;
 		opacity: 0.3;
 		pointer-events: none;
-	  }
-	  
-	  .foreground path {
+	}
+
+	.foreground path {
 		fill: none;
-		stroke-width:2px;
-		opacity:0.5;
-	  }
-	  
-	  .brush .extent {
+		stroke-width: 2px;
+		opacity: 0.5;
+	}
+
+	.brush .extent {
 		fill-opacity: .3;
 		stroke: #fff;
 		shape-rendering: crispEdges;
-	  }
-	  
-	  .paracoords .axis line,
-	  .axis path {
+	}
+
+	.paracoords .axis line,
+	.axis path {
 		fill: none;
 		stroke: #000;
 		shape-rendering: crispEdges;
-	  }
-	  
-	  .paracoords .axis text {
+	}
+
+	.paracoords .axis text {
 		text-shadow: 0 1px 0 #fff, 1px 0 0 #fff, 0 -1px 0 #fff, -1px 0 0 #fff;
 		cursor: move;
-	  }
-	
-	  div.tooltip {
+	}
+
+	div.tooltip {
 		color: white;
 		position: absolute;
 		text-align: center;
@@ -77,86 +77,129 @@
 		height: 28px; */
 		padding: 2px;
 		font: 12px sans-serif;
-		background: rgba(0,0,0,.8);
+		background: rgba(0, 0, 0, .8);
 		border: 2px solid black;
 		pointer-events: none;
-		text-align:left;
-	  }
-	
-	  div.tooltip b.title {
-		text-align:center;
-	  }
-	
-	  div.country-container {
-		display:block;
-		overflow-y:auto;
-		height:475px;
+		text-align: left;
+	}
+
+	div.tooltip b.title {
+		text-align: center;
+	}
+
+	div.country-container {
+		display: block;
+		overflow-y: auto;
+		height: 475px;
 		width: 230px;
-		-webkit-box-sizing: border-box; /* Safari/Chrome, other WebKit */
-		-moz-box-sizing: border-box;    /* Firefox, other Gecko */
-		box-sizing: border-box;         /* Opera/IE 8+ */
-	  }
-	
-	  div.country-container div.country {
+		-webkit-box-sizing: border-box;
+		/* Safari/Chrome, other WebKit */
+		-moz-box-sizing: border-box;
+		/* Firefox, other Gecko */
+		box-sizing: border-box;
+		/* Opera/IE 8+ */
+	}
+
+	div.country-container div.country {
 		padding: 10px;
-		border:solid;
-		border-color:lightgrey;
-		border-width:1px;
-		margin-bottom:2px;
-		margin-top:0px;
-		border-radius:3px;
-	  }
-	
-	  /* select.country-container option.country span {
+		border: solid;
+		border-color: lightgrey;
+		border-width: 1px;
+		margin-bottom: 2px;
+		margin-top: 0px;
+		border-radius: 3px;
+	}
+
+	/* select.country-container option.country span {
 		float:right;
 	  } */
-	
-	  table.slider-table {
+
+	table.slider-table {
 		width: 350px;
-		
+
 		input {
 			cursor: pointer;
 		}
-	  }
-	
-	  select.country-container {
-		width:350px;
+	}
+
+	select.country-container {
+		width: 350px;
 		margin-bottom: 10px;
 		font-size: 1.2rem;
-		
+
 		option {
 			background-repeat: no-repeat;
 			padding: 5px 5px 5px 35px;
 			cursor: pointer;
 			background-size: 20px;
-			background-position: left 8px  center;
+			background-position: left 8px center;
 		}
-	  }
-	
-	  select.country-container option.country img {
-		height: 25px; 
-		width:25px;
-		vertical-align:sub;
-	  }
-	
-	  input.country-selector {
-		width:230px;
-		margin-bottom:2px;
-		padding:5px;
-		border-radius:3px;
-		border-width:1px;
-		-webkit-box-sizing: border-box; /* Safari/Chrome, other WebKit */
-		-moz-box-sizing: border-box;    /* Firefox, other Gecko */
-		box-sizing: border-box;         /* Opera/IE 8+ */
-	  }
-	  
-	  .legend {
-		  
+	}
+
+	select.country-container option.country img {
+		height: 25px;
+		width: 25px;
+		vertical-align: sub;
+	}
+
+	input.country-selector {
+		width: 230px;
+		margin-bottom: 2px;
+		padding: 5px;
+		border-radius: 3px;
+		border-width: 1px;
+		-webkit-box-sizing: border-box;
+		/* Safari/Chrome, other WebKit */
+		-moz-box-sizing: border-box;
+		/* Firefox, other Gecko */
+		box-sizing: border-box;
+		/* Opera/IE 8+ */
+	}
+
+	.legend {
+
 		.colorscale-gradient {
-		  position: relative;
-		  margin-top: 30px;
-		  height: 30px;
-		  background: linear-gradient(90deg, rgba(0,176,255,1) 0%, rgba(255,0,0,1) 100%);
+			position: relative;
+			margin-top: 30px;
+			height: 30px;
+			background: linear-gradient(90deg, rgba(0, 176, 255, 1) 0%, rgba(255, 0, 0, 1) 100%);
 		}
-	  }
+		
+		.legend-scale {
+			margin-top: 6px;
+		
+			.axis-container {
+				height: 5px;
+				position: relative;
+				
+				* {
+					background-color: black;
+					position: absolute;
+					top: 0;
+				}
+				
+				.tick-left {
+					height: 100%;
+					width: 2px;
+				}
+				
+				.axis-line {
+					height: 2px;
+					width: 100%;
+				}
+				
+				.tick-right {
+					right: 0;
+					height: 100%;
+					width: 2px;
+				}
+			}
+			
+			.labels {
+				display: flex;
+				justify-content: space-between;
+				font-size: 11px;
+			}
+		}
+	}
 }

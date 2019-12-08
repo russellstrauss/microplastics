@@ -2,13 +2,9 @@ module.exports = function () {
 	
 	var svg;
 	var upOneLevelIcon;
+	var stats = document.querySelector('.sunburst-component .stats');
 	
 	return {
-		
-		
-		settings: {
-
-		},
 
 		init: function () {
 
@@ -18,10 +14,12 @@ module.exports = function () {
 
 		sunburst: function () {
 			'use strict';
-
+			
+			let self = this;
 			const format = d3.format(",d");
-			const width = document.querySelector('.sunburst').offsetWidth;
+			const width = document.querySelector('.sunburst .sunburst-container').offsetWidth;
 			const radius = width / 6;
+			document.querySelector('.sunburst').style.height = width + 'px';
 
 			const arc = d3.arc()
 						.startAngle(d => d.x0)
@@ -102,7 +100,7 @@ module.exports = function () {
 					.on("click", clicked);
 
 				path.append("title")
-					.text(d => `${d.ancestors().map(d => d.data.name).reverse().join("/")}\n${format(d.value)}`);
+					.text(d => `${d.ancestors().map(d => d.data.name).reverse().join("/")}\n${format(d.value) + ' metric tons'}`);
 
 				const label = g.append("g")
 							.attr("pointer-events", "none")
@@ -133,7 +131,7 @@ module.exports = function () {
 						y1: Math.max(0, d.y1 - p.depth)
 					});
 
-					const t = g.transition().duration(750);
+					const t = g.transition().duration(500);
 
 					// Transition the data on all arcs, even the ones that aren’t visible,
 					// so that if this transition is interrupted, entering arcs will start
@@ -156,12 +154,50 @@ module.exports = function () {
 						.attr("fill-opacity", d => +labelVisible(d.target))
 						.attrTween("transform", d => () => labelTransform(d.current));
 						
-					if (p.parent === null) upOneLevelIcon.style.opacity = '0';
+					if (p.parent === null) upOneLevelIcon.style.opacity = '0'; // show icon in lower depths
 					else {
 						upOneLevelIcon.style.opacity = '1';
 					}
+					
+					if (p.depth < 2) self.updateStats(p.children, p);
+					else {
+						self.hideStats();
+					}
 				}
 			});
+		},
+		
+		hideStats: function() {
+			stats.style.opacity = '0';
+		},
+		
+		updateStats: function(newRoot, parent) {
+			
+			stats.innerHTML = '';
+			
+			newRoot.forEach(function(child) {
+						
+				let regionName = child.data.name;
+				let regionElement = document.createElement('div'), percentageElement = document.createElement('div'), regionNameElement = document.createElement('div');
+				regionElement.classList.add('region');
+				percentageElement.classList.add('percentage');
+				regionNameElement.classList.add('region-name');
+				
+				let percentageValue = (parent.value / child.value);
+				
+				console.log(parent, child);
+				
+				percentageElement.innerText = percentageValue.toFixed(1) + '%';
+				console.log(percentageValue)
+				regionNameElement.innerText = regionName;
+				regionElement.appendChild(percentageElement);
+				regionElement.appendChild(regionNameElement);
+				stats.appendChild(regionElement);
+				
+				
+				
+			});
+			stats.style.opacity = '1';
 		},
 		
 		addIcon: function() {

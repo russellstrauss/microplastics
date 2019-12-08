@@ -69,26 +69,6 @@ module.exports = function() {
 			});
 			svg.call(toolTip);
 		},
-		
-		setScrollPoints: function() {
-			
-			let self = this;
-			let veil = document.querySelector('.veil');
-			
-			var waypoint = new Waypoint({
-				element: document.getElementById('showAsia'),
-				handler: function(direction) {
-					
-					if (direction === 'down') {
-						
-					}
-					else {
-						
-					}
-				},
-				offset: 0
-			});
-		},
 		 
 		exports: function() {
 			

@@ -430,17 +430,6 @@ module.exports = function () {
       });
       svg.call(_toolTip);
     },
-    setScrollPoints: function setScrollPoints() {
-      var self = this;
-      var veil = document.querySelector('.veil');
-      var waypoint = new Waypoint({
-        element: document.getElementById('showAsia'),
-        handler: function handler(direction) {
-          if (direction === 'down') {} else {}
-        },
-        offset: 0
-      });
-    },
     exports: function exports() {
       var self = this;
       d3.csv('./assets/js/data/imports.csv', prepareImports).then(function (data) {
@@ -1622,8 +1611,8 @@ module.exports = function () {
 module.exports = function () {
   var svg;
   var upOneLevelIcon;
+  var stats = document.querySelector('.sunburst-component .stats');
   return {
-    settings: {},
     init: function init() {
       this.sunburst();
       this.addIcon();
@@ -1631,9 +1620,11 @@ module.exports = function () {
     sunburst: function sunburst() {
       'use strict';
 
+      var self = this;
       var format = d3.format(",d");
-      var width = document.querySelector('.sunburst').offsetWidth;
+      var width = document.querySelector('.sunburst .sunburst-container').offsetWidth;
       var radius = width / 6;
+      document.querySelector('.sunburst').style.height = width + 'px';
       var arc = d3.arc().startAngle(function (d) {
         return d.x0;
       }).endAngle(function (d) {
@@ -1711,7 +1702,7 @@ module.exports = function () {
         path.append("title").text(function (d) {
           return "".concat(d.ancestors().map(function (d) {
             return d.data.name;
-          }).reverse().join("/"), "\n").concat(format(d.value));
+          }).reverse().join("/"), "\n").concat(format(d.value) + ' metric tons');
         });
         var label = g.append("g").attr("pointer-events", "none").attr("text-anchor", "middle").style("user-select", "none").selectAll("text").data(root.descendants().slice(1)).join("text").attr("dy", "0.35em").attr("fill-opacity", function (d) {
           return +labelVisible(d.current);
@@ -1732,7 +1723,7 @@ module.exports = function () {
               y1: Math.max(0, d.y1 - p.depth)
             };
           });
-          var t = g.transition().duration(750); // Transition the data on all arcs, even the ones that aren’t visible,
+          var t = g.transition().duration(500); // Transition the data on all arcs, even the ones that aren’t visible,
           // so that if this transition is interrupted, entering arcs will start
           // the next transition from the desired position.
 
@@ -1759,11 +1750,39 @@ module.exports = function () {
               return labelTransform(d.current);
             };
           });
-          if (p.parent === null) upOneLevelIcon.style.opacity = '0';else {
-            upOneLevelIcon.style.opacity = '1';
+          if (p.parent === null) upOneLevelIcon.style.opacity = '0'; // show icon in lower depths
+          else {
+              upOneLevelIcon.style.opacity = '1';
+            }
+          if (p.depth < 2) self.updateStats(p.children, p);else {
+            self.hideStats();
           }
         }
       });
+    },
+    hideStats: function hideStats() {
+      stats.style.opacity = '0';
+    },
+    updateStats: function updateStats(newRoot, parent) {
+      stats.innerHTML = '';
+      newRoot.forEach(function (child) {
+        var regionName = child.data.name;
+        var regionElement = document.createElement('div'),
+            percentageElement = document.createElement('div'),
+            regionNameElement = document.createElement('div');
+        regionElement.classList.add('region');
+        percentageElement.classList.add('percentage');
+        regionNameElement.classList.add('region-name');
+        var percentageValue = parent.value / child.value;
+        console.log(parent, child);
+        percentageElement.innerText = percentageValue.toFixed(1) + '%';
+        console.log(percentageValue);
+        regionNameElement.innerText = regionName;
+        regionElement.appendChild(percentageElement);
+        regionElement.appendChild(regionNameElement);
+        stats.appendChild(regionElement);
+      });
+      stats.style.opacity = '1';
     },
     addIcon: function addIcon() {
       d3.xml('./assets/svg/up-one-level.svg').then(function (data) {

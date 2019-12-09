@@ -5,10 +5,12 @@ background-color: black;
     .hero2 {
         position: relative;
         background-color: white;
-        height: 3200px;
+        height: 3400px;
+        max-width:100%;
         background-size: cover;
         background-repeat: no-repeat;
         background-position: center right;
+        padding-bottom:1000px;
 
         .gradient-black2 {
         position: absolute;
@@ -55,10 +57,11 @@ background-color: black;
 
     }  
     .lastimg{
+        position:absolute;
         background-color: white;
-
     }
     .lastimg img {
+
         background-color: white;
         padding-top:150px;
         display: block;
@@ -69,5 +72,8 @@ background-color: black;
 }
 
 .references {
-    color: grey;
+    margin-top:0;
+    padding-top:600px;
+    background-color:#FCA93C;
+    color: rgb(80, 80, 80);
 }

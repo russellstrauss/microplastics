@@ -1,10 +1,14 @@
 .map-intro {
-	padding: 300px 15px;
+	padding-top: 100px;
 	background: linear-gradient(0deg, rgba(0,0,0,1) 0%, rgba(50,50,50,1) 100%);
 	
 	h2 {
 		color: white;
-		margin: 200px 0;
+		margin: 50px 0;
+		
+		&:last-of-type {
+			margin-bottom: 0;
+		}
 	}
 }
 

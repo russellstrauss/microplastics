@@ -714,10 +714,9 @@ module.exports = function () {
         mapDataButtons.forEach(function (button) {
           button.classList.remove('active');
         });
-        exportsButton.classList.add('active');
-        setTimeout(function () {
-          _map.flyTo(center.location, center.zoom);
-        }, 1000);
+        exportsButton.classList.add('active'); // setTimeout(function() {
+        // 	map.flyTo(center.location, center.zoom);
+        // }, 1000);
       });
       var importsButton = document.querySelector('#plasticImports');
       if (importsButton) importsButton.addEventListener('click', function () {
@@ -731,10 +730,9 @@ module.exports = function () {
         mapDataButtons.forEach(function (button) {
           button.classList.remove('active');
         });
-        importsButton.classList.add('active');
-        setTimeout(function () {
-          _map.flyTo(center.location, center.zoom);
-        }, 1000);
+        importsButton.classList.add('active'); // setTimeout(function() {
+        // 	map.flyTo(center.location, center.zoom);
+        // }, 1000);
       });
       var mismanagedButton = document.querySelector('#plasticMismanaged');
       if (mismanagedButton) mismanagedButton.addEventListener('click', function () {
@@ -753,10 +751,9 @@ module.exports = function () {
         });
         mismanagedButton.classList.add('active');
         var valuation = document.querySelector('.geo-vis .stats .valuation');
-        valuation.style.display = 'none';
-        setTimeout(function () {
-          _map.flyTo(mismanagedCenter.location, mismanagedCenter.zoom);
-        }, 1000);
+        valuation.style.display = 'none'; // setTimeout(function() {
+        // 	map.flyTo(mismanagedCenter.location, mismanagedCenter.zoom);
+        // }, 1000);
       });
       var zoomIn = document.querySelector('.geo-vis .zooms .in');
       if (zoomIn) zoomIn.addEventListener('click', function () {

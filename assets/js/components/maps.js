@@ -429,9 +429,9 @@ module.exports = function() {
 				});
 				exportsButton.classList.add('active');
 				
-				setTimeout(function() {
-					map.flyTo(center.location, center.zoom);
-				}, 1000);
+				// setTimeout(function() {
+				// 	map.flyTo(center.location, center.zoom);
+				// }, 1000);
 			});
 			
 			let importsButton = document.querySelector('#plasticImports');
@@ -451,9 +451,9 @@ module.exports = function() {
 				});
 				importsButton.classList.add('active');
 				
-				setTimeout(function() {
-					map.flyTo(center.location, center.zoom);
-				}, 1000);
+				// setTimeout(function() {
+				// 	map.flyTo(center.location, center.zoom);
+				// }, 1000);
 			});
 			
 			let mismanagedButton = document.querySelector('#plasticMismanaged');
@@ -478,9 +478,9 @@ module.exports = function() {
 				let valuation = document.querySelector('.geo-vis .stats .valuation');
 				valuation.style.display = 'none';
 				
-				setTimeout(function() {
-					map.flyTo(mismanagedCenter.location, mismanagedCenter.zoom);
-				}, 1000);
+				// setTimeout(function() {
+				// 	map.flyTo(mismanagedCenter.location, mismanagedCenter.zoom);
+				// }, 1000);
 			});
 			
 			let zoomIn = document.querySelector('.geo-vis .zooms .in');

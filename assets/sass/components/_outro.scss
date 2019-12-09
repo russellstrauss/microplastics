@@ -13,12 +13,12 @@ background-color: black;
         padding-bottom:1000px;
 
         .gradient-black2 {
-        position: absolute;
-        height: 600px;
-    
-        width: 100%;
-        background: linear-gradient(0deg,  rgba(0, 0, 0, 0) 0%, black 100%);
-        z-index: 1;
+            position: absolute;
+            height: 600px;
+        
+            width: 100%;
+            background: linear-gradient(0deg,  rgba(0, 0, 0, 0) 0%, black 100%);
+            z-index: 1;
         }
 
         .bag-bg {
@@ -54,15 +54,22 @@ background-color: black;
             color: white;
         
         }
+        
+        .gradient-orange {
+            position: absolute;
+            width: 100%;
+            left: 0;
+            bottom: 0;
+            height: 200px;
+            background: linear-gradient(0deg, rgba(252,169,60,1) 0%, rgba(255,255,255,0) 100%);
+        }
 
     }  
     .lastimg{
         position:absolute;
-        background-color: white;
+        width: 100%;
     }
     .lastimg img {
-
-        background-color: white;
         padding-top:150px;
         display: block;
         margin-left: auto;
@@ -73,7 +80,7 @@ background-color: black;
 
 .references {
     margin-top:0;
-    padding-top:600px;
+    padding-top:1200px;
     background-color:#FCA93C;
     color: rgb(80, 80, 80);
 }

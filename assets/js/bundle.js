@@ -683,9 +683,7 @@ module.exports = function () {
     updateStats: function updateStats(percent, region, value) {
       var country = document.querySelector('.geo-vis .stats .country');
       var percentageOfTotal = document.querySelector('.geo-vis .stats .percentage-of-total');
-      var valuation = document.querySelector('.geo-vis .stats .valuation span'); //percent = parseInt(percent).toFixed(1); // round tenths
-      //if (percent.toString().slice(-2) === '.0') percent = parseInt(percent).toFixed(0);
-
+      var valuation = document.querySelector('.geo-vis .stats .valuation span');
       percent = utils.roundTenths(percent);
       country.textContent = region;
       percentageOfTotal.textContent = percent + '%';
@@ -1490,7 +1488,7 @@ module.exports = function () {
       var preparePast = function preparePast(d, i) {
         var row = {};
         row.year = d['Year'];
-        row.amount = d['Global plastics production (million tons)'] * 1000000;
+        row.amount = d['Global plastics production (million tons)'];
         return row;
       };
 
@@ -1509,21 +1507,18 @@ module.exports = function () {
         return row;
       };
 
-      d3.csv('./assets/js/data/projections-midpoint-world.csv', prepareMidpoint).then(function (data1) {
-        projectionData = data1;
-        d3.csv('./assets/js/data/global-plastics-production.csv', preparePast).then(function (data1) {
-          pastData = data1;
-          pastData.unshift({
-            'year': '1950',
-            'amount': 0
-          });
-          pastData.push({
-            'year': '2015',
-            'amount': 0
-          });
-          self.lineChart();
-          self.addAxes();
+      d3.csv('./assets/js/data/global-plastics-production.csv', preparePast).then(function (data1) {
+        pastData = data1;
+        pastData.unshift({
+          'year': '1950',
+          'amount': 0
         });
+        pastData.push({
+          'year': '2015',
+          'amount': 0
+        });
+        self.lineChart();
+        self.addAxes();
       });
     },
     lineChart: function lineChart() {
@@ -1543,15 +1538,18 @@ module.exports = function () {
       ;
       var xScale = d3.scaleLinear().domain([1950, 2015]).range([0, chartWidth]);
       var maxValue = d3.max(dataset, function (d) {
-        return d.amount;
+        return +d.amount;
       });
       var yScale = d3.scaleLinear().domain([0, maxValue]).range([chartHeight, 0]);
-      svg.append("g").attr("class", "x axis").attr("transform", "translate(0," + chartHeight + ")").call(d3.axisBottom(xScale).tickFormat(d3.format('d'))); //	.call(d3.axisBottom(xScale).tickFormat(d3.timeFormat("%Y"))); // y no worky
-
-      svg.append("g").attr("class", "y axis").attr("transform", "translate(" + chartWidth + ", 0)").call(d3.axisRight(yScale));
+      svg.append("g").attr("class", "x axis").attr("transform", "translate(0," + chartHeight + ")").call(d3.axisBottom(xScale).tickFormat(d3.format('d')));
+      var formatValue = d3.format(".2s");
+      svg.append("g").attr("class", "y axis").attr("transform", "translate(" + chartWidth + ", 0)").call(d3.axisRight(yScale).tickFormat(function (d) {
+        return formatValue(d).replace('M', ' million tons');
+      }));
       var line = d3.line().x(function (d, i) {
         return xScale(d.year);
       }).y(function (d) {
+        //console.log(parseInt(d.amount).toLocaleString(), parseInt(yScale(d.amount)).toLocaleString(), 'max: ', parseInt(maxValue).toLocaleString());
         return yScale(d.amount);
       }).curve(d3.curveMonotoneX); // apply smoothing to the line
 
@@ -1586,12 +1584,7 @@ module.exports = function () {
       var xAxisLabel = svg.append('text').attr('class', 'x-axis-label').html('metric tons');
       textWidth = xAxisLabel.node().getBBox().width;
       textHeight = xAxisLabel.node().getBBox().height;
-      xAxisLabel.attr('transform', 'translate(' + (chartWidth + 45) + ', ' + (chartHeight + 3) + ')'); // let yAxisLabel = svg.append('text') 
-      // .attr('class', 'y-axis-label')
-      // .html('Weight (metric tons)');
-      // textWidth = yAxisLabel.node().getBBox().width;
-      // textHeight = yAxisLabel.node().getBBox().height;
-      // yAxisLabel.attr('transform','translate(' + (chartWidth/2 - textWidth/2) + ', ' + (chartHeight + textHeight + (padding.bottom/2)) + ')');
+      xAxisLabel.attr('transform', 'translate(' + (chartWidth + 30) + ', ' + (chartHeight + 3) + ')');
     }
   };
 };

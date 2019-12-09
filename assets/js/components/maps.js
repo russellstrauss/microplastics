@@ -265,7 +265,7 @@ module.exports = function() {
 					markup += '<h4 class="country">' + countryName + '</h4>';
 					markup += '<div class="exports"><strong>Total exports (USD):</strong> $' + countryExports + '</div>';
 					markup += '<div class="imports"><strong>Total imports (USD):</strong> $' + countryImports + '</div>';
-					markup += '<div class="mismanaged"><strong>Percentage mismanaged waste:</strong> ' + countryMismanaged + '%</div>';
+					if (countryMismanaged) markup += '<div class="mismanaged"><strong>Global share of mismanaged waste:</strong> ' + countryMismanaged + '%</div>';
 					markup += '</div>';
 					
 					

@@ -28,7 +28,15 @@ $foreground: white;
 			font-size: 22px;
 			padding: 5px 10px;
 		}
+		
 	}
+	
+	.description {
+		max-width:1000px;
+		text-align:center;
+		margin: 300px auto 0 auto;
+	}
+
 	
 	.two-column {
 		overflow: visible;

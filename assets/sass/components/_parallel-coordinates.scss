@@ -11,8 +11,15 @@
 	padding-top: 160px;
 	background-color: rgb(43, 43, 43);
 	
+	p {
+		text-align: center;
+		color: white;
+		max-width: 1000px;
+		margin: 0 auto 20px auto;
+	}
+	
 	.gradient-grey1 {
-		height: 500px;
+		height: 300px;
 		top: 100%;
 		width: 100%;
 		background: linear-gradient(0deg, rgba(0,0,0,1) 0%, rgba(0,0,0,0) 100%);
@@ -35,23 +42,21 @@
 		display: flex;
 		justify-content: center;
 		padding: 10px;
-		// margin: 300px 0;
 		margin-top: 100px;
 		
 	}
 
 	div#selectors {
-		height: 560px;
-h2{
-	font-size:30px;
-	font-weight:100;
-	color:rgb(220, 220, 220);
+		
+		h2 {
+			font-size:30px;
+			font-weight:100;
+			color:rgb(220, 220, 220);
 
-}
+		}
 		.button-container {
 			display: flex;
 			justify-content: flex-end;
-			margin-bottom: 150px;
 			
 			.clear-all-countries{
 				background-color: rgb(99, 99, 99);
@@ -162,7 +167,6 @@ color: rgb(194, 194, 194);
 
 	select.country-container {
 		width: 350px;
-		// height:300px;
 		margin-bottom: 10px;
 		font-size: 1.2rem;
 
@@ -183,6 +187,7 @@ color: rgb(194, 194, 194);
 		height: 25px;
 		width: 25px;
 		vertical-align: sub;
+		display:none;
 	}
 
 	input.country-selector {
@@ -201,7 +206,6 @@ color: rgb(194, 194, 194);
 	}
 	.greycontainer{
 		width:100%;
-		height:300px;
 	}
 
 	.legend {
@@ -251,5 +255,9 @@ color: rgb(194, 194, 194);
 
 			}
 		}
+	}
+	
+	.description {
+		margin-top: 40px;
 	}
 }

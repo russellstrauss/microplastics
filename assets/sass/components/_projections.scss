@@ -15,6 +15,18 @@
 		max-width: 1200px;
 		margin: 100px auto 0 auto;
 		display: block;
+		position: relative;
+		
+		.line-plot-description {
+			position: absolute;
+			left: 0;
+			top: 50px;
+			width: 40%;
+			
+			p {
+				text-align: left;
+			}
+		}
 		
 		.line-graph {
 			

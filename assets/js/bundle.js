@@ -800,7 +800,7 @@ module.exports = function () {
       var parentElement = document.querySelector('.paracoords');
       var svgWidth = parentElement.offsetWidth * .60,
           // setting width to 60% of parent container for responsiveness. Adjust if necessary.
-      svgHeight = window.innerHeight * .60,
+      svgHeight = window.innerHeight * .70,
           margin = {
         top: 30,
         right: 100,
@@ -908,7 +908,7 @@ module.exports = function () {
         });
         x = d3.scalePoint().domain(dimensions).range([0, width]);
         draw(data);
-        selectors.append('h2').text('Adjust Ranking');
+        selectors.append('h2').text('Adjust Weights');
         var table = selectors.append('table').attr('class', 'slider-table');
         Object.keys(function_keys).forEach(function (d) {
           var tr = table.append('tr');
@@ -1577,9 +1577,10 @@ module.exports = function () {
       }
     },
     addAxes: function addAxes() {
-      var title = svg.append('text').attr('class', 'title').text('Plastic Created Since 1950');
+      var title = svg.append('text').attr('class', 'title').text('Yearly Plastic Production Since 1950');
       var textWidth = title.node().getBBox().width;
       var textHeight = title.node().getBBox().height;
+      title.style('font-size', '12px');
       title.attr('transform', 'translate(0, ' + (chartHeight - 40) + ')');
       var xAxisLabel = svg.append('text').attr('class', 'x-axis-label').html('metric tons');
       textWidth = xAxisLabel.node().getBBox().width;

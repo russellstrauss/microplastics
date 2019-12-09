@@ -30,7 +30,7 @@ module.exports = function () {
 			var parentElement = document.querySelector('.paracoords');
 			
 			const svgWidth = parentElement.offsetWidth * .60, // setting width to 60% of parent container for responsiveness. Adjust if necessary.
-				svgHeight = window.innerHeight * .60,
+				svgHeight = window.innerHeight * .70,
 				margin = { top: 30, right: 100, bottom: 30, left: 100 },
 				width = svgWidth - margin.left - margin.right,
 				height = svgHeight - margin.top - margin.bottom;
@@ -171,7 +171,7 @@ module.exports = function () {
 
 				draw(data);
 				
-				selectors.append('h2').text('Adjust Ranking')
+				selectors.append('h2').text('Adjust Weights')
 				var table = selectors.append('table').attr('class', 'slider-table');
 				Object.keys(function_keys).forEach(function(d) {
 					var tr = table.append('tr')

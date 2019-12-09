@@ -134,9 +134,10 @@ module.exports = function() {
 			
 			let title = svg.append('text') 
 			.attr('class', 'title')
-			.text('Plastic Created Since 1950');
+			.text('Yearly Plastic Production Since 1950');
 			let textWidth = title.node().getBBox().width;
 			let textHeight = title.node().getBBox().height;
+			title.style('font-size', '12px');
 			title.attr('transform','translate(0, ' + (chartHeight - 40) + ')');
 			
 			let xAxisLabel = svg.append('text') 

@@ -27,7 +27,7 @@ module.exports = function () {
 		materials: {
 			bottle: {
 				title: '1 Plastic Bottle',
-				path: './assets/svg/bottle.svg',
+				path: './assets/img/bottle-black.jpg',
 				useTimeHours: 1,
 				useTimeDisplay: '1 hour',
 				mass: '24g',

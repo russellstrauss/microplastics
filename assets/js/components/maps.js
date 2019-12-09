@@ -5,7 +5,7 @@ module.exports = function() {
 	var selectColor = '#E66200';
 	var defaultColor = '#E6965B';
 	
-	var exportsStatsLabel = 'total global plastic exports', importsStatsLabel = 'total global plastic imports', mismanagedStatsLabel = 'of all waste mismanaged';
+	var exportsStatsLabel = 'total global plastic exports', importsStatsLabel = 'total global plastic imports', mismanagedStatsLabel = 'global share of mismanaged waste';
 	
 	var containerWidth = parseInt(document.querySelector('.fullscreen-map').offsetWidth);
 	var containerHeight = parseInt(document.querySelector('.fullscreen-map').offsetHeight);
@@ -319,13 +319,12 @@ module.exports = function() {
 			let top = mapData.slice(0)[19];
 			let worldPercent;
 			if (mismanagedDataBoolean) {
-				worldPercent = Math.round(10*top.amount)/10;
+				worldPercent = top.amount;
 			}
 			else {
-				worldPercent = Math.round(10*worldTotal/top.amount)/10;
+				worldPercent = worldTotal/top.amount;
 			}
 			self.updateStats(worldPercent, top.country, top.amount);
-			
 			
 			let count = 21;
 			var y = d3.scaleBand().domain(mapData.map(function (d) {
@@ -342,17 +341,11 @@ module.exports = function() {
 			svg.selectAll('.bar')
 			.data(mapData)
 			.enter()
-			// .append('rect').attr('height', barHeight).attr('barWidth', function(d) { // make clear hover interaction
-			// 	return x(d.amount);
-			// }).style('fill', 'red').attr('y', function (d) {
-			// 	return y(d.country) + (y.bandwidth());
-			// })
 			.append('rect')
 			.on('mouseover', function(d) {
 				d3.event.target.style.fill = selectColor;
 				
-				let percentage = ((parseInt(d.amount)/parseInt(worldTotal)) * 100).toFixed(1);
-				if (percentage.toString().slice(-2) === '.0') percentage = parseInt(percentage).toFixed(0);
+				let percentage = ((parseInt(d.amount)/parseInt(worldTotal)) * 100);
 				if (mismanagedDataBoolean) self.updateStats(d.amount, d.country, '')
 				else {
 					self.updateStats(percentage, d.country, d.amount);
@@ -395,6 +388,11 @@ module.exports = function() {
 			let country = document.querySelector('.geo-vis .stats .country');
 			let percentageOfTotal = document.querySelector('.geo-vis .stats .percentage-of-total');
 			let valuation = document.querySelector('.geo-vis .stats .valuation span');
+			
+			//percent = parseInt(percent).toFixed(1); // round tenths
+			//if (percent.toString().slice(-2) === '.0') percent = parseInt(percent).toFixed(0);
+			
+			percent = utils.roundTenths(percent);
 			
 			country.textContent = region;
 			percentageOfTotal.textContent = percent + '%';

@@ -61,7 +61,7 @@ module.exports = function() {
 			let dataset = pastData;
 			
 			width = document.querySelector('.projections .plot-container').offsetWidth;
-			height = 700;
+			height = window.innerHeight;
 			padding = {top: 50, right: 200, bottom: 100, left: 25};
 			chartWidth = width - padding.left - padding.right;
 			chartHeight = height - padding.top - padding.bottom;

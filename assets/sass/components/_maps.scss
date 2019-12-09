@@ -152,6 +152,7 @@
 	
 	.bar-section {
 		display: flex;
+		justify-content: center;
 		
 		@include mobile-only {
 			flex-direction: column;	
@@ -164,14 +165,11 @@
 			flex-direction: column;
 			justify-content: center;
 			margin-bottom: 70px;
-			margin-left:20px;
+			margin-left: 20px;
+			
 			@include tablet {
 				margin-top: 40px;
 				width: 20%;
-			}
-			
-			@include desktop {
-				padding-left: 100px;
 			}
 			
 			.percentage-of-total {
@@ -204,10 +202,9 @@
 		}
 		
 		.right {
-			width: 80%;
+			width: 70%;
 			
 			.bar-graph {
-				//width: 50%;
 				margin: auto;
 				color: white;
 				fill: white;
@@ -234,13 +231,6 @@
 					fill: #E6965B;
 				}
 				
-				.tick {
-					
-					text {
-						//transform: translateX(-5px); // give y-axis lables more space
-					}
-				}
-				
 				rect {
 					cursor: pointer;
 				}
@@ -250,7 +240,8 @@
 	
 	.insights {
 		margin-top: 100px;
-		p{
+		
+		p {
 			color: rgb(177, 177, 177);
 			margin-bottom: 20px;
 			margin-left: 8%;

@@ -1580,7 +1580,6 @@ module.exports = function () {
       var title = svg.append('text').attr('class', 'title').text('Yearly Plastic Production Since 1950');
       var textWidth = title.node().getBBox().width;
       var textHeight = title.node().getBBox().height;
-      title.style('font-size', '12px');
       title.attr('transform', 'translate(0, ' + (chartHeight - 40) + ')');
       var xAxisLabel = svg.append('text').attr('class', 'x-axis-label').html('metric tons');
       textWidth = xAxisLabel.node().getBBox().width;

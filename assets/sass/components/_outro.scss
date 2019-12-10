@@ -79,8 +79,12 @@ background-color: black;
 }
 
 .references {
-    margin-top:0;
-    padding-top:1200px;
-    background-color:#FCA93C;
-    color: rgb(80, 80, 80);
+    margin-top: 0;
+    padding-top: 1200px;
+    background-color: #FCA93C;
+	color: rgb(80, 80, 80);
+	
+	.references-title {
+		margin-top: 150px;
+	}
 }

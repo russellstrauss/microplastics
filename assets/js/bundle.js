@@ -1522,11 +1522,11 @@ module.exports = function () {
       var self = this;
       var dataset = pastData;
       width = document.querySelector('.projections .plot-container').offsetWidth;
-      height = window.innerHeight;
+      height = window.innerHeight * .8;
       padding = {
-        top: 50,
+        top: 0,
         right: 200,
-        bottom: 100,
+        bottom: 50,
         left: 25
       };
       chartWidth = width - padding.left - padding.right;

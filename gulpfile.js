@@ -10,6 +10,10 @@ var notifier = require('node-notifier');
 var jshint = require('gulp-jshint');
 var stylish = require('jshint-stylish');
 var babel = require('gulp-babel');
+var uglify = require('gulp-uglify');
+var cleanCSS = require('gulp-clean-css');
+var fs = require('fs');
+var path = require('path');
 
 gulp.task('sass', function () {
 	return gulp.src('./assets/sass/main.scss')
@@ -86,3 +90,56 @@ gulp.task('watch', function() {
 
 // Default Task
 gulp.task('default', gulp.series('vendors', 'javascript', 'sass', gulp.parallel('watch', 'sync')));
+
+// Production Build Tasks
+gulp.task('clean:dist', function(done) {
+	if (fs.existsSync('dist')) {
+		fs.rmSync('dist', { recursive: true, force: true });
+	}
+	done();
+});
+
+gulp.task('build:js', function() {
+	return gulp.src('./assets/js/bundle.js')
+		.pipe(uglify())
+		.pipe(gulp.dest('./dist/assets/js/'));
+});
+
+gulp.task('build:css', function() {
+	return gulp.src('./assets/sass/main.css')
+		.pipe(cleanCSS({compatibility: 'ie8'}))
+		.pipe(gulp.dest('./dist/assets/sass/'));
+});
+
+gulp.task('build:vendors', function() {
+	return gulp.src('./assets/vendors/js/vendors.js')
+		.pipe(uglify())
+		.pipe(gulp.dest('./dist/assets/vendors/js/'));
+});
+
+gulp.task('build:html', function() {
+	return gulp.src('./index.html')
+		.pipe(gulp.dest('./dist/'));
+});
+
+gulp.task('build:assets', function() {
+	return gulp.src([
+		'./assets/img/**/*',
+		'./assets/svg/**/*',
+		'./assets/video/**/*',
+		'./assets/js/data/**/*'
+	], {base: './assets'})
+		.pipe(gulp.dest('./dist/assets/'));
+});
+
+gulp.task('build', gulp.series(
+	'clean:dist',
+	'vendors',
+	'javascript',
+	'sass',
+	'build:js',
+	'build:css',
+	'build:vendors',
+	'build:html',
+	'build:assets'
+));

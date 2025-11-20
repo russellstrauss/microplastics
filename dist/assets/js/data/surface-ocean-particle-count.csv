@@ -1,0 +1,6 @@
+size,northPacific,northAtlantic,southPacifc, southAtlantic, indian, mediterranean, total
+0.33-1.00 mm,68.8,32.4,17.6,10.6,45.5,8.5,183
+1.01-4.75 mm,116,53.2,26.9,16.7,74.9,14.6,302
+4.76-200 mm,13.2,7.3,4.4,2.4,9.2,1.6,38.1
+>200 mm,.3,.2,.1,.05,.2,.04,.9
+Overall,199,93,49.1,29.7,130,24.7,525

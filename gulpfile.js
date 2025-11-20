@@ -1,6 +1,5 @@
 var gulp = require('gulp');
-var sass = require('gulp-sass');
-var watch = require('gulp-watch');
+var sass = require('gulp-sass')(require('sass'));
 var sourcemaps = require('gulp-sourcemaps');
 var browserify = require('browserify');
 var rename = require('gulp-rename');
@@ -21,14 +20,14 @@ gulp.task('sass', function () {
 	.pipe(browserSync.stream()); // causes injection of styles on save
 });
 
-gulp.task('sync', ['sass'], function() {
+gulp.task('sync', gulp.series('sass', function() {
 	browserSync.init({
 		open: true,
 		server: {
 			baseDir: "./",
 		}
 	});
-});
+}));
 
 var vendors = {
 	merge: [
@@ -80,17 +79,10 @@ gulp.task('HTML', function() {
 });
 
 gulp.task('watch', function() {
-
-	watch('./assets/sass/**/*.scss', function() {
-		gulp.start('sass');
-	});
-	watch(['./assets/js/**/*.js', '!./assets/js/bundle.js'], function() {
-		gulp.start('javascript');
-	});
-	watch('./**/*.html', function() {
-		gulp.start('HTML');
-	});	
+	gulp.watch('./assets/sass/**/*.scss', gulp.series('sass'));
+	gulp.watch(['./assets/js/**/*.js', '!./assets/js/bundle.js'], gulp.series('javascript'));
+	gulp.watch('./**/*.html', gulp.series('HTML'));
 });
 
 // Default Task
-gulp.task('default', ['vendors', 'javascript', 'sass', 'watch', 'sync']);
+gulp.task('default', gulp.series('vendors', 'javascript', 'sass', gulp.parallel('watch', 'sync')));

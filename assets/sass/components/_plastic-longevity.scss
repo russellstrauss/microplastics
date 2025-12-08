@@ -1,3 +1,6 @@
+@use '../mixins' as *;
+@use '../responsive' as *;
+
 $background: black;
 $foreground: white;
 

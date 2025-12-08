@@ -1,18 +1,5 @@
-// Fix for graceful-fs primordials issue with Node.js 12+
-try {
-	var gracefulFs = require('graceful-fs');
-	if (gracefulFs && gracefulFs.gracefulify) {
-		var fs = require('fs');
-		gracefulFs.gracefulify(fs);
-	}
-} catch (e) {
-	// graceful-fs not available, continue anyway
-}
-
 var gulp = require('gulp');
-var sassCompiler = require('sass');
-var sass = require('gulp-sass')(sassCompiler);
-var watch = require('gulp-watch');
+var sass = require('gulp-sass')(require('sass'));
 var sourcemaps = require('gulp-sourcemaps');
 var browserify = require('browserify');
 var rename = require('gulp-rename');
@@ -23,6 +10,10 @@ var notifier = require('node-notifier');
 var jshint = require('gulp-jshint');
 var stylish = require('jshint-stylish');
 var babel = require('gulp-babel');
+var uglify = require('gulp-uglify');
+var cleanCSS = require('gulp-clean-css');
+var fs = require('fs');
+var path = require('path');
 
 gulp.task('sass', function () {
 	return gulp.src('./assets/sass/main.scss')
@@ -33,14 +24,14 @@ gulp.task('sass', function () {
 	.pipe(browserSync.stream()); // causes injection of styles on save
 });
 
-gulp.task('sync', ['sass'], function() {
+gulp.task('sync', gulp.series('sass', function() {
 	browserSync.init({
 		open: true,
 		server: {
 			baseDir: "./",
 		}
 	});
-});
+}));
 
 var vendors = {
 	merge: [
@@ -92,68 +83,63 @@ gulp.task('HTML', function() {
 });
 
 gulp.task('watch', function() {
-
-	watch('./assets/sass/**/*.scss', function() {
-		gulp.start('sass');
-	});
-	watch(['./assets/js/**/*.js', '!./assets/js/bundle.js'], function() {
-		gulp.start('javascript');
-	});
-	watch('./**/*.html', function() {
-		gulp.start('HTML');
-	});	
+	gulp.watch('./assets/sass/**/*.scss', gulp.series('sass'));
+	gulp.watch(['./assets/js/**/*.js', '!./assets/js/bundle.js'], gulp.series('javascript'));
+	gulp.watch('./**/*.html', gulp.series('HTML'));
 });
 
 // Default Task
-gulp.task('default', ['vendors', 'javascript', 'sass', 'watch', 'sync']);
+gulp.task('default', gulp.series('vendors', 'javascript', 'sass', gulp.parallel('watch', 'sync')));
 
-// Build Tasks for Production
-gulp.task('build-sass', function () {
-	return gulp.src('./assets/sass/main.scss')
-		.pipe(sass({ outputStyle: 'compressed' }).on('error', sass.logError))
-		.pipe(gulp.dest('./dist/assets/sass'));
+// Production Build Tasks
+gulp.task('clean:dist', function(done) {
+	if (fs.existsSync('dist')) {
+		fs.rmSync('dist', { recursive: true, force: true });
+	}
+	done();
 });
 
-gulp.task('build-vendors', function() {
-	return gulp.src(vendors.merge)
-		.pipe(concat('vendors.js'))
-		.pipe(gulp.dest('./dist/assets/vendors/js/'));
-});
-
-gulp.task('build-javascript', function() {
-	var bundleStream = browserify('./assets/js/main.js')
-		.transform("babelify", {presets: ["@babel/preset-env"]})
-		.bundle()
-		.on('error', function(err) {
-			console.log(err.stack);
-			notifier.notify({
-				'title': 'Browserify Compilation Error',
-				'message': err.message
-			});
-			this.emit('end');
-		});
-
-	return bundleStream
-		.pipe(source('main.js'))
-		.pipe(rename('bundle.js'))
+gulp.task('build:js', function() {
+	return gulp.src('./assets/js/bundle.js')
+		.pipe(uglify())
 		.pipe(gulp.dest('./dist/assets/js/'));
 });
 
-gulp.task('build-html', function() {
+gulp.task('build:css', function() {
+	return gulp.src('./assets/sass/main.css')
+		.pipe(cleanCSS({compatibility: 'ie8'}))
+		.pipe(gulp.dest('./dist/assets/sass/'));
+});
+
+gulp.task('build:vendors', function() {
+	return gulp.src('./assets/vendors/js/vendors.js')
+		.pipe(uglify())
+		.pipe(gulp.dest('./dist/assets/vendors/js/'));
+});
+
+gulp.task('build:html', function() {
 	return gulp.src('./index.html')
 		.pipe(gulp.dest('./dist/'));
 });
 
-gulp.task('build-assets', function() {
+gulp.task('build:assets', function() {
 	return gulp.src([
 		'./assets/img/**/*',
-		'./assets/js/data/**/*',
 		'./assets/svg/**/*',
-		'./assets/video/**/*'
-	], { base: './assets' })
+		'./assets/video/**/*',
+		'./assets/js/data/**/*'
+	], {base: './assets'})
 		.pipe(gulp.dest('./dist/assets/'));
 });
 
-gulp.task('build', ['build-vendors', 'build-javascript', 'build-sass', 'build-html', 'build-assets'], function() {
-	console.log('Build complete! Output is in the dist folder.');
-});
+gulp.task('build', gulp.series(
+	'clean:dist',
+	'vendors',
+	'javascript',
+	'sass',
+	'build:js',
+	'build:css',
+	'build:vendors',
+	'build:html',
+	'build:assets'
+));

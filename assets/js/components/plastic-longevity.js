@@ -68,7 +68,6 @@ module.exports = function () {
 
 		init: function () {
 			
-			this.useRatio(settings.materials['bottle'].useTimeHours, settings.materials['bottle'].breakdownTime);
 			this.longevityTimescale();
 			this.bindUI();
 			this.miniMap();
@@ -172,7 +171,6 @@ module.exports = function () {
 			if (selector) selector.addEventListener('change', function(event) {
 				self.setMaterial(selector.value);
 				canvasHolder.innerHTML = '';
-				self.useRatio(settings.materials[selector.value].useTimeHours, settings.materials[selector.value].breakdownTime);
 				
 				let newYear = settings.materials[selector.value].breakdownTime;
 				data = [{ 'years': newYear }];
@@ -200,25 +198,25 @@ module.exports = function () {
 				image.setAttribute('src', material.path);
 			}
 			
-			let title = document.querySelector('.plastic-longevity .stats .material span');
-			let useTime = document.querySelector('.plastic-longevity .stats .use-time span');
-			//let mass = document.querySelector('.plastic-longevity .stats .mass span');
-			let breakdownTime = document.querySelector('.plastic-longevity .stats .generations span');
-			let lifetimes = document.querySelector('.plastic-longevity .stats .lifetimes span');
-			
-			title.textContent = material.title;
-			useTime.textContent = material.useTimeDisplay;
-			//mass.textContent = material.mass;
-			breakdownTime.textContent = material.breakdownTimeDisplay;
-			let lifetimesValue = material.breakdownTime / 76;
-			if (lifetimesValue < 1) lifetimesValue = lifetimesValue.toFixed(3);
-			else { 
-				lifetimesValue = lifetimesValue.toFixed(1);
-			}
-			lifetimes.textContent = lifetimesValue.toString() + ' lifetimes';
-			
-			let averageUseTimeElement = document.querySelector('.baseline span');
-			averageUseTimeElement.textContent = '(' + material.useTimeDisplay + ')';
+		let title = document.querySelector('.plastic-longevity .stats .material span');
+		let useTime = document.querySelector('.plastic-longevity .stats .use-time span');
+		//let mass = document.querySelector('.plastic-longevity .stats .mass span');
+		let breakdownTime = document.querySelector('.plastic-longevity .stats .generations span');
+		let lifetimes = document.querySelector('.plastic-longevity .stats .lifetimes span');
+		
+		if (title) title.textContent = material.title;
+		if (useTime) useTime.textContent = material.useTimeDisplay;
+		//if (mass) mass.textContent = material.mass;
+		if (breakdownTime) breakdownTime.textContent = material.breakdownTimeDisplay;
+		let lifetimesValue = material.breakdownTime / 76;
+		if (lifetimesValue < 1) lifetimesValue = lifetimesValue.toFixed(3);
+		else { 
+			lifetimesValue = lifetimesValue.toFixed(1);
+		}
+		if (lifetimes) lifetimes.textContent = lifetimesValue.toString() + ' lifetimes';
+		
+		let averageUseTimeElement = document.querySelector('.baseline span');
+		if (averageUseTimeElement) averageUseTimeElement.textContent = '(' + material.useTimeDisplay + ')';
 		},
 		
 		useRatio: function(useTimeHours, decomposeYears) {
@@ -312,8 +310,15 @@ module.exports = function () {
 			let self = this;
 			var range = document.querySelector('.mini-map');
 			var dragger = document.querySelector('.mini-map .dragger');
+			var columnLeft = document.querySelector('.plastic-longevity .column-left');
+			
+			// Exit early if required elements don't exist
+			if (!range || !dragger || !columnLeft || !canvasHolder || !unitVisContainer) {
+				return;
+			}
+			
 			var dragging = false, startY, currentY, draggerStartY;
-			var moveableHeight = document.querySelector('.plastic-longevity .column-left').getBoundingClientRect().height - dragger.getBoundingClientRect().height;
+			var moveableHeight = columnLeft.getBoundingClientRect().height - dragger.getBoundingClientRect().height;
 			
 			var totalProgress = 0;
 			

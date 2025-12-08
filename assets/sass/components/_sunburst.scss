@@ -1,6 +1,8 @@
+@use "sass:color";
+@use '../responsive' as *;
 
 .sunburst-component {
-	background-color: rgb(50, 50, 50);
+	background-color: black;
 	padding: 100px 15px;
 	
 	h2 {
@@ -75,9 +77,9 @@
 				cursor: pointer;
 				border-radius: 20px;
 				
-				&:hover {
-					background-color: darken(#808080, 8%);
-				}
+			&:hover {
+				background-color: color.adjust(#808080, $lightness: -8%);
+			}
 				
 				&.active {
 					background-color: #FF6C00;

@@ -1,5 +1,5 @@
 
-module.exports = function() {
+export default function() {
 	
 	var projectionData, midpointData, higherData, statisticsData, pastData;
 	var svg, width, height, chartWidth, chartHeight, padding;

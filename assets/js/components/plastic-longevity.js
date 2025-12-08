@@ -1,4 +1,4 @@
-module.exports = function () {
+export default function () {
 	
 	var graphic = document.querySelector('.plastic-longevity .graphic');
 	var data = [{ 'years': 450 }];
@@ -70,7 +70,6 @@ module.exports = function () {
 			
 			this.longevityTimescale();
 			this.bindUI();
-			this.miniMap();
 			this.setMaterial('bottle');
 		},
 		
@@ -169,10 +168,10 @@ module.exports = function () {
 			let self = this;
 			let selector = document.querySelector('#longevitySelector');			
 			if (selector) selector.addEventListener('change', function(event) {
-				self.setMaterial(selector.value);
-				canvasHolder.innerHTML = '';
+				let materialID = selector.value;
+				self.setMaterial(materialID);
 				
-				let newYear = settings.materials[selector.value].breakdownTime;
+				let newYear = settings.materials[materialID].breakdownTime;
 				data = [{ 'years': newYear }];
 				if (newYear < 1) {
 					document.querySelector('.longevity').innerHTML = '';
@@ -232,7 +231,14 @@ module.exports = function () {
 				width = parseInt(element.offsetWidth);
 			}
 
-			var context = canvas.getContext('2d');
+			// Get canvas element (should exist from HTML)
+			let canvasElement = document.querySelector('#dotCanvas');
+			if (!canvasElement) {
+				console.warn('Canvas element not found for useRatio visualization');
+				return;
+			}
+
+			var context = canvasElement.getContext('2d');
 			
 			var height = 1200;
 			var vw = width, vh = height;
@@ -241,8 +247,8 @@ module.exports = function () {
 			var countPerCanvas;
 			
 			function resizeCanvas() {
-				canvas.width = vw;
-				canvas.height = vh;
+				canvasElement.width = vw;
+				canvasElement.height = vh;
 				countPerCanvas = drawDots();
 			}
 			resizeCanvas();
@@ -284,8 +290,11 @@ module.exports = function () {
 					generationCount++;
 				}
 				
-				element.append(cloneCanvas(canvas));
-				canvas.remove();
+				let clonedCanvas = cloneCanvas(canvasElement);
+				element.appendChild(clonedCanvas);
+				if (i === canvasCopies) {
+					canvasElement.remove();
+				}
 				totalCount += countPerCanvas;
 				if (canvasCopies === 0) {
 					totalCount = Math.floor(ratio);
@@ -302,6 +311,8 @@ module.exports = function () {
 				return newCanvas;
 			}
 			
+			// Update module-level canvas reference for resize handler
+			canvas = canvasElement;
 			window.addEventListener('resize', resizeCanvas, false);
 		},
 		

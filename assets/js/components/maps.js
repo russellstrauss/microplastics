@@ -1,6 +1,4 @@
-require('leaflet-arc');
-
-module.exports = function() {
+export default function() {
 	
 	var selectColor = '#E66200';
 	var defaultColor = '#E6965B';

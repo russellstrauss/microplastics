@@ -147,5 +147,4 @@
 		}
 	})();
 	
-	module.exports = window.utils;
 })();

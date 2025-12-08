@@ -1,5 +1,17 @@
+// Fix for graceful-fs primordials issue with Node.js 12+
+try {
+	var gracefulFs = require('graceful-fs');
+	if (gracefulFs && gracefulFs.gracefulify) {
+		var fs = require('fs');
+		gracefulFs.gracefulify(fs);
+	}
+} catch (e) {
+	// graceful-fs not available, continue anyway
+}
+
 var gulp = require('gulp');
-var sass = require('gulp-sass');
+var sassCompiler = require('sass');
+var sass = require('gulp-sass')(sassCompiler);
 var watch = require('gulp-watch');
 var sourcemaps = require('gulp-sourcemaps');
 var browserify = require('browserify');
@@ -94,3 +106,54 @@ gulp.task('watch', function() {
 
 // Default Task
 gulp.task('default', ['vendors', 'javascript', 'sass', 'watch', 'sync']);
+
+// Build Tasks for Production
+gulp.task('build-sass', function () {
+	return gulp.src('./assets/sass/main.scss')
+		.pipe(sass({ outputStyle: 'compressed' }).on('error', sass.logError))
+		.pipe(gulp.dest('./dist/assets/sass'));
+});
+
+gulp.task('build-vendors', function() {
+	return gulp.src(vendors.merge)
+		.pipe(concat('vendors.js'))
+		.pipe(gulp.dest('./dist/assets/vendors/js/'));
+});
+
+gulp.task('build-javascript', function() {
+	var bundleStream = browserify('./assets/js/main.js')
+		.transform("babelify", {presets: ["@babel/preset-env"]})
+		.bundle()
+		.on('error', function(err) {
+			console.log(err.stack);
+			notifier.notify({
+				'title': 'Browserify Compilation Error',
+				'message': err.message
+			});
+			this.emit('end');
+		});
+
+	return bundleStream
+		.pipe(source('main.js'))
+		.pipe(rename('bundle.js'))
+		.pipe(gulp.dest('./dist/assets/js/'));
+});
+
+gulp.task('build-html', function() {
+	return gulp.src('./index.html')
+		.pipe(gulp.dest('./dist/'));
+});
+
+gulp.task('build-assets', function() {
+	return gulp.src([
+		'./assets/img/**/*',
+		'./assets/js/data/**/*',
+		'./assets/svg/**/*',
+		'./assets/video/**/*'
+	], { base: './assets' })
+		.pipe(gulp.dest('./dist/assets/'));
+});
+
+gulp.task('build', ['build-vendors', 'build-javascript', 'build-sass', 'build-html', 'build-assets'], function() {
+	console.log('Build complete! Output is in the dist folder.');
+});

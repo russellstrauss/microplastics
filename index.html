@@ -9,15 +9,15 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 	<link href="https://fonts.googleapis.com/css?family=Open+Sans|Cormorant|Abel&display=swap" rel="stylesheet">
 	<link rel="stylesheet" href="https://unpkg.com/leaflet@1.2.0/dist/leaflet.css" />
-	<link rel="stylesheet" href="/assets/sass/main.scss">
+	<link rel="stylesheet" href="./assets/sass/main.scss">
 	
 	<!-- Vendor libraries loaded as global scripts from public directory -->
-	<script src="/assets/vendors/js/d3.v5.min.js"></script>
-	<script src="/assets/vendors/js/d3-tip.js"></script>
-	<script src="/assets/vendors/js/leaflet.js"></script>
-	<script src="/assets/vendors/js/leaflet.edgebuffer.js"></script>
-	<script src="/assets/vendors/js/snap.svg-min.js"></script>
-	<script src="/assets/vendors/js/noframework.waypoints.min.js"></script>
+	<script type="module" src="./assets/vendors/js/d3.v5.min.js"></script>
+	<script type="module" src="./assets/vendors/js/d3-tip.js"></script>
+	<script type="module" src="./assets/vendors/js/leaflet.js"></script>
+	<script type="module" src="./assets/vendors/js/leaflet.edgebuffer.js"></script>
+	<script type="module" src="./assets/vendors/js/snap.svg-min.js"></script>
+	<script type="module" src="./assets/vendors/js/noframework.waypoints.min.js"></script>
 </head>
 
 <body>
@@ -232,9 +232,7 @@
 	<script src="https://cdn.jsdelivr.net/npm/@observablehq/stdlib"></script>
 	
 	<!-- Main application module - loaded after vendor scripts -->
-	<script type="module" src="/assets/js/main.js"></script>
-</head>
-<body>
+	<script type="module" src="./assets/js/main.js"></script>
 </body>
 
 </html>

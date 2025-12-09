@@ -7,8 +7,8 @@ export default function() {
 	
 	var containerWidth = parseInt(document.querySelector('.fullscreen-map').offsetWidth);
 	var containerHeight = parseInt(document.querySelector('.fullscreen-map').offsetHeight);
-	var mapWithLabels = 'https://stamen-tiles-{s}.a.ssl.fastly.net/toner/{z}/{x}/{y}{r}.png?access_token={accessToken}';
-	var mapWithoutLabels = 'https://stamen-tiles-{s}.a.ssl.fastly.net/toner-background/{z}/{x}/{y}{r}.png?access_token={accessToken}';
+	var mapWithLabels = 'https://stamen-tiles-{s}.a.ssl.fastly.net/toner/{z}/{x}/{y}.png';
+	var mapWithoutLabels = 'https://stamen-tiles-{s}.a.ssl.fastly.net/toner-background/{z}/{x}/{y}.png';
 	var graph, countriesLayer, barGraphTitle, worldTotal;
 	var mapData, exportsData, importsData, mismanagedData, geojson, toolTip, barData, barWidth, barPadding, barGraphInnerHeight, mismanagedDataBoolean;
 	
@@ -149,12 +149,12 @@ export default function() {
 			var activeMapType = 'nodes_links';
 			
 			L.tileLayer(mapWithoutLabels, {
-				id: 'mapbox.light',
-				accessToken: 'pk.eyJ1IjoiamFnb2R3aW4iLCJhIjoiY2lnOGQxaDhiMDZzMXZkbHYzZmN4ZzdsYiJ9.Uwh_L37P-qUoeC-MBSDteA',
+				subdomains: 'abcd',
+				attribution: 'Map tiles by <a href="http://stamen.com">Stamen Design</a>, under <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a>. Data by <a href="http://openstreetmap.org">OpenStreetMap</a>, under <a href="http://www.openstreetmap.org/copyright">ODbL</a>.',
 				edgeBufferTiles: 2,
 				reuseTiles: true,
-				format: 'jpg70',
-				noWrap: true
+				noWrap: true,
+				errorTileUrl: 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7'
 			}).addTo(map);
 			
 			map.doubleClickZoom.disable();
@@ -163,17 +163,19 @@ export default function() {
 		
 		showLabels: function() {
 			L.tileLayer(mapWithLabels, {
-				id: 'mapbox.light',
-				accessToken: 'pk.eyJ1IjoiamFnb2R3aW4iLCJhIjoiY2lnOGQxaDhiMDZzMXZkbHYzZmN4ZzdsYiJ9.Uwh_L37P-qUoeC-MBSDteA',
-				edgeBufferTiles: 2
+				subdomains: 'abcd',
+				attribution: 'Map tiles by <a href="http://stamen.com">Stamen Design</a>, under <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a>. Data by <a href="http://openstreetmap.org">OpenStreetMap</a>, under <a href="http://www.openstreetmap.org/copyright">ODbL</a>.',
+				edgeBufferTiles: 2,
+				errorTileUrl: 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7'
 			}).addTo(map);
 		},
 		
 		hideLabels: function() {
 			L.tileLayer(mapWithoutLabels, {
-				id: 'mapbox.light',
-				accessToken: 'pk.eyJ1IjoiamFnb2R3aW4iLCJhIjoiY2lnOGQxaDhiMDZzMXZkbHYzZmN4ZzdsYiJ9.Uwh_L37P-qUoeC-MBSDteA',
-				edgeBufferTiles: 2
+				subdomains: 'abcd',
+				attribution: 'Map tiles by <a href="http://stamen.com">Stamen Design</a>, under <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a>. Data by <a href="http://openstreetmap.org">OpenStreetMap</a>, under <a href="http://www.openstreetmap.org/copyright">ODbL</a>.',
+				edgeBufferTiles: 2,
+				errorTileUrl: 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7'
 			}).addTo(map);
 		},
 		

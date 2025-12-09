@@ -4,6 +4,7 @@ import legacy from '@vitejs/plugin-legacy';
 import { resolve } from 'path';
 
 export default defineConfig({
+  base: './',
   root: '.',
   publicDir: 'public',
   build: {

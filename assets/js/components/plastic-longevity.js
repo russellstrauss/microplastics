@@ -80,7 +80,17 @@ export default function () {
 			let glyph = document.querySelector('.generation-glyphs .frame');
 				
 			let graph = document.querySelector('.longevity');
+			if (!graph) {
+				console.warn('Longevity chart container not found');
+				return;
+			}
+			
 			let graphicContainer = graph.parentElement;
+			if (!graphicContainer) {
+				console.warn('Longevity chart parent container not found');
+				return;
+			}
+			
 			var padding = {
 				top: 5,
 				right: 50,
@@ -88,7 +98,13 @@ export default function () {
 				left: 20
 			};
 			
-			var width = graphicContainer.offsetWidth - padding.left - padding.right;
+			var containerWidth = graphicContainer.offsetWidth || graphicContainer.clientWidth || 800;
+			var width = containerWidth - padding.left - padding.right;
+			if (width <= 0) {
+				console.warn('Longevity chart width is invalid, using default');
+				width = 600;
+			}
+			
 			var height = timescaleHeight - padding.top - padding.bottom;
 			var barHeight = 15;
 			var barWidth = 0;
@@ -119,6 +135,7 @@ export default function () {
 			
 			// Scale the range of the data in the domains
 			x.domain([0, (maxValue + maxValue * .2)]);
+			y.domain(data.map(function(d, i) { return i; })).padding(0.1);
 			
 			let xAxisHeight = 20;
 			let xAxisLabel = svg.append('text') 
@@ -132,6 +149,10 @@ export default function () {
 			.data(data)
 			.enter().append('rect')
 			.attr('class', 'bar')
+			.attr('x', 0)
+			.attr('y', function(d, i) {
+				return y(i);
+			})
 			.attr('width', function (d) {
 				barWidth = x(d.years);
 				ratio = d.years / generationLength;
@@ -139,11 +160,15 @@ export default function () {
 				
 				return x(d.years);
 			})
-			.attr('height', barHeight);
+			.attr('height', function(d, i) {
+				return y.bandwidth();
+			});
 			
 			let generations = document.querySelector('.generation-glyphs');
-			for (let i = 0; i < Math.ceil(ratio) - 1; i++) {
-				generations.append(glyph.cloneNode(true));
+			if (generations && glyph) {
+				for (let i = 0; i < Math.ceil(ratio) - 1; i++) {
+					generations.append(glyph.cloneNode(true));
+				}
 			}
 			
 			let graphicWidth = barWidth / ratio;

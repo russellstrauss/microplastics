@@ -2,12 +2,15 @@
 @use '../responsive' as *;
 
 .map-intro {
-	padding-top: 100px;
 	background: black;
 	
 	h2 {
 		color: white;
-		margin: 100px 0;
+		margin: 50px auto;
+
+		@include tablet {
+			margin: 100px auto;
+		}
 		
 		&:last-of-type {
 			margin-bottom: 0;
@@ -16,16 +19,24 @@
 }
 
 .geo-vis {
-	padding: 300px 0;
 	background-color: black;
 	color: white;
-	text-align: center;
 	top: 100%;
+	margin: 100px auto;
+
+	@include tablet {
+		margin: 300px auto;
+	}
 	
 	p {
 		max-width: 1000px;
 		margin-left: auto;
 		margin-right: auto;
+		
+		@include tablet {
+			
+			text-align: center;
+		}
 	}
 	
 	.leaflet-popup {
@@ -82,13 +93,22 @@
 	}
 	
 	.ui {
-		margin-top: 70px;
 		margin-bottom: 10px;
+		padding: 20px;
+		text-align: center;
+
+		@include mobile-only {
+			margin: 0;
+			padding: 0 20px;
+		}
+		
+		@include tablet {
+			margin-top: 70px;
+		}
 
 		button {
 			font-size: 14px;
 			padding: 6px 20px;
-			display: inline-block;
 			margin: 0 20px;
 			background-color: #E6965B;
 			border-radius: 3px;
@@ -99,6 +119,16 @@
 			border-radius: 20px;
 			transition: all 150ms ease;
 			opacity: .55;
+
+			@include mobile-only {
+				display: block;
+				margin: 20px auto;
+				width: 100%;
+			}
+			
+			@include tablet {
+				display: inline-block;
+			}
 			
 			&:hover {
 				opacity: 1;
@@ -167,16 +197,19 @@
 		
 		.stats {
 			font-family: 'Abel', sans-serif;
-			padding-left: 20px;
 			display: flex;
 			flex-direction: column;
 			justify-content: center;
-			margin-bottom: 70px;
-			margin-left: 20px;
+			text-align: center;
+
+			@include mobile-only {
+				margin: 50px 0;
+			}
 			
 			@include tablet {
-				margin-top: 40px;
 				width: 20%;
+				padding-left: 20px;
+				margin: 40px 0 70px 20px;
 			}
 			
 			.percentage-of-total {
@@ -209,7 +242,9 @@
 		}
 		
 		.right {
-			width: 70%;
+			@include tablet {
+				width: 70%;
+			}
 			
 			.bar-graph {
 				margin: auto;
@@ -251,7 +286,7 @@
 		p {
 			color: rgb(177, 177, 177);
 			margin-bottom: 20px;
-			text-align: center;
+			text-align: left;
 		}
 	}
 }

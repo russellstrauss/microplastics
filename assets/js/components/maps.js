@@ -1,40 +1,40 @@
 export default function() {
 	
-	var selectColor = '#E66200';
-	var defaultColor = '#E6965B';
+	let selectColor = '#E66200';
+	let defaultColor = '#E6965B';
 	
-	var exportsStatsLabel = 'total global plastic exports', importsStatsLabel = 'total global plastic imports', mismanagedStatsLabel = 'global share of mismanaged waste';
+	let exportsStatsLabel = 'total global plastic exports', importsStatsLabel = 'total global plastic imports', mismanagedStatsLabel = 'global share of mismanaged waste';
 	
-	var containerWidth = parseInt(document.querySelector('.fullscreen-map').offsetWidth);
-	var containerHeight = parseInt(document.querySelector('.fullscreen-map').offsetHeight);
-	var mapWithLabels = 'https://stamen-tiles-{s}.a.ssl.fastly.net/toner/{z}/{x}/{y}.png';
-	var mapWithoutLabels = 'https://stamen-tiles-{s}.a.ssl.fastly.net/toner-background/{z}/{x}/{y}.png';
-	var graph, countriesLayer, barGraphTitle, worldTotal;
-	var mapData, exportsData, importsData, mismanagedData, geojson, toolTip, barData, barWidth, barPadding, barGraphInnerHeight, mismanagedDataBoolean;
+	let containerWidth = parseInt(document.querySelector('.fullscreen-map').offsetWidth);
+	let containerHeight = parseInt(document.querySelector('.fullscreen-map').offsetHeight);
+	let mapWithLabels = 'https://stamen-tiles-{s}.a.ssl.fastly.net/toner/{z}/{x}/{y}.png';
+	let mapWithoutLabels = 'https://stamen-tiles-{s}.a.ssl.fastly.net/toner-background/{z}/{x}/{y}.png';
+	let graph, countriesLayer, barGraphTitle, worldTotal;
+	let mapData, exportsData, importsData, mismanagedData, geojson, toolTip, barData, barWidth, barPadding, barGraphInnerHeight, mismanagedDataBoolean;
 	
-	var china = {
+	let china = {
 		location: new L.LatLng(23.638, 120.998),
 		zoom: 3
 	}
 	
-	var center = {
+	let center = {
 		location: new L.LatLng(30, 20),
 		zoom: 2.5
 	}
 	
-	var mismanagedCenter = {
+	let mismanagedCenter = {
 		location: new L.LatLng(10, 70),
 		zoom: 3.5
 	}
 	
-	var setLocation = center;
+	let setLocation = center;
 	
-	var map = L.map('map', { 
+	let map = L.map('map', { 
 		zoomControl: false,
 		zoomSnap: 0.01
 	}).setView(setLocation.location, setLocation.zoom);
-	var svg = d3.select('#map').select('svg');
-	var pointsGroup = svg.select('g').attr('class', 'points').append('g');
+	let svg = d3.select('#map').select('svg');
+	let pointsGroup = svg.select('g').attr('class', 'points').append('g');
 	
 	let northwestCorner = L.latLng(120, -171);
 	let southeastCorner = L.latLng(-40, 175);
@@ -42,7 +42,7 @@ export default function() {
 	let bounds = L.latLngBounds(northwestCorner, southeastCorner);
 	map.setZoom(map.getBoundsZoom(bounds));
 	
-	var svgLayer = L.svg();
+	let svgLayer = L.svg();
 	svgLayer.addTo(map);
 	
 	return {
@@ -51,10 +51,25 @@ export default function() {
 
 			let self = this;
 			
-			self.map();
-			self.exports();
-			self.bindUI();
-			//self.toolTip();
+			if (document.readyState === 'loading') {
+				document.addEventListener('DOMContentLoaded', function() {
+					self.map();
+					self.exports();
+					self.bindUI();
+				});
+			} else {
+				self.map();
+				self.exports();
+				self.bindUI();
+			}
+			
+			window.addEventListener('resize', function() { // Handle window resize to update map and bar graph
+				if (map) {
+					setTimeout(function() {
+						map.invalidateSize();
+					}, 100);
+				}
+			});
 		},
 		
 		toolTip: function() {
@@ -141,12 +156,22 @@ export default function() {
 		map: function() {
 			
 			let self = this;
-			var mapElement = d3.select('.fullscreen-map');
-			var mapWidth = parseInt(mapElement.offsetWidth);
-			var mapHeight = parseInt(mapElement.offsetHeight);
+			let mapElement = d3.select('.fullscreen-map');
+			let mapWidth = parseInt(mapElement.offsetWidth);
+			let mapHeight = parseInt(mapElement.offsetHeight);
 			
-			var vertices = d3.map();
-			var activeMapType = 'nodes_links';
+			if (mapWidth <= 0 || mapHeight <= 0) { // Ensure map container has valid dimensions before initializing
+				
+				setTimeout(function() { // Wait for container to be properly sized
+					self.map();
+				}, 100);
+				return;
+			}
+			
+			let vertices = d3.map();
+			let activeMapType = 'nodes_links';
+			
+			map.invalidateSize();
 			
 			L.tileLayer(mapWithoutLabels, {
 				subdomains: 'abcd',
@@ -154,7 +179,9 @@ export default function() {
 				edgeBufferTiles: 2,
 				reuseTiles: true,
 				noWrap: true,
-				errorTileUrl: 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7'
+				errorTileUrl: 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7',
+				maxZoom: 18,
+				minZoom: 1
 			}).addTo(map);
 			
 			map.doubleClickZoom.disable();
@@ -166,7 +193,9 @@ export default function() {
 				subdomains: 'abcd',
 				attribution: 'Map tiles by <a href="http://stamen.com">Stamen Design</a>, under <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a>. Data by <a href="http://openstreetmap.org">OpenStreetMap</a>, under <a href="http://www.openstreetmap.org/copyright">ODbL</a>.',
 				edgeBufferTiles: 2,
-				errorTileUrl: 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7'
+				errorTileUrl: 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7',
+				maxZoom: 18,
+				minZoom: 1
 			}).addTo(map);
 		},
 		
@@ -175,7 +204,9 @@ export default function() {
 				subdomains: 'abcd',
 				attribution: 'Map tiles by <a href="http://stamen.com">Stamen Design</a>, under <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a>. Data by <a href="http://openstreetmap.org">OpenStreetMap</a>, under <a href="http://www.openstreetmap.org/copyright">ODbL</a>.',
 				edgeBufferTiles: 2,
-				errorTileUrl: 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7'
+				errorTileUrl: 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7',
+				maxZoom: 18,
+				minZoom: 1
 			}).addTo(map);
 		},
 		
@@ -294,16 +325,14 @@ export default function() {
 			graph = document.querySelector('.geo-vis .bar-graph');
 			
 			let graphicContainer = graph.parentElement;
-			barPadding = {
-				top: 60,
-				right: 100,
-				bottom: 80,
-				left: 200
-			};
+			barPadding = { top: 60, right: 100, bottom: 120, left: 200 };
+			if (utils.mobile()) barPadding = { top: 20, right: 0, bottom: 120, left: 120 };
 			
-			var barGraphHeight = 425;
-			var barHeight = 7;
+			let barGraphHeight = 425;
+			let barHeight = 7;
 			barWidth = graphicContainer.offsetWidth - barPadding.left - barPadding.right;
+			
+			barWidth = Math.max(100, barWidth); // Ensure minimum width
 			barGraphInnerHeight = barGraphHeight - barPadding.top - barPadding.bottom;
 
 			let maxValue = d3.max(mapData, function (d) {
@@ -327,12 +356,14 @@ export default function() {
 			self.updateStats(worldPercent, top.country, top.amount);
 			
 			let count = 21;
-			var y = d3.scaleBand().domain(mapData.map(function (d) {
+			let y = d3.scaleBand().domain(mapData.map(function (d) {
 				return d.country;
 			})).range([barGraphInnerHeight, 0]);
-			var x = d3.scaleLinear().domain([0, maxValue]).range([0, barWidth - 100]);
+			
+			let maxBarWidth = Math.max(50, barWidth - 50);// Ensure x scale range is always positive
+			let x = d3.scaleLinear().domain([0, maxValue]).range([0, maxBarWidth]);
 
-			var svg = d3.select(graph).append('svg')
+			let svg = d3.select(graph).append('svg')
 			.attr('width', barWidth + barPadding.left + barPadding.right)
 			.attr('height', barGraphInnerHeight + barPadding.top + barPadding.bottom)
 			.append('g')
@@ -368,19 +399,23 @@ export default function() {
 			.ease(d3.easeCubicOut)
 			.duration(300)
 			.attr('width', function(d) {
-				return x(d.amount);
+				let width = x(d.amount);
+				return Math.max(0, width); // Ensure width is never negative
 			});
 			
-			svg.append('g').attr('transform', 'translate(0,' + (barGraphInnerHeight + 6) + ')').call(d3.axisBottom(x));
+			svg.append('g').attr('transform', 'translate(0,' + (barGraphInnerHeight + 6) + ')')
+			.call(d3.axisBottom(x).tickFormat(function(d) {
+				return Math.round(d / 1000000);
+			}));
 			svg.append('g').call(d3.axisLeft(y).tickSize(0));
 			
 			let titleHeight = 20;
-			barGraphTitle = svg.append('text') 
-				.attr('class', 'x-axis-label')
-				.html('Top 20 Global Plastic Exporters (USD)');
-			let textWidth = barGraphTitle.node().getBBox().width;
-			let textHeight = barGraphTitle.node().getBBox().height;
+			barGraphTitle = svg.append('text').attr('class', 'x-axis-label').html('Top 20 Global Plastic Exporters');
+			let textWidth = barGraphTitle.node().getBBox().width, textHeight = barGraphTitle.node().getBBox().height;
 			barGraphTitle.attr('transform','translate(' + (barWidth/2 - (textWidth/2) - (barPadding.left/2)) + ', ' + (barGraphInnerHeight + titleHeight + (barPadding.bottom/2)) + ')');
+			let barGraphUnits = svg.append('text').attr('class', 'x-axis-label-2').html('in millions of USD $');
+			let unitTextWidth = barGraphUnits.node().getBBox().width, unitTextHeight = barGraphUnits.node().getBBox().height;
+			barGraphUnits.attr('transform','translate(' + (barWidth/2 - (unitTextWidth/2) - (barPadding.left/2)) + ', ' + (barGraphInnerHeight + unitTextHeight + (barPadding.bottom/2) + 30) + ')');
 		},
 		
 		updateStats: function(percent, region, value) {
@@ -428,10 +463,6 @@ export default function() {
 					button.classList.remove('active');
 				});
 				exportsButton.classList.add('active');
-				
-				// setTimeout(function() {
-				// 	map.flyTo(center.location, center.zoom);
-				// }, 1000);
 			});
 			
 			let importsButton = document.querySelector('#plasticImports');
@@ -445,15 +476,10 @@ export default function() {
 				self.setStatsLabel(importsStatsLabel);
 				barGraphTitle.html('Top 20 Global Plastic Importers (USD)');
 				
-				
 				mapDataButtons.forEach(function(button) {
 					button.classList.remove('active');
 				});
 				importsButton.classList.add('active');
-				
-				// setTimeout(function() {
-				// 	map.flyTo(center.location, center.zoom);
-				// }, 1000);
 			});
 			
 			let mismanagedButton = document.querySelector('#plasticMismanaged');
@@ -477,10 +503,6 @@ export default function() {
 				
 				let valuation = document.querySelector('.geo-vis .stats .valuation');
 				valuation.style.display = 'none';
-				
-				// setTimeout(function() {
-				// 	map.flyTo(mismanagedCenter.location, mismanagedCenter.zoom);
-				// }, 1000);
 			});
 			
 			let zoomIn = document.querySelector('.geo-vis .zooms .in');

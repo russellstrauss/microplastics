@@ -3,7 +3,11 @@
 .projections {
 	background-color: black;
 	color: white;
-	padding: 300px 15px;
+	margin-top: 50px;
+	
+	@include tablet {
+		padding: 300px 15px;
+	}
 	
 	h2 {
 		margin-bottom: 50px;

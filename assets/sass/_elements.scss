@@ -60,10 +60,12 @@ hr {
 }
 
 p {
+	color: #b1b1b1;
 	font-size: .9rem;
 	line-height: 2;
 	margin-bottom: 40px;
 	max-width: 1000px;
+	padding: 0 10px;
 }
 
 section {
@@ -92,6 +94,6 @@ ul {
 	}
 }
 
-.orange {
+.highlight {
 	color: orange;
 }

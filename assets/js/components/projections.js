@@ -59,6 +59,9 @@ export default function() {
 			width = document.querySelector('.projections .plot-container').offsetWidth;
 			height = window.innerHeight * .8;
 			padding = {top: 0, right: 200, bottom: 50, left: 25};
+			if (utils.mobile()) {
+				padding = {top: 0, right: 25, bottom: 50, left: 25};
+			}
 			chartWidth = width - padding.left - padding.right;
 			chartHeight = height - padding.top - padding.bottom;
 			
@@ -87,10 +90,18 @@ export default function() {
 			
 			let formatValue = d3.format(".2s");
 			
-			svg.append("g")
-			.attr("class", "y axis")
-			.attr("transform", "translate(" + chartWidth + ", 0)")
-			.call(d3.axisRight(yScale).tickFormat(function(d) { return formatValue(d).replace('M', ' million tons'); }));
+			if (!utils.mobile()) {
+				svg.append("g")
+				.attr("class", "y axis")
+				.attr("transform", "translate(" + chartWidth + ", 0)")
+				.call(d3.axisRight(yScale).tickFormat(function(d) { return formatValue(d).replace('M', ' million tons'); }));
+			}
+			else {
+				svg.append("g")
+				.attr("class", "y axis")
+				.attr("transform", "translate(" + chartWidth + ", 0)")
+				.call(d3.axisRight(yScale).tickFormat(function(d) { return formatValue(d).replace('M', ''); }));
+			}
 			
 			var line = d3.line()
 			.x(function(d, i) { return xScale(d.year); })
@@ -132,13 +143,21 @@ export default function() {
 		
 		addAxes: function() {
 			
-			let title = svg.append('text') 
-			.attr('class', 'title')
-			.text('Yearly Plastic Production Since 1950');
+			let title;
+			if (!utils.mobile()) {
+				title = svg.append('text').attr('class', 'title').text('Yearly Plastic Production Since 1950');
+			}
+			else {
+				title = svg.append('text').attr('class', 'title').text('Yearly Plastic Production Since 1950 in Millions of Tons');	
+			}
+
 			let textWidth = title.node().getBBox().width;
 			let textHeight = title.node().getBBox().height;
-			title.attr('transform','translate(0, ' + (chartHeight - 40) + ')');
-			
+			if (utils.mobile()) title.attr('transform','translate(0, 10)');
+			else {
+				title.attr('transform','translate(0, ' + (chartHeight - 40) + ')');
+			}
+
 			let xAxisLabel = svg.append('text') 
 			.attr('class', 'x-axis-label')
 			.html('metric tons');

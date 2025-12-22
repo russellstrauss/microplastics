@@ -8,8 +8,21 @@
 	h2 {
 		color: white;
 		text-align: center;
-		margin-top: 200px;
-		// margin-bottom: 300px;
+		margin-top: 150px;
+		margin-bottom: 100px;
+		
+		.highlight {
+			color: orange;
+		}
+	}
+
+	p {
+		
+		margin: 50px auto;
+		
+		@include tablet {
+			width: 50%;
+		}
 	}
 	
 	.sunburst {
@@ -22,6 +35,7 @@
 		@include desktop-large {
 			padding: 0 50px;
 		}
+
 		
 		.sunburst-container {
 			max-width: 600px;
@@ -90,19 +104,31 @@
 	
 	.stats {
 		color: white;
-		display: flex;
 		text-align: center;
 		transition: all 250ms ease;
 		margin-top: 100px;
-		flex-wrap: wrap;
+		
+		@include tablet {
+			display: flex;
+			flex-wrap: wrap;
+		}
 		
 		.region {
-			border-right: 1px solid white;
 			margin: auto;
 			flex-grow: 1;
 			
-			@include desktop-large {
+			@include mobile-only {
+				border-bottom: 1px solid white;
+				padding: 10px;
+				width: 75%;
 
+				&:last-child {
+					border: 0;
+				}
+			}
+
+			@include tablet {
+				border-right: 1px solid white;
 			}
 			
 			&:last-child {
@@ -128,6 +154,10 @@
 				font-family: 'Abel', sans-serif;
 				font-size: 1.75rem;
 				color: #E6965B;
+
+				@include mobile-only {
+					font-size: 1.5rem;
+				}
 			}
 		}
 	}

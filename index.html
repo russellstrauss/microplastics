@@ -14,8 +14,7 @@
 	<!-- Vendor libraries loaded as global scripts from public directory -->
 	<script type="module" src="./assets/vendors/js/d3.v5.min.js"></script>
 	<script type="module" src="./assets/vendors/js/d3-tip.js"></script>
-	<script type="module" src="./assets/vendors/js/leaflet.js"></script>
-	<script type="module" src="./assets/vendors/js/leaflet.edgebuffer.js"></script>
+	<!-- Leaflet and leaflet plugins are now loaded via npm in vendors.js -->
 	<script type="module" src="./assets/vendors/js/snap.svg-min.js"></script>
 	<script type="module" src="./assets/vendors/js/noframework.waypoints.min.js"></script>
 </head>
@@ -31,8 +30,8 @@
 			<div class="plot-container">
 				
 				<div class="line-plot-description">
-					<p style="color: #b1b1b1;">The rate of global plastic production is measured on the scale of hundreds of millions of metric tons, and this trend is steadily increasing as time passes.</p>
-					<p style="color: #b1b1b1; ">Commercial production of plastics, which began in the 1950's, has enjoyed exceptional growth. Now, global annual production has exceeded 330 million metric tons in 2016 alone. Including the resin used in spinning textile fibers, this figure is closer to 400 metric tons, a value that almost exactly matches that of global human biomass.</p>
+					<p>The rate of global plastic production is measured on the scale of hundreds of millions of metric tons, and this trend is steadily increasing as time passes.</p>
+					<p>Commercial production of plastics, which began in the 1950's, has enjoyed exceptional growth. Now, global annual production has exceeded 330 million metric tons in 2016 alone. Including the resin used in spinning textile fibers, this figure is closer to 400 metric tons, a value that almost exactly matches that of global human biomass.</p>
 				</div>
 				
 				<svg>
@@ -59,23 +58,21 @@
 
 			</div>
 			
-			<p style="color: #b1b1b1; width: 60%; margin: auto;">At the present rate of growth, plastics production is estimated to double within the next 20 years.</p>
+			<p class="projections-caption">At the present rate of growth, plastics production is estimated to double within the next 20 years.</p>
 		</div>
 	</div>
 
 	<div class="sunburst-component">
-			<h2 style="margin-top:150px; margin-bottom: 100px;"> Should you be worried<br> about this <span style="color:orange; ">plastic epidemic</span>?
+			<h2> Should you be worried<br> about this <span class="highlight">plastic epidemic</span>?
 			</h2>
-			<p style="width : 50%; color: #b1b1b1; display:table; margin-top: 50px; margin-left:auto; margin-right:auto; text-align: left;">While plastic was originally envisioned as a building material for long-term, multi-use, robust products, as the manufacture of plastics became cheaper and cheaper, it started to be used in packaging and other single-use applications.</p>
-
-			<p style="width : 50%; color: #b1b1b1; display:table; margin-left:auto; margin-right:auto; padding-top:10px; text-align: left;">Now nearly every country on earth is creating millions of tons of plastic waste, causing it to become a global epidemic. <span class="orange">Who are the biggest contributors?</span></p>
+			<p>While plastic was originally envisioned as a building material for long-term, multi-use, robust products, as the manufacture of plastics became cheaper and cheaper, it started to be used in packaging and other single-use applications.</p>
+			<p>Now nearly every country on earth is creating millions of tons of plastic waste, causing it to become a global epidemic. <span class="highlight">Who are the biggest contributors?</span></p>
 
 
 		<h2 style=" margin-top:200px; ">Plastic Waste Production By Region</h2>
-		<p style="width : 60%; color: #909090; display:table; font-size:12px;  margin-bottom: 90px;margin-left:auto; margin-right:auto; text-align: center;">Click on a region to zoom in and click on the button in the centre to zoom out to explore more.</p>
+		<p>Click on a region to zoom in and click on the button in the centre to zoom out to explore more.</p>
 
 		<div class="sunburst">
-
 			<div class="sunburst-container">
 				<svg id="partitionSVG"></svg>
 			</div>
@@ -116,14 +113,14 @@
 	</div>
 
 	<section class="map-intro">
-		<h2>Who <span class="orange">sells</span> the most?</h2>
-		<h2>Who <span class="orange">buys</span> the most?</h2>
-		<h2>Who <span class="orange">mismanages</span> the most?</h2>
+		<h2>Who <span class="highlight">sells</span> the most?</h2>
+		<h2>Who <span class="highlight">buys</span> the most?</h2>
+		<h2>Who <span class="highlight">mismanages</span> the most?</h2>
 	</section>
 	
 	<div class="geo-vis">
 
-		<p style="color: #b1b1b1; display:table; margin-left:auto; margin-right:auto; padding-top:10px; text-align: left;">Since plastic is a global industry, plastic and plastic waste are imported and exported around the world. Countries import and export plastic products and, unknown to many, even plastic waste for massive capital gains. </p>
+		<p>Since plastic is a global industry, plastic and plastic waste are imported and exported around the world. Countries import and export plastic products and, unknown to many, even plastic waste for massive capital gains. </p>
 
 		<div class="map fullscreen-map" id="map">
 			<div class="zooms">

@@ -1,3 +1,5 @@
+@use '../responsive' as *;
+
 .projections {
 	background-color: black;
 	color: white;
@@ -9,6 +11,7 @@
 	
 	p {
 		text-align: center;
+		color: #b1b1b1;
 	}
 	
 	.plot-container {
@@ -18,10 +21,12 @@
 		position: relative;
 		
 		.line-plot-description {
-			position: absolute;
-			left: 0;
-			top: 0;
-			width: 40%;
+			@include tablet {
+				position: absolute;
+				left: 0;
+				top: 0;
+				width: 40%;
+			}
 			
 			p {
 				text-align: left;
@@ -49,6 +54,13 @@
 			.x-axis-label {
 				font-size: 10px;
 			}
+		}
+	}
+
+	.projections-caption {
+		@include tablet {
+			width: 60%;
+			margin: auto;
 		}
 	}
 }

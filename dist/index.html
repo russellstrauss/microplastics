@@ -8,11 +8,11 @@
 
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 	<link href="https://fonts.googleapis.com/css?family=Open+Sans|Cormorant|Abel&display=swap" rel="stylesheet">
-	<link rel="stylesheet" href="https://unpkg.com/leaflet@1.2.0/dist/leaflet.css" />
+	<link rel="stylesheet" href="https://unpkg.com/leaflet@1.2.0/dist/leaflet.css" />
 	
-	<!-- Vendor libraries loaded as global scripts from public directory -->
-  <script type="module" crossorigin src="./assets/main-DnoJjwuq.js"></script>
-  <link rel="stylesheet" crossorigin href="./assets/main-CHwlMG2j.css">
+	<script src="./assets/vendors/js/snap.svg-min.js"></script> <!-- snap.svg must be loaded as a regular script (not module) to avoid strict mode errors -->
+  <script type="module" crossorigin src="./assets/main-B-cKW4YH.js"></script>
+  <link rel="stylesheet" crossorigin href="./assets/main-C7rtLjUB.css">
   <script type="module">import.meta.url;import("_").catch(()=>1);(async function*(){})().next();window.__vite_is_modern_browser=true</script>
   <script type="module">!function(){if(window.__vite_is_modern_browser)return;console.warn("vite: loading legacy chunks, syntax error above and the same error below should be ignored");var e=document.getElementById("vite-legacy-polyfill"),n=document.createElement("script");n.src=e.src,n.onload=function(){System.import(document.getElementById('vite-legacy-entry').getAttribute('data-src'))},document.body.appendChild(n)}();</script>
 </head>
@@ -28,8 +28,8 @@
 			<div class="plot-container">
 				
 				<div class="line-plot-description">
-					<p style="color: #b1b1b1;">The rate of global plastic production is measured on the scale of hundreds of millions of metric tons, and this trend is steadily increasing as time passes.</p>
-					<p style="color: #b1b1b1; ">Commercial production of plastics, which began in the 1950's, has enjoyed exceptional growth. Now, global annual production has exceeded 330 million metric tons in 2016 alone. Including the resin used in spinning textile fibers, this figure is closer to 400 metric tons, a value that almost exactly matches that of global human biomass.</p>
+					<p>The rate of global plastic production is measured on the scale of hundreds of millions of metric tons, and this trend is steadily increasing as time passes.</p>
+					<p>Commercial production of plastics, which began in the 1950's, has enjoyed exceptional growth. Now, global annual production has exceeded 330 million metric tons in 2016 alone. Including the resin used in spinning textile fibers, this figure is closer to 400 metric tons, a value that almost exactly matches that of global human biomass.</p>
 				</div>
 				
 				<svg>
@@ -56,23 +56,23 @@
 
 			</div>
 			
-			<p style="color: #b1b1b1; width: 60%; margin: auto;">At the present rate of growth, plastics production is estimated to double within the next 20 years.</p>
+			<p class="projections-caption">At the present rate of growth, plastics production is estimated to double within the next 20 years.</p>
 		</div>
 	</div>
 
 	<div class="sunburst-component">
-			<h2 style="margin-top:150px; margin-bottom: 100px;"> Should you be worried<br> about this <span style="color:orange; ">plastic epidemic</span>?
+			<h2> Should you be worried<br> about this <span class="highlight">plastic epidemic</span>?
 			</h2>
-			<p style="width : 50%; color: #b1b1b1; display:table; margin-top: 50px; margin-left:auto; margin-right:auto; text-align: left;">While plastic was originally envisioned as a building material for long-term, multi-use, robust products, as the manufacture of plastics became cheaper and cheaper, it started to be used in packaging and other single-use applications.</p>
+			<p>While plastic was originally envisioned as a building material for long-term, multi-use, robust products, as the manufacture of plastics became cheaper and cheaper, it started to be used in packaging and other single-use applications.</p>
+			<p>Now nearly every country on earth is creating millions of tons of plastic waste, causing it to become a global epidemic. <span class="highlight">Who are the biggest contributors?</span></p>
 
-			<p style="width : 50%; color: #b1b1b1; display:table; margin-left:auto; margin-right:auto; padding-top:10px; text-align: left;">Now nearly every country on earth is creating millions of tons of plastic waste, causing it to become a global epidemic. <span class="orange">Who are the biggest contributors?</span></p>
 
-
-		<h2 style=" margin-top:200px; ">Plastic Waste Production By Region</h2>
-		<p style="width : 60%; color: #909090; display:table; font-size:12px;  margin-bottom: 90px;margin-left:auto; margin-right:auto; text-align: center;">Click on a region to zoom in and click on the button in the centre to zoom out to explore more.</p>
+		<h2>Plastic Waste Production By Region</h2>
+		<div class="caption">
+			<p>Click on a region to zoom in and click on the button in the centre to zoom out to explore more.</p>
+		</div>
 
 		<div class="sunburst">
-
 			<div class="sunburst-container">
 				<svg id="partitionSVG"></svg>
 			</div>
@@ -113,14 +113,14 @@
 	</div>
 
 	<section class="map-intro">
-		<h2>Who <span class="orange">sells</span> the most?</h2>
-		<h2>Who <span class="orange">buys</span> the most?</h2>
-		<h2>Who <span class="orange">mismanages</span> the most?</h2>
+		<h2>Who <span class="highlight">sells</span> the most?</h2>
+		<h2>Who <span class="highlight">buys</span> the most?</h2>
+		<h2>Who <span class="highlight">mismanages</span> the most?</h2>
 	</section>
 	
 	<div class="geo-vis">
 
-		<p style="color: #b1b1b1; display:table; margin-left:auto; margin-right:auto; padding-top:10px; text-align: left;">Since plastic is a global industry, plastic and plastic waste are imported and exported around the world. Countries import and export plastic products and, unknown to many, even plastic waste for massive capital gains. </p>
+		<p>Since plastic is a global industry, plastic and plastic waste are imported and exported around the world. Countries import and export plastic products and, unknown to many, even plastic waste for massive capital gains. </p>
 
 		<div class="map fullscreen-map" id="map">
 			<div class="zooms">
@@ -164,7 +164,7 @@
 			<div class="left stats">
 				<div class="country"></div>
 				<div class="percentage-of-total"></div>
-				<div class="label" style="font-size: 20px;">of total global plastic exports</div>
+				<div class="label">of total global plastic exports</div>
 				<div class="valuation">$ <span></span> USD</div>
 			</div>
 			<div class="right">
@@ -172,10 +172,10 @@
 			</div>
 		</div>
 
-		<div class="insights" style="text-align: left; ">
-			<p style="color: #b1b1b1; display:table; margin-left:auto; margin-right:auto; padding-top:10px; text-align: left;">The percentage of mismanaged waste is defined as material that is at high risk of entering the ocean through the wind, tides, or carried to the coastline from inner waterways. </p>
+		<div class="insights">
+			<p>The percentage of mismanaged waste is defined as material that is at high risk of entering the ocean through the wind, tides, or carried to the coastline from inner waterways. </p>
 					
-			<p style="color: #b1b1b1; display:table; margin-left:auto; margin-right:auto; padding-top:10px; text-align: left;">The United States, China, and Germany are the top three importers and exporters of plastics worldwide. The United States is the top producer by a large margin, even over China who comes in at 2nd. The top three
+			<p>The United States, China, and Germany are the top three importers and exporters of plastics worldwide. The United States is the top producer by a large margin, even over China who comes in at 2nd. The top three
 				export nearly twice as much as the rest of the world's top 20 countries. These superpowers, with large amounts of resources	are relatively unlikely to mismanage their waste. However, it is common practice for major countries to ship large portions
 				of plastic waste overseas to countries like China and, more recently, Malaysia that are more susceptible to waste mismanagement. In this way plastic waste has become a massive commodity market, with China and Hong Kong importing over 70% of plastic waste around the globe. This
 				means that countries with high levels of mismanaged waste may not necessarily have been the origin of that waste, yet they are impacted by it more severely than countries like the U.S. or Germany might be.</p>
@@ -186,7 +186,7 @@
 
 		<div class="selector">
 			<h2>The Danger of Single-Use Plastics</h2>
-			<p style="width : 50%; color: #b1b1b1; display:table; margin-left:auto; margin-right:auto; padding-top:10px; text-align: left;">Choices we make each and every day about which products to buy can impact the world around us for an absurdly long time. In the next visualization, we show just how long that coffee cup or water bottle you may have used today will take to break down versus how long you may have used it for. When you consider how others may be impacted much more severely than you, it may cause you to reconsider that next purchase.
+			<p>Choices we make each and every day about which products to buy can impact the world around us for an absurdly long time. In the next visualization, we show just how long that coffee cup or water bottle you may have used today will take to break down versus how long you may have used it for. When you consider how others may be impacted much more severely than you, it may cause you to reconsider that next purchase.
 			</p>
 			<select name="longevitySelector" class="material" id="longevitySelector">
 				<option value="bottle">Bottle</option>
@@ -195,15 +195,15 @@
 				<option value="vegetable">Organic Matter</option>
 			</select>
 		</div>
+
 		<div class="two-column">
 			<div class="graphic">
-				<img src="./assets/bottle-bTCUVnkd.svg" alt="">
+				<img src="./assets/bottle-D2zJLrNo.svg" alt="">
 			</div>
 			<div class="stats">
 				<ul>
 					<li class="material">Material: <span>1 plastic bottle</span></li>
 					<li class="use-time">Average use time: <span>1 hour</span></li>
-					<!-- <li class="mass">Mass: <span>24g</span></li> -->
 					<li class="generations">Will break down after: <span>450 years</span></li>
 					<li class="lifetimes" style="justify-content: flex-end;"><span>5.2 lifetimes</span></li>
 				</ul>
@@ -217,21 +217,17 @@
 			<div class="longevity"></div>
 		</div>
 
-		<div class="description"><p style="max-width: 1000px; color: #b1b1b1; display:table; margin-left:auto; margin-right:auto; padding-top:10px; text-align: left;">
+		<div class="description"><p>
 				The global problem of plastic pollution has impact on people from all corners of the globe. Many of these issues disproportionately impact populations which do not have the resources to control the problem on their own. We are already beginning to see plastic entering the food chain. The problem will inevitably grow, irreversibly damaging us and our planet. 
 			</p>
 		</div>
 		
 	</div>
 	
-
-
 	<script src="https://cdn.jsdelivr.net/npm/@observablehq/stdlib"></script>
-	
-	<!-- Main application module - loaded after vendor scripts -->
   <script nomodule>!function(){var e=document,t=e.createElement("script");if(!("noModule"in t)&&"onbeforeload"in t){var n=!1;e.addEventListener("beforeload",(function(e){if(e.target===t)n=!0;else if(!e.target.hasAttribute("nomodule")||!n)return;e.preventDefault()}),!0),t.type="module",t.src=".",e.head.appendChild(t),t.remove()}}();</script>
-  <script nomodule crossorigin id="vite-legacy-polyfill" src="./assets/polyfills-legacy-DbnTOCNI.js"></script>
-  <script nomodule crossorigin id="vite-legacy-entry" data-src="./assets/main-legacy-D055P_pn.js">System.import(document.getElementById('vite-legacy-entry').getAttribute('data-src'))</script>
+  <script nomodule crossorigin id="vite-legacy-polyfill" src="./assets/polyfills-legacy-C9Mzn068.js"></script>
+  <script nomodule crossorigin id="vite-legacy-entry" data-src="./assets/main-legacy-BioPaPcn.js">System.import(document.getElementById('vite-legacy-entry').getAttribute('data-src'))</script>
 </body>
 
 </html>

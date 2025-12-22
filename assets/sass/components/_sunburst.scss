@@ -18,6 +18,7 @@
 
 	p {
 		margin: 50px auto;
+		padding: 0;
 		
 		@include tablet {
 			max-width: 1000px;

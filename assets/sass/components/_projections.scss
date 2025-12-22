@@ -25,6 +25,8 @@
 		position: relative;
 		
 		.line-plot-description {
+			margin: 0 20px;
+			
 			@include tablet {
 				position: absolute;
 				left: 0;

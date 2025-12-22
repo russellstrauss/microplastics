@@ -60,7 +60,7 @@ export default function() {
 			height = window.innerHeight * .8;
 			padding = {top: 0, right: 200, bottom: 50, left: 25};
 			if (utils.mobile()) {
-				padding = {top: 0, right: 25, bottom: 50, left: 25};
+				padding = {top: 0, right: 35, bottom: 50, left: 25};
 			}
 			chartWidth = width - padding.left - padding.right;
 			chartHeight = height - padding.top - padding.bottom;
@@ -106,7 +106,6 @@ export default function() {
 			var line = d3.line()
 			.x(function(d, i) { return xScale(d.year); })
 			.y(function(d) { 
-				//console.log(parseInt(d.amount).toLocaleString(), parseInt(yScale(d.amount)).toLocaleString(), 'max: ', parseInt(maxValue).toLocaleString());
 				return yScale(d.amount);
 			})
 			.curve(d3.curveMonotoneX) // apply smoothing to the line
@@ -120,7 +119,6 @@ export default function() {
 			
 			for (let i = 0; i < 3; i++) {
 				
-				break; // remove me
 				
 				let year = 2020 + (i * 20);
 				let scenario = 'A';

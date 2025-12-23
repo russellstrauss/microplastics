@@ -110,11 +110,14 @@
 		color: white;
 		text-align: center;
 		transition: all 250ms ease;
-		margin-top: 100px;
+		margin-top: 20px;
+
+		column-count: 2;
 		
 		@include tablet {
 			display: flex;
 			flex-wrap: wrap;
+			margin-top: 100px;
 		}
 		
 		.region {
@@ -125,10 +128,7 @@
 				border-bottom: 1px solid white;
 				padding: 10px;
 				width: 75%;
-
-				&:last-child {
-					border: 0;
-				}
+				display: inline-block;
 			}
 
 			@include tablet {
@@ -160,7 +160,7 @@
 				color: #E6965B;
 
 				@include mobile-only {
-					font-size: 1.5rem;
+					font-size: 1.05rem;
 				}
 			}
 		}

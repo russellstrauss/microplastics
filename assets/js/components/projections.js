@@ -119,7 +119,6 @@ export default function() {
 			
 			for (let i = 0; i < 3; i++) {
 				
-				
 				let year = 2020 + (i * 20);
 				let scenario = 'A';
 				

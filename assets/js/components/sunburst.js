@@ -51,28 +51,13 @@ export default function () {
 				return `rotate(${x - 90}) translate(${y},0) rotate(${x < 180 ? 0 : 180})`;
 			}
 
-			/**
-			* Four working methods to load data:
-			* (1) Inline data in json format (JS plain objects);
-			* (2) From an https URL, which works only afer allowing cross origin requests
-			*     on Firefox if the data URL is not the same as your app server;
-			* (3) From a local file;
-			* (4) Calling require()('@observablehq/flare') (observable-specific). In fact,
-			*     The same as (2).
-			*/
-
-			//var data_url = "https://gist.githubusercontent.com/mbostock/1093025/raw/b40b9fc5b53b40836ead8aa4b4a17d948b491126/flare.json"; // network error!
 			var dataURL = "https://gist.githubusercontent.com/mbostock/4348373/raw/85f18ac90409caa5529b32156aa6e71cf985263f/flare.json";
 
-			//const {require} = new observablehq.Library;
-			//require()('@observablehq/flare').then((data, error) => { // works!
-			//d3.json(dataURL).then((data, error) => { // works behind proxy!
 			d3.json("./assets/js/data/sunburst-countries.json").then((data, error) => { // works!
-				//console.log(data);
+
 				const root = partition(data);
 				const color = d3.scaleOrdinal()
-								.range(d3.quantize(d3.interpolateRainbow,
-												data.children.length + 1));
+								.range(d3.quantize(d3.interpolateRainbow, data.children.length + 1));
 
 				root.each(d => d.current = d);
 
@@ -213,18 +198,6 @@ export default function () {
 				.attr('x', (sunburstWidth/2 - iconWidth/2) - (iconWidth*.02))
 				.attr('y', sunburstWidth/2 - iconHeight/2);
 			});
-		},
-		
-		initButtons: function() {
-			
-			let buttons = document.querySelectorAll('.sunburst .region-selector buttons');
-			if (buttons) buttons.foreach(function(button) {
-				
-				button.addEventListener('click', function() {
-					//clicked(root);
-				});
-			});
-			
 		}
 	}
 }
